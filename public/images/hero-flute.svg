@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 380" role="img" aria-label="Flutist teaching online">
+  <rect width="720" height="380" fill="#f9efd6"/>
+  <path d="M0 310 C160 250 230 370 390 300 C520 244 600 276 720 220 L720 380 L0 380 Z" fill="#dce7cf"/>
+  <circle cx="510" cy="132" r="64" fill="#f6c944" stroke="#17130d" stroke-width="6"/>
+  <rect x="118" y="96" width="270" height="190" rx="18" fill="#fffdf5" stroke="#17130d" stroke-width="6"/>
+  <circle cx="210" cy="162" r="44" fill="#e7b89c" stroke="#17130d" stroke-width="5"/>
+  <path d="M172 128 C188 88 260 96 258 150 C232 126 205 127 172 128Z" fill="#17130d"/>
+  <path d="M210 208 C170 216 144 250 134 286 L304 286 C298 244 260 211 210 208Z" fill="#6f8b63" stroke="#17130d" stroke-width="5"/>
+  <path d="M306 186 L622 112" stroke="#17130d" stroke-width="10" stroke-linecap="round"/>
+  <path d="M330 182 L640 110" stroke="#fffdf5" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="422" cy="159" r="8" fill="#fffdf5" stroke="#17130d" stroke-width="4"/>
+  <circle cx="485" cy="145" r="8" fill="#fffdf5" stroke="#17130d" stroke-width="4"/>
+  <circle cx="548" cy="130" r="8" fill="#fffdf5" stroke="#17130d" stroke-width="4"/>
+  <path d="M72 74 C102 38 146 42 160 84" fill="none" stroke="#6f8b63" stroke-width="6" stroke-linecap="round"/>
+  <path d="M612 254 C642 218 684 226 692 268" fill="none" stroke="#6f8b63" stroke-width="6" stroke-linecap="round"/>
+</svg>

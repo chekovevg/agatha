@@ -1,0 +1,16 @@
+{
+  "LocaleSwitcher": {
+    "label": "Sprache"
+  },
+  "ContactForm": {
+    "name": "Name",
+    "email": "E-Mail",
+    "studentAge": "Alter des Schuelers",
+    "subject": "Thema",
+    "preferredLanguage": "Bevorzugte Sprache",
+    "message": "Nachricht",
+    "submit": "Nachricht senden",
+    "success": "Danke. Deine Nachricht wurde gesendet.",
+    "error": "Etwas ist schiefgelaufen. Bitte versuche es erneut oder nutze den Buchungslink."
+  }
+}

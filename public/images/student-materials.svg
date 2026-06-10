@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 360" role="img" aria-label="Student materials">
+  <rect width="520" height="360" fill="#f9efd6"/>
+  <rect x="94" y="56" width="332" height="248" rx="12" fill="#fffdf5" stroke="#17130d" stroke-width="6"/>
+  <g stroke="#17130d" stroke-width="4">
+    <path d="M136 116 H382"/>
+    <path d="M136 154 H382"/>
+    <path d="M136 192 H382"/>
+    <path d="M136 230 H314"/>
+  </g>
+  <circle cx="380" cy="282" r="46" fill="#f6c944" stroke="#17130d" stroke-width="5"/>
+  <path d="M366 282 L376 294 L398 266" fill="none" stroke="#17130d" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
