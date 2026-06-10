@@ -17,6 +17,12 @@ focused tasks produce better diffs and fewer regressions.
 - Git remote: `https://github.com/chekovevg/agatha.git`.
 - GitHub push is configured via HTTPS fallback because SSH auth was not
   available in this environment.
+- Production URL: `https://agatha-pied.vercel.app`.
+- Vercel production deployment is connected to GitHub `main`.
+- Cal.com booking is configured through `NEXT_PUBLIC_CAL_LINK`.
+- Resend contact email is configured and verified with the temporary
+  `onboarding@resend.dev` sender. This is acceptable for testing only; replace
+  it with a verified custom-domain sender before final production launch.
 
 ## Core Commands
 Use `npm.cmd` in PowerShell if `npm.ps1` is blocked.
@@ -95,14 +101,15 @@ Rules:
 ```
 
 ## Recommended Next Tasks
-1. Connect the pushed GitHub repository to Vercel.
-2. Replace legal placeholders in `/impressum` and `/datenschutz` with reviewed
+1. Replace legal placeholders in `/impressum` and `/datenschutz` with reviewed
    real content.
-3. Add real Cal.com link and verify `/en/book`.
-4. Add real Resend env values and test contact email in a safe environment.
-5. Replace SVG placeholders with approved photos/media.
-6. Run an anti-AI-slop design and copy review before visual polish.
-7. Configure Vercel environment variables and deploy preview.
+2. Configure a real domain, verify it in Resend, and replace
+   `CONTACT_FROM_EMAIL=onboarding@resend.dev` with a branded sender.
+3. Confirm Cal.com intake questions, availability, timezone, and calendar sync.
+4. Replace SVG placeholders with approved photos/media.
+5. Run an anti-AI-slop design and copy review before visual polish.
+6. Add real optional public links if available: Preply, Instagram, WhatsApp.
+7. Run the full local checks and production browser QA after final content.
 
 ## What Not To Touch Without Approval
 - Real `.env.local` values or secrets.

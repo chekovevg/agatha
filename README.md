@@ -67,14 +67,23 @@ CAL_WEBHOOK_SECRET=
 
 Do not publish as production until these are resolved:
 
-- GitHub SSH or HTTPS push works.
-- Vercel project is connected to the GitHub repo.
-- Production env vars are configured in Vercel.
 - `/impressum` contains reviewed real provider information.
 - `/datenschutz` contains reviewed real privacy text.
-- Cal.com booking link is real and verified.
-- Resend sender/receiver values are real and verified.
+- Resend uses a verified custom-domain sender instead of
+  `onboarding@resend.dev`.
 - Placeholder SVG media is replaced or explicitly accepted for beta.
+- Optional Preply, Instagram, and WhatsApp URLs are added if they should be
+  displayed.
+
+Already verified for beta infrastructure:
+
+- GitHub HTTPS push works and `main` is connected to Vercel.
+- Production URL: `https://agatha-pied.vercel.app`.
+- `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_CAL_LINK`, `RESEND_API_KEY`,
+  `CONTACT_TO_EMAIL`, and `CONTACT_FROM_EMAIL` are configured in Vercel.
+- `/en/book` renders Cal.com booking.
+- Contact form sends notification and auto-reply emails through Resend using
+  the temporary `onboarding@resend.dev` sender.
 
 ## Deployment
 

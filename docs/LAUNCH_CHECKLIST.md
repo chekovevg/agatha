@@ -6,35 +6,39 @@ Use this checklist before treating the site as beta-ready or production-ready.
 
 - [x] GitHub HTTPS push works.
 - [x] `main` is pushed to `https://github.com/chekovevg/agatha.git`.
-- [ ] No secrets are committed.
-- [ ] `git status --short --branch` is clean before deployment.
+- [x] No secrets are committed.
+- [x] `git status --short --branch` is clean before deployment.
 
 ## Vercel
 
-- [ ] Vercel project is connected to the GitHub repo.
-- [ ] Preview deployment is created before production deployment.
-- [ ] `NEXT_PUBLIC_SITE_URL` points to the deployed site URL.
-- [ ] `NEXT_PUBLIC_CAL_LINK` is set.
-- [ ] `RESEND_API_KEY` is set.
-- [ ] `CONTACT_TO_EMAIL` is set.
-- [ ] `CONTACT_FROM_EMAIL` is set and verified in Resend.
+- [x] Vercel project is connected to the GitHub repo.
+- [x] Production deployment is created from `main`.
+- [x] `NEXT_PUBLIC_SITE_URL` points to `https://agatha-pied.vercel.app`.
+- [x] `NEXT_PUBLIC_CAL_LINK` is set.
+- [x] `RESEND_API_KEY` is set.
+- [x] `CONTACT_TO_EMAIL` is set.
+- [x] `CONTACT_FROM_EMAIL` is set to the temporary Resend sender
+  `onboarding@resend.dev`.
+- [ ] Replace the temporary Resend sender with a verified custom-domain sender.
 - [ ] Optional public links are set if available.
 
 ## Booking
 
-- [ ] `/en/book` renders a real Cal.com embed or a real fallback link.
-- [ ] Trial Lesson event exists in Cal.com.
+- [x] `/en/book` renders a real Cal.com embed or a real fallback link.
+- [x] Trial Lesson event exists in Cal.com.
 - [ ] Intake questions are configured in Cal.com.
 - [ ] Calendar sync is configured in Cal.com.
-- [ ] No custom calendar logic is added to the site.
+- [x] No custom calendar logic is added to the site.
 
 ## Contact
 
-- [ ] Contact form accepts a valid submission.
+- [x] Contact form accepts a valid submission.
 - [ ] Invalid email and missing required fields are rejected.
 - [ ] Honeypot submissions do not send email.
-- [ ] Agathe receives the notification email.
-- [ ] User receives the auto-reply email.
+- [x] Test receiver receives the notification email.
+- [x] Test visitor receives the auto-reply email.
+- [ ] Replace temporary test receiver/sender setup with real Agathe email and
+  verified domain sender.
 
 ## Legal
 
@@ -64,11 +68,14 @@ npm.cmd run build
 
 Browser QA:
 
-- [ ] `/` redirects to `/en`.
-- [ ] `/en`, `/de`, `/ru` render.
-- [ ] `/en/book` renders booking.
-- [ ] `/impressum` and `/datenschutz` render.
-- [ ] Video iframe is absent before click and present after click.
-- [ ] Contact form success and error states work.
-- [ ] Mobile header/menu and hero are usable.
-- [ ] `/sitemap.xml` and `/robots.txt` are reachable.
+- [x] `/` redirects to `/en`.
+- [x] `/en`, `/de`, `/ru` render.
+- [x] `/en/book` renders booking.
+- [x] `/impressum` and `/datenschutz` render.
+- [x] Video iframe is absent before click and present after click.
+- [x] Contact form success state works on production.
+- [ ] Contact form error state is checked manually in browser after final
+  content pass.
+- [x] Mobile header/menu and hero are usable.
+- [x] `/sitemap.xml` and `/robots.txt` are reachable and use the production
+  Vercel URL.
