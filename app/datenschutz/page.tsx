@@ -15,14 +15,22 @@ export default function DatenschutzPage() {
       <h1 className="mt-8 text-4xl font-black">Datenschutzerklaerung</h1>
       <div className="mt-8 space-y-5 rounded-lg border-2 border-[var(--line)] bg-white p-6 text-[var(--muted)] shadow-[6px_6px_0_var(--line)]">
         <p>
-          This page is a technical placeholder and must be reviewed before
-          launch. The v1 stack collects contact form data only to send email via
-          Resend and uses Cal.com as the booking provider.
+          This page is intentionally blocked from production launch until a
+          reviewed privacy policy is supplied. Do not publish with placeholder
+          privacy text.
         </p>
-        <p>
-          YouTube video embeds are loaded only after user interaction. Vercel
-          Analytics and Speed Insights are included for cookieless site metrics.
-        </p>
+        <section>
+          <h2 className="text-xl font-black text-[var(--ink)]">
+            Data processing to cover
+          </h2>
+          <ul className="mt-3 list-disc space-y-2 pl-5">
+            <li>Contact form data sent through Resend.</li>
+            <li>Booking data handled by Cal.com.</li>
+            <li>Vercel hosting, Analytics, and Speed Insights.</li>
+            <li>YouTube nocookie video embeds loaded only after click.</li>
+            <li>Retention, controller identity, and user rights under GDPR.</li>
+          </ul>
+        </section>
       </div>
     </main>
   );

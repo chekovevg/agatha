@@ -15,14 +15,21 @@ export default function ImpressumPage() {
       <h1 className="mt-8 text-4xl font-black">Impressum</h1>
       <div className="mt-8 space-y-5 rounded-lg border-2 border-[var(--line)] bg-white p-6 text-[var(--muted)] shadow-[6px_6px_0_var(--line)]">
         <p>
-          This page is a technical placeholder. German commercial provider
-          information must be completed with Agathe&apos;s real legal details before
-          production launch.
+          This page is intentionally blocked from production launch until real
+          provider details are supplied and reviewed. Do not invent legal data.
         </p>
-        <p>
-          Required fields usually include name, postal address, contact email,
-          and any legally required registration or professional information.
-        </p>
+        <section>
+          <h2 className="text-xl font-black text-[var(--ink)]">
+            Required launch inputs
+          </h2>
+          <ul className="mt-3 list-disc space-y-2 pl-5">
+            <li>Legal name of the service provider.</li>
+            <li>Postal address for the provider information.</li>
+            <li>Contact email and, if required, phone number.</li>
+            <li>Any registration, tax, or professional details that apply.</li>
+            <li>Human legal review for German commercial website compliance.</li>
+          </ul>
+        </section>
       </div>
     </main>
   );

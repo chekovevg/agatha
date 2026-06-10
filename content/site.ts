@@ -19,9 +19,7 @@ const baseContent: SiteContent = {
     secondary: "Watch an open lesson",
     contact: "Send a message",
   },
-  social: {
-    email: "hello@example.com",
-  },
+  social: {},
   seo: {
     title: "Agathe G. Musik - Flute & Music Theory Lessons",
     description:

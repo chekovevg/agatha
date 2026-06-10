@@ -1,36 +1,95 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Agathe G. Musik
 
-## Getting Started
+Static-first multilingual Next.js site for a music teacher brand. The v1 site
+is a marketing and booking surface: lessons, method, about, media, reviews,
+booking, FAQ, contact, and German legal pages.
 
-First, run the development server:
+## Stack
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Next.js 16 App Router
+- TypeScript
+- Tailwind CSS 4
+- `next-intl` for `en`, `de`, `ru`
+- Resend for contact email
+- Cal.com for booking
+- Vercel Analytics and Speed Insights
+- Vitest and Playwright for verification
+
+## Local Development
+
+PowerShell may block `npm.ps1`, so use `npm.cmd`.
+
+```powershell
+npm.cmd install
+npm.cmd run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```text
+http://127.0.0.1:3000/en
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Checks
 
-## Learn More
+```powershell
+npm.cmd run typecheck
+npm.cmd run lint
+npm.cmd test
+npm.cmd run build
+```
 
-To learn more about Next.js, take a look at the following resources:
+## Environment
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Copy `.env.example` to `.env.local` for local secrets. Never commit real env
+values.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Required for production-like behavior:
 
-## Deploy on Vercel
+```text
+NEXT_PUBLIC_SITE_URL=
+NEXT_PUBLIC_CAL_LINK=
+RESEND_API_KEY=
+CONTACT_TO_EMAIL=
+CONTACT_FROM_EMAIL=
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Optional public links:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```text
+NEXT_PUBLIC_PREPLY_URL=
+NEXT_PUBLIC_INSTAGRAM_URL=
+NEXT_PUBLIC_WHATSAPP_URL=
+CAL_WEBHOOK_SECRET=
+```
+
+## Launch Blockers
+
+Do not publish as production until these are resolved:
+
+- GitHub SSH or HTTPS push works.
+- Vercel project is connected to the GitHub repo.
+- Production env vars are configured in Vercel.
+- `/impressum` contains reviewed real provider information.
+- `/datenschutz` contains reviewed real privacy text.
+- Cal.com booking link is real and verified.
+- Resend sender/receiver values are real and verified.
+- Placeholder SVG media is replaced or explicitly accepted for beta.
+
+## Deployment
+
+Preferred flow:
+
+1. Push `main` to `git@github.com:chekovevg/agatha.git`.
+2. Import the repo in Vercel.
+3. Add env vars from `.env.example`.
+4. Deploy preview first.
+5. Verify routes, sitemap, robots, booking, and contact form.
+
+Current known issue: SSH push previously failed with `Permission denied
+(publickey)`. Configure GitHub SSH access or switch the remote to an HTTPS URL
+with a valid GitHub login/token.
+
+## AI Workflow
+
+See `AGENTS.md` and `docs/AI_WORKFLOW.md`.
