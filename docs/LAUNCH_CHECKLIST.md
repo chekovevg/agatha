@@ -4,8 +4,8 @@ Use this checklist before treating the site as beta-ready or production-ready.
 
 ## Repository
 
-- [ ] GitHub SSH or HTTPS push works.
-- [ ] `main` is pushed to `git@github.com:chekovevg/agatha.git`.
+- [x] GitHub HTTPS push works.
+- [x] `main` is pushed to `https://github.com/chekovevg/agatha.git`.
 - [ ] No secrets are committed.
 - [ ] `git status --short --branch` is clean before deployment.
 

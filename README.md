@@ -86,9 +86,9 @@ Preferred flow:
 4. Deploy preview first.
 5. Verify routes, sitemap, robots, booking, and contact form.
 
-Current known issue: SSH push previously failed with `Permission denied
-(publickey)`. Configure GitHub SSH access or switch the remote to an HTTPS URL
-with a valid GitHub login/token.
+Current repository state: `main` has been pushed through the HTTPS remote
+`https://github.com/chekovevg/agatha.git`. SSH can be configured later if
+preferred.
 
 ## AI Workflow
 

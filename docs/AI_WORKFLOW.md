@@ -14,9 +14,9 @@ focused tasks produce better diffs and fewer regressions.
 - Stack: Next.js 16 App Router, TypeScript, Tailwind CSS 4, `next-intl`,
   Resend, Cal.com, Vercel Analytics, Vitest, Playwright.
 - Git branch: `main`.
-- Git remote: `git@github.com:chekovevg/agatha.git`.
-- Known issue: SSH push failed with `Permission denied (publickey)`. Configure
-  GitHub SSH access, then run `git push -u origin main`.
+- Git remote: `https://github.com/chekovevg/agatha.git`.
+- GitHub push is configured via HTTPS fallback because SSH auth was not
+  available in this environment.
 
 ## Core Commands
 Use `npm.cmd` in PowerShell if `npm.ps1` is blocked.
@@ -95,14 +95,14 @@ Rules:
 ```
 
 ## Recommended Next Tasks
-1. Replace legal placeholders in `/impressum` and `/datenschutz` with reviewed
+1. Connect the pushed GitHub repository to Vercel.
+2. Replace legal placeholders in `/impressum` and `/datenschutz` with reviewed
    real content.
-2. Configure GitHub SSH and push `main`.
 3. Add real Cal.com link and verify `/en/book`.
 4. Add real Resend env values and test contact email in a safe environment.
 5. Replace SVG placeholders with approved photos/media.
 6. Run an anti-AI-slop design and copy review before visual polish.
-7. Deploy to Vercel and configure environment variables.
+7. Configure Vercel environment variables and deploy preview.
 
 ## What Not To Touch Without Approval
 - Real `.env.local` values or secrets.
