@@ -107,7 +107,8 @@ Rules:
    `CONTACT_FROM_EMAIL=onboarding@resend.dev` with a branded sender.
 3. Confirm Cal.com intake questions, availability, timezone, and calendar sync.
 4. Replace SVG placeholders with approved photos/media.
-5. Run an anti-AI-slop design and copy review before visual polish.
+5. Run the anti-AI-slop design and copy review in `docs/UI_REVIEW.md` before
+   visual polish.
 6. Add real optional public links if available: Preply, Instagram, WhatsApp.
 7. Run the full local checks and production browser QA after final content.
 
