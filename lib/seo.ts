@@ -48,3 +48,16 @@ export function bookMetadata(locale: Locale): Metadata {
     },
   };
 }
+
+export function fullProfileMetadata(locale: Locale): Metadata {
+  const seo = siteContent[locale].seo;
+
+  return {
+    title: `Full profile | ${seo.title}`,
+    description: seo.description,
+    alternates: {
+      canonical: siteUrl(`/${locale}/full`),
+      languages: localizedAlternates("/full"),
+    },
+  };
+}

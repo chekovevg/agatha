@@ -1,10 +1,10 @@
 import type {Metadata} from "next";
 import {notFound} from "next/navigation";
 
-import {CompactDashboardPage} from "@/components/pages/CompactDashboardPage";
+import {LongProfilePage} from "@/components/pages/LongProfilePage";
 import {siteContent} from "@/content/site";
+import {fullProfileMetadata} from "@/lib/seo";
 import {isLocale, locales, type Locale} from "@/lib/routing";
-import {landingMetadata} from "@/lib/seo";
 
 type PageProps = {
   params: Promise<{locale: string}>;
@@ -21,10 +21,10 @@ export async function generateMetadata({params}: PageProps): Promise<Metadata> {
     return {};
   }
 
-  return landingMetadata(locale);
+  return fullProfileMetadata(locale);
 }
 
-export default async function LocaleHome({params}: PageProps) {
+export default async function FullProfileRoute({params}: PageProps) {
   const {locale: rawLocale} = await params;
 
   if (!isLocale(rawLocale)) {
@@ -32,5 +32,6 @@ export default async function LocaleHome({params}: PageProps) {
   }
 
   const locale: Locale = rawLocale;
-  return <CompactDashboardPage content={siteContent[locale]} locale={locale} />;
+
+  return <LongProfilePage content={siteContent[locale]} locale={locale} />;
 }

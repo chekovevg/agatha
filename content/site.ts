@@ -37,6 +37,53 @@ const baseContent: SiteContent = {
       "Clear explanations, healthy technique and music you actually enjoy playing.",
     trust: "Teaching since 2014 · Students aged 6-60 · 400+ online lessons",
   },
+  dashboard: {
+    eyebrow: "Flute · Recorder · Music Theory",
+    heading: "Music lessons with calm structure and clear next steps.",
+    subheading:
+      "For children, adult beginners and aspiring musicians who want attentive online lessons in Russian, English or German.",
+    trustLine:
+      "Teaching since 2014 · Students aged 6-60 · Music schools, private lessons and online classes.",
+    fitHeading: "Suitable for",
+    fitItems: [
+      "Children and teenagers who need patient structure",
+      "Adult beginners who want to start without shame or pressure",
+      "Flute, recorder, piccolo and music theory students",
+      "Students who want explanations in Russian, English or German",
+    ],
+    styleHeading: "Lesson style",
+    styleIntro:
+      "Calm, structured and practical lessons with healthy technique, clear explanations and notes after class.",
+    styleTags: [
+      "Calm",
+      "Structured",
+      "Attentive",
+      "Practical",
+      "Healthy technique",
+      "Practice notes",
+    ],
+    trialHeading: "What happens in a trial lesson",
+    trialSteps: [
+      "Meet and clarify the goal.",
+      "Check level, breathing, posture, sound, rhythm or theory needs.",
+      "Try a short learning activity.",
+      "Leave with notes and a realistic next-step recommendation.",
+    ],
+    proofHeading: "Why students trust Agathe",
+    proofItems: [
+      "Academic flute background",
+      "Teaching experience since 2014",
+      "Clear explanations and patient support",
+      "Experience with children, adults and online lessons",
+    ],
+    practical: [
+      {label: "Languages", value: "Russian · English · German"},
+      {label: "Format", value: "Online lessons"},
+      {label: "First step", value: "Trial lesson via Cal.com"},
+      {label: "Focus", value: "Flute · Recorder · Theory"},
+    ],
+    fullProfileCta: "Read the full profile",
+  },
   trust: [
     {
       title: "Moscow-trained flutist",
@@ -351,6 +398,55 @@ export const siteContent: Record<Locale, SiteContent> = {
         "Klare Erklaerungen, gesunde Technik und Musik, die du wirklich gern spielst.",
       trust: "Unterricht seit 2014 · Schueler von 6-60 · 400+ Online-Stunden",
     },
+    dashboard: {
+      ...baseContent.dashboard,
+      eyebrow: "Floete · Blockfloete · Musiktheorie",
+      heading:
+        "Musikunterricht mit ruhiger Struktur und klaren naechsten Schritten.",
+      subheading:
+        "Fuer Kinder, erwachsene Anfaenger und angehende Musiker, die aufmerksamen Online-Unterricht auf Russisch, Englisch oder Deutsch suchen.",
+      trustLine:
+        "Unterricht seit 2014 · Schueler von 6-60 · Musikschulen, Privatunterricht und Online-Stunden.",
+      fitHeading: "Geeignet fuer",
+      fitItems: [
+        "Kinder und Jugendliche, die geduldige Struktur brauchen",
+        "Erwachsene Anfaenger, die ohne Druck anfangen moechten",
+        "Floete, Blockfloete, Piccolo und Musiktheorie",
+        "Schueler, die Erklaerungen auf Russisch, Englisch oder Deutsch moechten",
+      ],
+      styleHeading: "Unterrichtsstil",
+      styleIntro:
+        "Ruhig, strukturiert und praktisch mit gesunder Technik, klaren Erklaerungen und Notizen nach der Stunde.",
+      styleTags: [
+        "Ruhig",
+        "Strukturiert",
+        "Aufmerksam",
+        "Praktisch",
+        "Gesunde Technik",
+        "Uebenotizen",
+      ],
+      trialHeading: "Was in der Probestunde passiert",
+      trialSteps: [
+        "Kennenlernen und Ziel klaeren.",
+        "Niveau, Atmung, Haltung, Klang, Rhythmus oder Theoriebedarf pruefen.",
+        "Eine kurze Lernaktivitaet ausprobieren.",
+        "Mit Notizen und einer realistischen Empfehlung weitergehen.",
+      ],
+      proofHeading: "Warum Schueler Agathe vertrauen",
+      proofItems: [
+        "Akademischer Floetenhintergrund",
+        "Unterrichtserfahrung seit 2014",
+        "Klare Erklaerungen und geduldige Begleitung",
+        "Erfahrung mit Kindern, Erwachsenen und Online-Unterricht",
+      ],
+      practical: [
+        {label: "Sprachen", value: "Russisch · Englisch · Deutsch"},
+        {label: "Format", value: "Online-Unterricht"},
+        {label: "Erster Schritt", value: "Probestunde ueber Cal.com"},
+        {label: "Fokus", value: "Floete · Blockfloete · Theorie"},
+      ],
+      fullProfileCta: "Vollstaendiges Profil lesen",
+    },
     legal: {
       impressumTitle: "Impressum",
       privacyTitle: "Datenschutzerklaerung",
@@ -385,6 +481,55 @@ export const siteContent: Record<Locale, SiteContent> = {
       support:
         "Понятные объяснения, здоровая техника и музыка, которую действительно хочется играть.",
       trust: "Преподает с 2014 · Ученики 6-60 лет · 400+ онлайн-уроков",
+    },
+    dashboard: {
+      ...baseContent.dashboard,
+      eyebrow: "Флейта · Блокфлейта · Теория музыки",
+      heading:
+        "Уроки музыки со спокойной структурой и понятным следующим шагом.",
+      subheading:
+        "Для детей, взрослых новичков и начинающих музыкантов, которым нужен внимательный онлайн-урок на русском, английском или немецком.",
+      trustLine:
+        "Преподает с 2014 · ученики 6-60 лет · музыкальные школы, частные уроки и онлайн-занятия.",
+      fitHeading: "Подходит для",
+      fitItems: [
+        "Детей и подростков, которым нужна терпеливая структура",
+        "Взрослых новичков, которые хотят начать без стыда и давления",
+        "Учеников по флейте, блокфлейте, пикколо и теории музыки",
+        "Тех, кому нужны объяснения на русском, английском или немецком",
+      ],
+      styleHeading: "Стиль урока",
+      styleIntro:
+        "Спокойно, структурно и практично: здоровая техника, понятные объяснения и заметки после занятия.",
+      styleTags: [
+        "Спокойно",
+        "Структурно",
+        "Внимательно",
+        "Практично",
+        "Здоровая техника",
+        "Заметки после урока",
+      ],
+      trialHeading: "Что будет на пробном уроке",
+      trialSteps: [
+        "Познакомимся и уточним цель.",
+        "Проверим уровень, дыхание, посадку, звук, ритм или вопросы по теории.",
+        "Попробуем короткое учебное задание.",
+        "Сформулируем заметки и реалистичный следующий шаг.",
+      ],
+      proofHeading: "Почему ученики доверяют Агате",
+      proofItems: [
+        "Академическая флейтовая база",
+        "Опыт преподавания с 2014 года",
+        "Понятные объяснения и терпеливая поддержка",
+        "Опыт с детьми, взрослыми и онлайн-уроками",
+      ],
+      practical: [
+        {label: "Языки", value: "Русский · Английский · Немецкий"},
+        {label: "Формат", value: "Онлайн-уроки"},
+        {label: "Первый шаг", value: "Пробный урок через Cal.com"},
+        {label: "Фокус", value: "Флейта · Блокфлейта · Теория"},
+      ],
+      fullProfileCta: "Открыть полный профиль",
     },
     legal: {
       impressumTitle: "Impressum",

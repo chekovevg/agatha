@@ -9,11 +9,31 @@ import {ButtonLink} from "@/components/ui/Button";
 export function Header({
   content,
   locale,
+  variant = "compact",
 }: {
   content: SiteContent;
   locale: Locale;
+  variant?: "compact" | "full";
 }) {
   const [open, setOpen] = useState(false);
+  const navItems =
+    variant === "compact"
+      ? [
+          {label: content.nav[0]?.label ?? "Lessons", href: "#lessons"},
+          {
+            label:
+              content.booking.eventTypes[0]?.title ?? content.booking.heading,
+            href: "#trial",
+          },
+          {label: content.nav[3]?.label ?? "Reviews", href: "#reviews"},
+          {label: content.dashboard.fullProfileCta, href: `/${locale}/full`},
+          {
+            label: content.nav[6]?.label ?? "Contact",
+            href: `/${locale}/full#contact`,
+          },
+        ]
+      : content.nav;
+  const localeHref = variant === "full" ? "/full" : "/";
 
   return (
     <header className="sticky top-0 z-40 border-b-2 border-[var(--line)] bg-[var(--background)]/95 backdrop-blur">
@@ -22,7 +42,7 @@ export function Header({
           {content.brand}
         </Link>
         <nav className="hidden items-center gap-5 text-sm font-bold lg:flex">
-          {content.nav.map((item) => (
+          {navItems.map((item) => (
             <a key={item.href} href={item.href} className="hover:underline">
               {item.label}
             </a>
@@ -33,7 +53,7 @@ export function Header({
             {locales.map((item) => (
               <Link
                 key={item}
-                href="/"
+                href={localeHref}
                 locale={item}
                 className={`px-2.5 py-2 ${
                   item === locale ? "bg-[var(--leaf)] text-white" : ""
@@ -57,7 +77,7 @@ export function Header({
       {open ? (
         <div className="border-t-2 border-[var(--line)] bg-white px-5 py-5 md:hidden">
           <nav className="grid gap-3 text-base font-bold">
-            {content.nav.map((item) => (
+            {navItems.map((item) => (
               <a key={item.href} href={item.href} onClick={() => setOpen(false)}>
                 {item.label}
               </a>
