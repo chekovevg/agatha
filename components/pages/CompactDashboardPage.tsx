@@ -2,7 +2,9 @@ import Image from "next/image";
 
 import {Footer} from "@/components/layout/Footer";
 import {Header} from "@/components/layout/Header";
+import {Badge} from "@/components/ui/badge";
 import {ButtonLink} from "@/components/ui/Button";
+import {Separator} from "@/components/ui/separator";
 import type {SiteContent} from "@/content/types";
 import type {Locale} from "@/lib/routing";
 
@@ -109,6 +111,7 @@ export function CompactDashboardPage({
           <div className="mx-auto grid max-w-7xl gap-4 px-5 py-6 sm:px-8 lg:grid-cols-2">
             <section id="reviews" className="rounded-lg bg-[var(--paper)] p-5">
               <h2 className="text-xl font-black">{dashboard.proofHeading}</h2>
+              <Separator className="my-4 bg-[var(--line)]/20" />
               <ul className="mt-4 grid gap-2">
                 {dashboard.proofItems.map((item) => (
                   <li key={item} className="text-sm font-bold leading-6">
@@ -125,12 +128,13 @@ export function CompactDashboardPage({
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
                 {dashboard.styleTags.map((tag) => (
-                  <span
+                  <Badge
                     key={tag}
-                    className="rounded-full border-2 border-[var(--line)] bg-white px-3 py-1 text-xs font-black"
+                    variant="outline"
+                    className="h-auto border-2 border-[var(--line)] bg-white px-3 py-1 text-xs font-black"
                   >
                     {tag}
-                  </span>
+                  </Badge>
                 ))}
               </div>
               <div className="mt-5 flex flex-col gap-3 sm:flex-row">
