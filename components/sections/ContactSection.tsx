@@ -41,7 +41,7 @@ export function ContactSection({content}: {content: SiteContent}) {
               ))}
             </div>
           ) : (
-            <p className="mt-8 rounded-lg border-2 border-[var(--line)] bg-white p-4 text-sm font-bold text-[var(--muted)]">
+            <p className="mt-8 rounded-[var(--radius-card)] bg-[var(--card)] p-5 text-sm font-medium leading-6 text-[var(--muted)] shadow-[var(--shadow-inset)]">
               Add Cal.com, WhatsApp, Preply, or Instagram URLs in environment
               variables to show quick contact links here.
             </p>

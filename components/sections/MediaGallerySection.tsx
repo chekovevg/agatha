@@ -15,7 +15,7 @@ export function MediaGallerySection({items}: {items: MediaItem[]}) {
         {items.map((item) => (
           <article
             key={item.title}
-            className="overflow-hidden rounded-lg border-2 border-[var(--line)] bg-white"
+            className="overflow-hidden rounded-[var(--radius-card)] bg-[var(--card)] shadow-[var(--shadow-elevated)]"
           >
             <Image
               src={item.thumbnail}
@@ -24,8 +24,8 @@ export function MediaGallerySection({items}: {items: MediaItem[]}) {
               height={360}
               className="h-56 w-full object-cover"
             />
-            <div className="border-t-2 border-[var(--line)] p-5">
-              <h3 className="font-black">{item.title}</h3>
+            <div className="border-t border-[var(--line)] p-5">
+              <h3 className="font-display font-normal">{item.title}</h3>
               <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
                 {item.caption}
               </p>

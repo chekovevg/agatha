@@ -14,9 +14,9 @@ export function MethodSection({
         {content.principles.map((principle) => (
           <article
             key={principle.title}
-            className="rounded-lg border-2 border-[var(--line)] bg-white p-5"
+            className="rounded-[var(--radius-card)] bg-[var(--card)] p-5 shadow-[var(--shadow-elevated)]"
           >
-            <h3 className="text-xl font-black">{principle.title}</h3>
+            <h3 className="font-display text-xl font-normal leading-7">{principle.title}</h3>
             <p className="mt-3 text-sm leading-6 text-[var(--muted)]">
               {principle.text}
             </p>

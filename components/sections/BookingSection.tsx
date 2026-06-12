@@ -23,11 +23,11 @@ export function BookingSection({
           <SectionHeader title={content.booking.heading} intro={content.booking.copy} />
           <div className="mt-8 grid gap-4 sm:grid-cols-2">
             {content.booking.steps.map((step, index) => (
-              <div key={step.title} className="rounded-lg border-2 border-[var(--line)] bg-white p-5">
-                <p className="text-sm font-black text-[var(--leaf)]">
+              <div key={step.title} className="rounded-[var(--radius-card)] bg-[var(--card)] p-5 shadow-[var(--shadow-elevated)]">
+                <p className="font-ui text-sm font-medium text-[var(--muted)]">
                   {index + 1}
                 </p>
-                <h3 className="mt-2 font-black">{step.title}</h3>
+                <h3 className="mt-2 font-medium">{step.title}</h3>
                 <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
                   {step.text}
                 </p>
@@ -40,16 +40,16 @@ export function BookingSection({
             </ButtonLink>
           ) : null}
         </div>
-        <div className="rounded-lg border-2 border-[var(--line)] bg-white p-5 shadow-[6px_6px_0_var(--line)]">
+        <div className="rounded-[var(--radius-media)] bg-[var(--card)] p-5 shadow-[var(--shadow-elevated)]">
           {calLink ? (
             <iframe
               title="Book a trial lesson with Agathe"
               src={calLink}
-              className="min-h-[620px] w-full rounded-md"
+              className="min-h-[620px] w-full rounded-[var(--radius-card)]"
             />
           ) : (
-            <div className="flex min-h-[420px] flex-col items-start justify-center rounded-md bg-[var(--paper)] p-8">
-              <h3 className="text-2xl font-black">Booking link pending</h3>
+            <div className="flex min-h-[420px] flex-col items-start justify-center rounded-[var(--radius-card)] bg-[var(--paper)] p-8">
+              <h3 className="text-2xl font-medium">Booking link pending</h3>
               <p className="mt-4 max-w-md leading-7 text-[var(--muted)]">
                 Add NEXT_PUBLIC_CAL_LINK to enable the Cal.com booking embed.
                 The site keeps Cal.com as the booking authority and does not
@@ -63,7 +63,7 @@ export function BookingSection({
           <div className="mt-5 grid gap-3">
             {content.booking.eventTypes.map((event) => (
               <div key={event.title} className="border-t border-[var(--line)] pt-3">
-                <p className="font-black">
+                <p className="font-medium">
                   {event.title} · {event.duration}
                 </p>
                 <p className="text-sm text-[var(--muted)]">{event.description}</p>

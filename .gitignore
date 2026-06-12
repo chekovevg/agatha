@@ -24,6 +24,7 @@
 .DS_Store
 *.pem
 .superpowers/
+.codex-run/
 
 # debug
 npm-debug.log*

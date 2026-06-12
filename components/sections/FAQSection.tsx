@@ -12,7 +12,7 @@ export function FAQSection({items}: {items: FAQItem[]}) {
   return (
     <Section id="faq" tone="white">
       <SectionHeader title="Questions before the first lesson" />
-      <div className="mt-10 divide-y-2 divide-[var(--line)] rounded-lg border-2 border-[var(--line)] bg-white">
+      <div className="mt-10 divide-y divide-[var(--line)] overflow-hidden rounded-[var(--radius-card)] bg-[var(--card)] shadow-[var(--shadow-elevated)]">
         {items
           .sort((a, b) => a.order - b.order)
           .map((item) => {
@@ -22,7 +22,7 @@ export function FAQSection({items}: {items: FAQItem[]}) {
               <div key={item.question}>
                 <button
                   type="button"
-                  className="flex w-full items-center justify-between gap-5 px-5 py-4 text-left font-black"
+                  className="font-ui flex w-full items-center justify-between gap-5 px-5 py-4 text-left font-medium"
                   aria-expanded={isOpen}
                   onClick={() => setOpen(isOpen ? "" : item.question)}
                 >

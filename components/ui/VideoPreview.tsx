@@ -17,7 +17,7 @@ export function VideoPreview({
   const [loaded, setLoaded] = useState(false);
 
   return (
-    <div className="overflow-hidden rounded-lg border-2 border-[var(--line)] bg-white shadow-[6px_6px_0_var(--line)]">
+    <div className="overflow-hidden rounded-[var(--radius-media)] bg-[var(--card)] shadow-[var(--shadow-elevated)]">
       <div className="relative aspect-video">
         {loaded && videoUrl ? (
           <iframe
@@ -38,7 +38,7 @@ export function VideoPreview({
           </>
         )}
       </div>
-      <p className="border-t-2 border-[var(--line)] px-5 py-4 font-black">{title}</p>
+      <p className="font-display border-t border-[var(--line)] px-5 py-4 font-normal">{title}</p>
     </div>
   );
 }

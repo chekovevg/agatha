@@ -13,15 +13,15 @@ export function LessonsSection({content}: {content: SiteContent}) {
         {content.lessons.map((lesson) => (
           <article
             key={lesson.slug}
-            className="rounded-lg border-2 border-[var(--line)] bg-white p-6 shadow-[5px_5px_0_var(--line)]"
+            className="rounded-[var(--radius-card)] bg-[var(--card)] p-6 shadow-[var(--shadow-elevated)]"
           >
-            <h3 className="text-2xl font-black">{lesson.title}</h3>
+            <h3 className="font-display text-2xl font-normal leading-8">{lesson.title}</h3>
             <p className="mt-4 text-sm leading-7 text-[var(--muted)]">
               {lesson.description}
             </p>
             <a
               href="#booking"
-              className="mt-5 inline-block text-sm font-black underline"
+              className="font-ui mt-5 inline-block rounded-full text-xs font-medium underline underline-offset-4"
             >
               {lesson.ctaLabel}
             </a>

@@ -12,7 +12,7 @@ export function AboutSection({
   return (
     <Section id="about" tone="white">
       <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
-        <div className="overflow-hidden rounded-lg border-2 border-[var(--line)] bg-[var(--paper)] shadow-[6px_6px_0_var(--line)]">
+        <div className="overflow-hidden rounded-[var(--radius-media)] bg-[var(--paper)] shadow-[var(--shadow-elevated)]">
           <Image
             src="/images/about-agathe.svg"
             alt="Agathe teaching with sheet music"
@@ -30,8 +30,8 @@ export function AboutSection({
           </div>
           <div className="mt-8 grid gap-4 md:grid-cols-3">
             {content.facts.map((fact) => (
-              <div key={fact.label} className="border-t-2 border-[var(--line)] pt-4">
-                <h3 className="font-black">{fact.label}</h3>
+              <div key={fact.label} className="rounded-[var(--radius-card)] bg-[var(--paper)] p-5 shadow-[var(--shadow-inset)]">
+                <h3 className="font-ui text-sm font-medium">{fact.label}</h3>
                 <ul className="mt-3 space-y-2 text-sm leading-6 text-[var(--muted)]">
                   {fact.values.map((value) => (
                     <li key={value}>{value}</li>

@@ -9,14 +9,14 @@ export function Section({
 }) {
   const toneClass =
     tone === "green"
-      ? "bg-[#edf3df]"
+      ? "bg-[var(--paper)]"
       : tone === "white"
         ? "bg-white"
-        : "bg-[var(--paper)]";
+        : "bg-[var(--background)]";
 
   return (
-    <section id={id} className={`${toneClass} border-t-2 border-[var(--line)]`}>
-      <div className="mx-auto max-w-7xl px-5 py-16 sm:px-8 lg:py-24">
+    <section id={id} className={`${toneClass} border-t border-[var(--line)]`}>
+      <div className="mx-auto max-w-[1200px] px-5 py-16 sm:px-8 lg:py-24">
         {children}
       </div>
     </section>

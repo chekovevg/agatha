@@ -1,18 +1,17 @@
 export function TrustStrip({items}: {items: {title: string; text: string}[]}) {
   return (
-    <section className="border-y-2 border-[var(--line)] bg-white">
-      <div className="mx-auto grid max-w-7xl gap-0 px-5 sm:px-8 md:grid-cols-4">
-        {items.map((item) => (
-          <div
-            key={item.title}
-            className="border-b-2 border-[var(--line)] py-6 md:border-b-0 md:border-r-2 md:px-5 last:md:border-r-0"
-          >
-            <h2 className="text-lg font-black">{item.title}</h2>
-            <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
-              {item.text}
-            </p>
-          </div>
-        ))}
+    <section className="border-y border-[var(--line)] bg-white">
+      <div className="mx-auto max-w-[1200px] px-5 py-6 sm:px-8">
+        <div className="grid gap-3 rounded-[var(--radius-card)] bg-[var(--paper)] p-3 md:grid-cols-4">
+          {items.map((item) => (
+            <div key={item.title} className="rounded-[var(--radius-card)] bg-[var(--card)] p-5 shadow-[var(--shadow-inset)]">
+              <h2 className="font-display text-base font-normal leading-6">{item.title}</h2>
+              <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
+                {item.text}
+              </p>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );

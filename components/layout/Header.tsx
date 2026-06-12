@@ -5,6 +5,7 @@ import {useState} from "react";
 import type {SiteContent} from "@/content/types";
 import {Link, type Locale, locales} from "@/lib/routing";
 import {ButtonLink} from "@/components/ui/Button";
+import {StyleSwitcher} from "@/components/ui/StyleSwitcher";
 
 export function Header({
   content,
@@ -36,27 +37,38 @@ export function Header({
   const localeHref = variant === "full" ? "/full" : "/";
 
   return (
-    <header className="sticky top-0 z-40 border-b-2 border-[var(--line)] bg-[var(--background)]/95 backdrop-blur">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-4 sm:px-8">
-        <Link href="/" locale={locale} className="text-lg font-black">
+    <header className="sticky top-0 z-40 border-b border-[var(--line)] bg-[var(--surface-nav)]/95 backdrop-blur">
+      <div className="mx-auto flex max-w-[1200px] items-center justify-between gap-4 px-5 py-3 sm:px-8">
+        <Link
+          href="/"
+          locale={locale}
+          className="font-display text-sm font-bold leading-none text-[var(--ink)]"
+        >
           {content.brand}
         </Link>
-        <nav className="hidden items-center gap-5 text-sm font-bold lg:flex">
+        <nav className="font-ui hidden items-center gap-5 text-xs font-normal text-[var(--ink)] lg:flex">
           {navItems.map((item) => (
-            <a key={item.href} href={item.href} className="hover:underline">
+            <a
+              key={item.href}
+              href={item.href}
+              className="rounded-full px-1 py-2 hover:text-[var(--muted)]"
+            >
               {item.label}
             </a>
           ))}
         </nav>
         <div className="hidden items-center gap-3 md:flex">
-          <div className="flex rounded-md border-2 border-[var(--line)] bg-white text-xs font-black">
+          <StyleSwitcher />
+          <div className="font-ui flex rounded-full border border-[var(--line)] bg-[var(--paper)] p-1 text-xs font-medium shadow-[var(--shadow-inset)]">
             {locales.map((item) => (
               <Link
                 key={item}
                 href={localeHref}
                 locale={item}
-                className={`px-2.5 py-2 ${
-                  item === locale ? "bg-[var(--leaf)] text-white" : ""
+                className={`rounded-full px-3 py-1.5 ${
+                  item === locale
+                    ? "bg-[var(--card)] text-[var(--ink)] shadow-[var(--shadow-inset)]"
+                    : "text-[var(--muted)]"
                 }`}
               >
                 {item.toUpperCase()}
@@ -66,7 +78,7 @@ export function Header({
           <ButtonLink href={`/${locale}/book`}>{content.cta.primary}</ButtonLink>
         </div>
         <button
-          className="rounded-md border-2 border-[var(--line)] bg-white px-3 py-2 text-sm font-black md:hidden"
+          className="font-ui rounded-full border border-[var(--line)] bg-[var(--card)] px-4 py-2 text-sm font-medium shadow-[var(--shadow-control)] md:hidden"
           type="button"
           aria-expanded={open}
           onClick={() => setOpen((value) => !value)}
@@ -75,8 +87,9 @@ export function Header({
         </button>
       </div>
       {open ? (
-        <div className="border-t-2 border-[var(--line)] bg-white px-5 py-5 md:hidden">
-          <nav className="grid gap-3 text-base font-bold">
+        <div className="border-t border-[var(--line)] bg-[var(--card)] px-5 py-5 md:hidden">
+          <nav className="grid gap-4 text-base font-medium">
+            <StyleSwitcher />
             {navItems.map((item) => (
               <a key={item.href} href={item.href} onClick={() => setOpen(false)}>
                 {item.label}

@@ -14,12 +14,12 @@ export function ReviewsSection({
         {content.items.map((item) => (
           <article
             key={item.title}
-            className="rounded-lg border-2 border-[var(--line)] bg-[var(--paper)] p-5"
+            className="rounded-[var(--radius-card)] bg-[var(--paper)] p-5 shadow-[var(--shadow-inset)]"
           >
-            <p className="text-xs font-black uppercase text-[var(--leaf)]">
+            <p className="font-ui text-xs font-medium uppercase text-[var(--muted)]">
               {item.sourceLabel}
             </p>
-            <h3 className="mt-3 text-xl font-black">{item.title}</h3>
+            <h3 className="font-display mt-3 text-xl font-normal leading-7">{item.title}</h3>
             <p className="mt-3 text-sm leading-6 text-[var(--muted)]">
               {item.text}
             </p>
