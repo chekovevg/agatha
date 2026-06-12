@@ -46,14 +46,14 @@ describe("Resend email sender", () => {
     expect(sendEmail).toHaveBeenNthCalledWith(
       1,
       expect.objectContaining({
-        from: "Agathe G. <hello@agathamusic.com>",
+        from: "Agatha G. <hello@agathamusic.com>",
         replyTo: "student@example.com",
       }),
     );
     expect(sendEmail).toHaveBeenNthCalledWith(
       2,
       expect.objectContaining({
-        from: "Agathe G. <hello@agathamusic.com>",
+        from: "Agatha G. <hello@agathamusic.com>",
         to: "student@example.com",
       }),
     );

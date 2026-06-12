@@ -4,7 +4,7 @@ import {env} from "@/lib/env";
 import type {ContactInput} from "@/lib/validators";
 
 const resend = env.RESEND_API_KEY ? new Resend(env.RESEND_API_KEY) : null;
-const senderName = "Agathe G.";
+const senderName = "Agatha G.";
 
 function getSenderAddress() {
   return env.CONTACT_FROM_EMAIL
