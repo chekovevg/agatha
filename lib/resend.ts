@@ -4,6 +4,13 @@ import {env} from "@/lib/env";
 import type {ContactInput} from "@/lib/validators";
 
 const resend = env.RESEND_API_KEY ? new Resend(env.RESEND_API_KEY) : null;
+const senderName = "Agathe G.";
+
+function getSenderAddress() {
+  return env.CONTACT_FROM_EMAIL
+    ? `${senderName} <${env.CONTACT_FROM_EMAIL}>`
+    : undefined;
+}
 
 export function isEmailConfigured() {
   return Boolean(resend && env.CONTACT_TO_EMAIL && env.CONTACT_FROM_EMAIL);
@@ -11,6 +18,12 @@ export function isEmailConfigured() {
 
 export async function sendContactEmails(input: ContactInput) {
   if (!resend || !env.CONTACT_TO_EMAIL || !env.CONTACT_FROM_EMAIL) {
+    return {skipped: true};
+  }
+
+  const from = getSenderAddress();
+
+  if (!from) {
     return {skipped: true};
   }
 
@@ -25,7 +38,7 @@ export async function sendContactEmails(input: ContactInput) {
   ].join("\n");
 
   await resend.emails.send({
-    from: env.CONTACT_FROM_EMAIL,
+    from,
     to: env.CONTACT_TO_EMAIL,
     replyTo: input.email,
     subject: `New lesson inquiry: ${input.subject}`,
@@ -33,7 +46,7 @@ export async function sendContactEmails(input: ContactInput) {
   });
 
   await resend.emails.send({
-    from: env.CONTACT_FROM_EMAIL,
+    from,
     to: input.email,
     subject: "Thank you for your message",
     text:
@@ -48,8 +61,14 @@ export async function sendCalWebhookNotification(payload: unknown) {
     return {skipped: true};
   }
 
+  const from = getSenderAddress();
+
+  if (!from) {
+    return {skipped: true};
+  }
+
   await resend.emails.send({
-    from: env.CONTACT_FROM_EMAIL,
+    from,
     to: env.CONTACT_TO_EMAIL,
     subject: "New Cal.com booking event",
     text: JSON.stringify(payload, null, 2),
