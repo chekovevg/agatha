@@ -10,7 +10,7 @@ Avoid broad "finish the whole site" requests. The project is small enough that
 focused tasks produce better diffs and fewer regressions.
 
 ## Current Project State
-- Product: multilingual static-first website for Agathe G. Musik.
+- Product: multilingual static-first website for Agatha Music.
 - Stack: Next.js 16 App Router, TypeScript, Tailwind CSS 4, `next-intl`,
   Resend, Cal.com, Vercel Analytics, Vitest, Playwright.
 - Git branch: `main`.

@@ -18,14 +18,45 @@ export type SiteContent = {
     ogTitle: string;
     ogDescription: string;
   };
-  hero: {
-    eyebrow: string;
-    heading: string;
-    subheading: string;
-    support: string;
-    trust: string;
+  pages: {
+    classes: {
+      heading: string;
+    };
+    about: {
+      trustHeading: string;
+      faqHeading: string;
+    };
+    media: {
+      eyebrow: string;
+      heading: string;
+      galleryHeading: string;
+    };
   };
-  dashboard: DashboardContent;
+  home: {
+    heroTitle: [string, string];
+    heroSubtitle: string;
+    manifesto: {
+      heading: string;
+      body: string;
+    };
+    values: {
+      heading: string;
+      items: string[];
+      activeItem: string;
+      activeText: string;
+      itemTexts?: string[];
+    };
+    location: {
+      heading: string;
+      body: string;
+      cta: string;
+    };
+    quote: {
+      body: string;
+      signature: string;
+    };
+    footerNote: string;
+  };
   trust: {title: string; text: string}[];
   lessons: Lesson[];
   about: {
@@ -60,24 +91,6 @@ export type SiteContent = {
     impressumTitle: string;
     privacyTitle: string;
   };
-};
-
-export type DashboardContent = {
-  eyebrow: string;
-  heading: string;
-  subheading: string;
-  trustLine: string;
-  fitHeading: string;
-  fitItems: string[];
-  styleHeading: string;
-  styleIntro: string;
-  styleTags: string[];
-  trialHeading: string;
-  trialSteps: string[];
-  proofHeading: string;
-  proofItems: string[];
-  practical: {label: string; value: string}[];
-  fullProfileCta: string;
 };
 
 export type Lesson = {

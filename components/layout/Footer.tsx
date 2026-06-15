@@ -1,6 +1,7 @@
 import type {SiteContent} from "@/content/types";
 import type {Locale} from "@/lib/routing";
 import Link from "next/link";
+import Image from "next/image";
 import {env} from "@/lib/env";
 
 export function Footer({
@@ -11,6 +12,9 @@ export function Footer({
   locale: Locale;
 }) {
   const externalLinks = [
+    content.social.email
+      ? {label: "Email", href: `mailto:${content.social.email}`}
+      : null,
     env.NEXT_PUBLIC_PREPLY_URL
       ? {label: "Preply", href: env.NEXT_PUBLIC_PREPLY_URL}
       : null,
@@ -22,43 +26,54 @@ export function Footer({
       : null,
   ].filter(Boolean) as {label: string; href: string}[];
   const footerNav = [
-    {label: content.nav[0]?.label ?? "Lessons", href: `/${locale}#lessons`},
-    {
-      label: content.booking.eventTypes[0]?.title ?? content.booking.heading,
-      href: `/${locale}#trial`,
-    },
-    {label: content.nav[3]?.label ?? "Reviews", href: `/${locale}#reviews`},
-    {label: content.dashboard.fullProfileCta, href: `/${locale}/full`},
-    {label: content.nav[6]?.label ?? "Contact", href: `/${locale}/full#contact`},
+    ...content.nav.map((item) => ({
+      label: item.label,
+      href: `/${locale}${item.href}`,
+    })),
   ];
 
   return (
-    <footer className="border-t border-[var(--line)] bg-[var(--background)] text-[var(--ink)]">
-      <div className="mx-auto grid max-w-[1200px] gap-8 px-5 py-10 sm:px-8 md:grid-cols-[1.3fr_1fr_1fr]">
+    <footer className="bg-[var(--background)] text-[var(--ink)]">
+      <div className="mx-auto grid max-w-[1408px] gap-8 px-6 pb-6 pt-0 md:grid-cols-[minmax(150px,1fr)_112px_112px_184px_minmax(240px,1fr)] md:items-start xl:px-0">
         <div>
-          <p className="font-display text-xl font-normal">{content.brand}</p>
-          <p className="mt-3 max-w-sm text-sm leading-6 text-[var(--muted)]">
-            Flute, recorder and music theory lessons online. Lessons in Russian,
-            English and German.
+          <p className="font-display text-[calc(24_*_var(--unit-fx-type))] leading-none">
+            {content.brand}
           </p>
         </div>
-        <nav className="font-ui grid gap-2 text-xs font-normal">
+        <nav className="mai-ui grid content-start gap-3">
           {footerNav.map((item) => (
             <a key={item.href} href={item.href}>
               {item.label}
             </a>
           ))}
         </nav>
-        <nav className="font-ui grid gap-2 text-xs font-normal">
-          <a href={`/${locale}/book`}>{content.cta.primary}</a>
-          <Link href="/impressum">Impressum</Link>
-          <Link href="/datenschutz">Privacy Policy</Link>
+        <nav className="mai-ui grid content-start gap-3">
           {externalLinks.map((link) => (
             <a key={link.href} href={link.href} target="_blank" rel="noreferrer">
               {link.label}
             </a>
           ))}
         </nav>
+        <nav className="mai-ui grid content-start gap-3">
+          <a href={`/${locale}/book`} className="inline-flex items-center gap-2">
+            {content.cta.primary}
+            <Image
+              src="/icons/arrow-up-right.svg"
+              alt=""
+              aria-hidden="true"
+              width={18}
+              height={18}
+              className="h-[18px] w-[18px]"
+            />
+          </a>
+          <Link href="/impressum">Impressum</Link>
+          <Link href="/datenschutz">Privacy and Cookies</Link>
+        </nav>
+        <div>
+          <p className="mai-ui max-w-xs leading-[1.4] text-[var(--ink)]">
+            {content.home.footerNote}
+          </p>
+        </div>
       </div>
     </footer>
   );

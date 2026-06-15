@@ -40,6 +40,7 @@ export default async function BookPage({params}: PageProps) {
     <>
       <Header content={content} locale={locale} />
       <main className="pt-10">
+        <h1 className="sr-only">{content.booking.heading}</h1>
         <BookingSection content={content} locale={locale} expanded />
       </main>
       <Footer content={content} locale={locale} />

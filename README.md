@@ -1,4 +1,4 @@
-# Agathe G. Musik
+# Agatha Music
 
 Static-first multilingual Next.js site for a music teacher brand. The v1 site
 is a marketing and booking surface: lessons, method, about, media, reviews,

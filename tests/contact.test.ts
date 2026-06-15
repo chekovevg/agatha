@@ -15,8 +15,15 @@ function validPayload(overrides: Record<string, unknown> = {}) {
     subject: "Flute lessons",
     message: "I would like to ask about a first flute lesson.",
     website: "",
+    formStartedAt: String(Date.now() - 5_000),
     ...overrides,
   };
+}
+
+function expectedContactPayload(payload: ReturnType<typeof validPayload>) {
+  const contactPayload: Record<string, unknown> = {...payload};
+  delete contactPayload.formStartedAt;
+  return contactPayload;
 }
 
 function request(payload: unknown, ip = "203.0.113.1") {
@@ -65,13 +72,43 @@ describe("POST /api/contact", () => {
     expect(sendContactEmails).not.toHaveBeenCalled();
   });
 
+  it("ignores submissions sent too quickly for a human form fill", async () => {
+    const {POST} = await import("@/app/api/contact/route");
+    const response = await POST(
+      request(validPayload({formStartedAt: String(Date.now())})),
+    );
+    const body = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(body.ok).toBe(true);
+    expect(sendContactEmails).not.toHaveBeenCalled();
+  });
+
+  it("ignores marketing spam submissions", async () => {
+    const {POST} = await import("@/app/api/contact/route");
+    const response = await POST(
+      request(
+        validPayload({
+          subject: "Please Disregard",
+          message:
+            "Bonjour Agathe, nous pouvons optimiser votre site web pour attirer plus d'eleves.",
+        }),
+      ),
+    );
+    const body = await response.json();
+
+    expect(response.status).toBe(200);
+    expect(body.ok).toBe(true);
+    expect(sendContactEmails).not.toHaveBeenCalled();
+  });
+
   it("sends expected payload for valid submission", async () => {
     const {POST} = await import("@/app/api/contact/route");
     const payload = validPayload();
     const response = await POST(request(payload));
 
     expect(response.status).toBe(200);
-    expect(sendContactEmails).toHaveBeenCalledWith(payload);
+    expect(sendContactEmails).toHaveBeenCalledWith(expectedContactPayload(payload));
   });
 
   it("does not expose internal send errors", async () => {

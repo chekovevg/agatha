@@ -29,7 +29,7 @@ export function landingMetadata(locale: Locale): Metadata {
       title: seo.ogTitle,
       description: seo.ogDescription,
       url: siteUrl(`/${locale}`),
-      siteName: "Agathe G. Musik",
+      siteName: "Agatha Music",
       locale,
       type: "website",
     },
@@ -40,7 +40,7 @@ export function bookMetadata(locale: Locale): Metadata {
   const content = siteContent[locale];
 
   return {
-    title: `${content.booking.heading} | Agathe G. Musik`,
+    title: `${content.booking.heading} | Agatha Music`,
     description: content.booking.copy,
     alternates: {
       canonical: siteUrl(`/${locale}/book`),
@@ -49,15 +49,49 @@ export function bookMetadata(locale: Locale): Metadata {
   };
 }
 
-export function fullProfileMetadata(locale: Locale): Metadata {
-  const seo = siteContent[locale].seo;
-
+function editorialPageMetadata(
+  locale: Locale,
+  path: "/classes" | "/about" | "/media",
+  title: string,
+  description: string,
+): Metadata {
   return {
-    title: `Full profile | ${seo.title}`,
-    description: seo.description,
+    title: `${title} | Agatha Music`,
+    description,
     alternates: {
-      canonical: siteUrl(`/${locale}/full`),
-      languages: localizedAlternates("/full"),
+      canonical: siteUrl(`/${locale}${path}`),
+      languages: localizedAlternates(path),
     },
   };
+}
+
+export function classesMetadata(locale: Locale): Metadata {
+  return editorialPageMetadata(
+    locale,
+    "/classes",
+    "Classes",
+    "Choose flute, recorder, piccolo, music theory, ear training and music history lessons with Agatha Music.",
+  );
+}
+
+export function aboutMetadata(locale: Locale): Metadata {
+  const content = siteContent[locale];
+
+  return editorialPageMetadata(
+    locale,
+    "/about",
+    "About me",
+    content.about.paragraphs[0] ?? content.seo.description,
+  );
+}
+
+export function mediaMetadata(locale: Locale): Metadata {
+  const content = siteContent[locale];
+
+  return editorialPageMetadata(
+    locale,
+    "/media",
+    "Media",
+    content.openLesson.copy,
+  );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import {useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {useTranslations} from "next-intl";
 
 import {Button} from "@/components/ui/Button";
@@ -9,7 +9,12 @@ type FormState = "idle" | "submitting" | "success" | "error";
 
 export function ContactForm() {
   const t = useTranslations("ContactForm");
+  const formStartedAt = useRef("");
   const [state, setState] = useState<FormState>("idle");
+
+  useEffect(() => {
+    formStartedAt.current = String(Date.now());
+  }, []);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -17,6 +22,7 @@ export function ContactForm() {
 
     const form = event.currentTarget;
     const formData = new FormData(form);
+    formData.set("formStartedAt", formStartedAt.current);
 
     const response = await fetch("/api/contact", {
       method: "POST",
@@ -38,36 +44,36 @@ export function ContactForm() {
       onSubmit={handleSubmit}
     >
       <input name="website" className="hidden" tabIndex={-1} autoComplete="off" />
-      <label className="font-ui grid gap-2 text-sm font-medium">
+      <label className="mai-ui grid gap-2">
         {t("name")}
         <input
           name="name"
           required
-          className="rounded px-4 py-3 font-normal shadow-[var(--shadow-inset)]"
+          className="mai-body rounded px-4 py-3 shadow-[var(--shadow-inset)]"
         />
       </label>
-      <label className="font-ui grid gap-2 text-sm font-medium">
+      <label className="mai-ui grid gap-2">
         {t("email")}
         <input
           name="email"
           required
           type="email"
-          className="rounded px-4 py-3 font-normal shadow-[var(--shadow-inset)]"
+          className="mai-body rounded px-4 py-3 shadow-[var(--shadow-inset)]"
         />
       </label>
       <div className="grid gap-4 md:grid-cols-2">
-        <label className="font-ui grid gap-2 text-sm font-medium">
+        <label className="mai-ui grid gap-2">
           {t("studentAge")}
           <input
             name="studentAge"
-            className="rounded px-4 py-3 font-normal shadow-[var(--shadow-inset)]"
+            className="mai-body rounded px-4 py-3 shadow-[var(--shadow-inset)]"
           />
         </label>
-        <label className="font-ui grid gap-2 text-sm font-medium">
+        <label className="mai-ui grid gap-2">
           {t("preferredLanguage")}
           <select
             name="preferredLanguage"
-            className="rounded px-4 py-3 font-normal shadow-[var(--shadow-inset)]"
+            className="mai-body rounded px-4 py-3 shadow-[var(--shadow-inset)]"
             defaultValue="Not sure"
           >
             <option>English</option>
@@ -77,31 +83,31 @@ export function ContactForm() {
           </select>
         </label>
       </div>
-      <label className="font-ui grid gap-2 text-sm font-medium">
+      <label className="mai-ui grid gap-2">
         {t("subject")}
         <input
           name="subject"
           required
-          className="rounded px-4 py-3 font-normal shadow-[var(--shadow-inset)]"
+          className="mai-body rounded px-4 py-3 shadow-[var(--shadow-inset)]"
         />
       </label>
-      <label className="font-ui grid gap-2 text-sm font-medium">
+      <label className="mai-ui grid gap-2">
         {t("message")}
         <textarea
           name="message"
           required
           rows={5}
-          className="rounded px-4 py-3 font-normal shadow-[var(--shadow-inset)]"
+          className="mai-body rounded px-4 py-3 shadow-[var(--shadow-inset)]"
         />
       </label>
       <Button type="submit" disabled={state === "submitting"}>
         {state === "submitting" ? "Sending..." : t("submit")}
       </Button>
       {state === "success" ? (
-        <p className="text-sm font-medium text-[var(--muted)]">{t("success")}</p>
+        <p className="mai-caption text-[var(--muted)]">{t("success")}</p>
       ) : null}
       {state === "error" ? (
-        <p className="text-sm font-medium text-[var(--ink)]">{t("error")}</p>
+        <p className="mai-caption text-[var(--ink)]">{t("error")}</p>
       ) : null}
     </form>
   );

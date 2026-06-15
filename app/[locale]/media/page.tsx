@@ -1,10 +1,10 @@
 import type {Metadata} from "next";
 import {notFound} from "next/navigation";
 
-import {HomePage} from "@/components/pages/HomePage";
+import {MediaPage} from "@/components/pages/MediaPage";
 import {siteContent} from "@/content/site";
 import {isLocale, locales, type Locale} from "@/lib/routing";
-import {landingMetadata} from "@/lib/seo";
+import {mediaMetadata} from "@/lib/seo";
 
 type PageProps = {
   params: Promise<{locale: string}>;
@@ -21,10 +21,10 @@ export async function generateMetadata({params}: PageProps): Promise<Metadata> {
     return {};
   }
 
-  return landingMetadata(locale);
+  return mediaMetadata(locale);
 }
 
-export default async function LocaleHome({params}: PageProps) {
+export default async function MediaRoute({params}: PageProps) {
   const {locale: rawLocale} = await params;
 
   if (!isLocale(rawLocale)) {
@@ -32,5 +32,5 @@ export default async function LocaleHome({params}: PageProps) {
   }
 
   const locale: Locale = rawLocale;
-  return <HomePage content={siteContent[locale]} locale={locale} />;
+  return <MediaPage content={siteContent[locale]} locale={locale} />;
 }

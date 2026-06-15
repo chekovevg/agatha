@@ -18,10 +18,22 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.8,
     },
     {
-      url: siteUrl(`/${locale}/full`),
+      url: siteUrl(`/${locale}/classes`),
       lastModified: new Date(),
       changeFrequency: "monthly" as const,
       priority: 0.7,
+    },
+    {
+      url: siteUrl(`/${locale}/about`),
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    },
+    {
+      url: siteUrl(`/${locale}/media`),
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
     },
   ]);
 

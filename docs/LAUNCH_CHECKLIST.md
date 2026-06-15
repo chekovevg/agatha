@@ -37,7 +37,7 @@ Use this checklist before treating the site as beta-ready or production-ready.
 - [ ] Honeypot submissions do not send email.
 - [x] Test receiver receives the notification email.
 - [x] Test visitor receives the auto-reply email.
-- [ ] Replace temporary test receiver/sender setup with real Agathe email and
+- [ ] Replace temporary test receiver/sender setup with real Agatha email and
   verified domain sender.
 
 ## Legal
@@ -53,8 +53,8 @@ Use this checklist before treating the site as beta-ready or production-ready.
 - [ ] English source copy is reviewed.
 - [ ] German draft copy is reviewed by a human speaker.
 - [ ] Russian draft copy is reviewed by a human speaker.
-- [ ] Anti-AI-slop review in `docs/UI_REVIEW.md` is completed for the compact
-  dashboard.
+- [ ] Anti-AI-slop review in `docs/UI_REVIEW.md` is completed for the editorial
+  site.
 - [ ] Placeholder SVGs are replaced with approved photos/media or accepted for
   beta.
 - [ ] Preply, Instagram, and WhatsApp links are real if displayed.

@@ -2,17 +2,17 @@ import type {Metadata} from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Datenschutzerklaerung | Agathe G. Musik",
-  description: "Privacy information for Agathe G. Musik.",
+  title: "Datenschutzerklaerung | Agatha Music",
+  description: "Privacy information for Agatha Music.",
 };
 
 export default function DatenschutzPage() {
   return (
-    <main className="mx-auto max-w-3xl px-5 py-16">
-      <Link className="font-ui text-sm font-medium underline" href="/en">
+    <main className="mai-body mx-auto max-w-3xl px-5 py-16">
+      <Link className="mai-ui underline" href="/en">
         Back to site
       </Link>
-      <h1 className="font-display mt-8 text-4xl font-normal">
+      <h1 className="mai-h4 mt-8 break-words">
         Datenschutzerklaerung
       </h1>
       <div className="mt-8 space-y-5 rounded-[var(--radius-card)] bg-[var(--card)] p-6 text-[var(--muted)] shadow-[var(--shadow-elevated)]">
@@ -22,7 +22,7 @@ export default function DatenschutzPage() {
           privacy text.
         </p>
         <section>
-          <h2 className="font-display text-xl font-normal text-[var(--ink)]">
+          <h2 className="mai-h7 text-[var(--ink)]">
             Data processing to cover
           </h2>
           <ul className="mt-3 list-disc space-y-2 pl-5">

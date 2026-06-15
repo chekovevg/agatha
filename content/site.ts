@@ -2,87 +2,78 @@ import type {Locale} from "@/lib/routing";
 import type {SiteContent} from "@/content/types";
 
 const nav = [
-  {label: "Lessons", href: "#lessons"},
-  {label: "Method", href: "#method"},
-  {label: "About", href: "#about"},
-  {label: "Reviews", href: "#reviews"},
-  {label: "Media", href: "#media"},
-  {label: "FAQ", href: "#faq"},
-  {label: "Contact", href: "#contact"},
+  {label: "About me", href: "/about"},
+  {label: "Classes", href: "/classes"},
+  {label: "Media", href: "/media"},
 ];
 
 const baseContent: SiteContent = {
-  brand: "Agathe G. Musik",
+  brand: "Agatha Music",
   nav,
   cta: {
-    primary: "Book a trial lesson",
-    secondary: "Watch an open lesson",
-    contact: "Send a message",
+    primary: "Book Trial Class",
+    secondary: "Explore Classes",
+    contact: "Text me",
   },
   social: {},
   seo: {
-    title: "Agathe G. Musik - Flute & Music Theory Lessons",
+    title: "Agatha Music - Flute & Music Theory Lessons",
     description:
       "Online flute, recorder and music theory lessons for children, adults and aspiring musicians. Lessons in Russian, English and German.",
-    ogTitle: "Make music feel possible - Agathe G. Musik",
+    ogTitle: "Agatha Music - Germany-based, Moscow-trained flutist",
     ogDescription:
-      "Clear, thoughtful flute, recorder and music theory lessons with Agathe Gurko.",
+      "Clear, thoughtful flute, recorder and music theory lessons with Agatha Gurko.",
   },
-  hero: {
-    eyebrow: "Flute · Recorder · Music Theory",
-    heading: "Make music feel possible.",
-    subheading:
-      "Flute, recorder and music theory lessons for children, adults and aspiring musicians - in Russian, English or German.",
-    support:
-      "Clear explanations, healthy technique and music you actually enjoy playing.",
-    trust: "Teaching since 2014 · Students aged 6-60 · 400+ online lessons",
+  pages: {
+    classes: {
+      heading: "Discover and choose what you want to learn",
+    },
+    about: {
+      trustHeading: "What students can count on",
+      faqHeading: "Questions before the first lesson",
+    },
+    media: {
+      eyebrow: "Media",
+      heading: "Lessons, materials and moments of music in progress",
+      galleryHeading: "Music in progress",
+    },
   },
-  dashboard: {
-    eyebrow: "Flute · Recorder · Music Theory",
-    heading: "Music lessons with calm structure and clear next steps.",
-    subheading:
-      "For children, adult beginners and aspiring musicians who want attentive online lessons in Russian, English or German.",
-    trustLine:
-      "Teaching since 2014 · Students aged 6-60 · Music schools, private lessons and online classes.",
-    fitHeading: "Suitable for",
-    fitItems: [
-      "Children and teenagers who need patient structure",
-      "Adult beginners who want to start without shame or pressure",
-      "Flute, recorder, piccolo and music theory students",
-      "Students who want explanations in Russian, English or German",
-    ],
-    styleHeading: "Lesson style",
-    styleIntro:
-      "Calm, structured and practical lessons with healthy technique, clear explanations and notes after class.",
-    styleTags: [
-      "Calm",
-      "Structured",
-      "Attentive",
-      "Practical",
-      "Healthy technique",
-      "Practice notes",
-    ],
-    trialHeading: "What happens in a trial lesson",
-    trialSteps: [
-      "Meet and clarify the goal.",
-      "Check level, breathing, posture, sound, rhythm or theory needs.",
-      "Try a short learning activity.",
-      "Leave with notes and a realistic next-step recommendation.",
-    ],
-    proofHeading: "Why students trust Agathe",
-    proofItems: [
-      "Academic flute background",
-      "Teaching experience since 2014",
-      "Clear explanations and patient support",
-      "Experience with children, adults and online lessons",
-    ],
-    practical: [
-      {label: "Languages", value: "Russian · English · German"},
-      {label: "Format", value: "Online lessons"},
-      {label: "First step", value: "Trial lesson via Cal.com"},
-      {label: "Focus", value: "Flute · Recorder · Theory"},
-    ],
-    fullProfileCta: "Read the full profile",
+  home: {
+    heroTitle: ["Your Musical", "Companion"],
+    heroSubtitle: "Flute, recorder and music theory lessons",
+    manifesto: {
+      heading:
+        "Music becomes possible when it is explained with care, practised with patience, and heard with attention.",
+      body:
+        "I teach flute, recorder and music theory through small realistic steps - helping students build confidence, sound and musical understanding.",
+    },
+    values: {
+      heading: "My Values",
+      items: ["Kindness", "Care", "Patience", "Adaptability", "Structure", "Joy"],
+      activeItem: "Kindness",
+      activeText:
+        "Learning music can feel vulnerable, especially at the beginning. I want my lessons to be a kind space where students can ask questions, make mistakes and try again without fear of being judged.",
+      itemTexts: [
+        "Learning music can feel vulnerable, especially at the beginning. I want my lessons to be a kind space where students can ask questions, make mistakes and try again without fear of being judged.",
+        "I pay attention not only to the notes, but to the person learning them. Every student has their own pace, confidence, sound and questions - and I shape the lesson around what they need to move forward.",
+        "Music takes time, repetition and trust. I never want students to feel rushed through something difficult. We break things down into small steps until they begin to feel clear, natural and possible.",
+        "Every student learns differently. Some lessons need to be playful, some technical, some structured, some more exploratory. I adapt my teaching to the student's age, level, goals and musical taste - while keeping a clear direction.",
+        "I believe structure makes progress feel less overwhelming. In each lesson, I try to give students a clear focus, practical exercises and a next step they can continue with after class.",
+        "Music should feel alive. I connect technique and theory with real pieces, sounds and ideas that the student actually wants to understand and play - because learning becomes deeper when it feels personal.",
+      ],
+    },
+    location: {
+      heading: "From the Rhine, online",
+      body:
+        "Agatha is based in the Cologne-Duesseldorf area and teaches students online in Russian, English and German. Wherever the lesson begins, the focus stays the same: clear guidance, healthy technique and music that feels personal.",
+      cta: "Get in touch",
+    },
+    quote: {
+      body:
+        "I believe music becomes easier when you feel safe enough to try. In my lessons, I guide students with patience, clear structure and small, realistic steps - so sound, rhythm and theory start becoming part of your own musical voice.",
+      signature: "Agatha Gurko",
+    },
+    footerNote: "Flute, recorder and music theory lessons online.",
   },
   trust: [
     {
@@ -108,7 +99,7 @@ const baseContent: SiteContent = {
       title: "Flute",
       description:
         "Build a clear tone, healthy breathing and relaxed posture from the very beginning. We work with sound, technique, hands, embouchure and musical expression step by step.",
-      ctaLabel: "Learn flute with Agathe",
+      ctaLabel: "Learn flute with Agatha",
     },
     {
       slug: "recorder",
@@ -147,9 +138,9 @@ const baseContent: SiteContent = {
     },
   ],
   about: {
-    heading: "Meet Agathe",
+    heading: "Agatha Gurko",
     paragraphs: [
-      "Agathe Gurko is a Moscow-trained flutist and music teacher, currently continuing her pedagogical studies at Hochschule fuer Musik und Tanz Koeln.",
+      "Moscow-trained flutist and music teacher, currently continuing pedagogical studies at Hochschule fuer Musik und Tanz Koeln.",
       "She has been teaching since 2014 - in music schools, private lessons and online classes - working with children, adult beginners and students who want to understand music more deeply.",
       "Her lessons combine a strong musical foundation with a calm, attentive teaching style: clear technique, healthy breathing, ear training, theory and music that feels meaningful to the student.",
     ],
@@ -175,7 +166,7 @@ const baseContent: SiteContent = {
   method: {
     heading: "High standards, human pace",
     intro:
-      "Learning music can be serious without feeling stressful. Agathe's lessons are structured, attentive and practical - with clear goals, healthy technique and enough space for the student's own musical taste.",
+      "Learning music can be serious without feeling stressful. Agatha's lessons are structured, attentive and practical - with clear goals, healthy technique and enough space for the student's own musical taste.",
     principles: [
       {
         title: "Breathing comes first",
@@ -210,7 +201,7 @@ const baseContent: SiteContent = {
   openLesson: {
     heading: "Watch an open lesson",
     copy:
-      "See how a lesson feels before you book. In this short video, Agathe explains musical ideas step by step - with clarity, patience and practical examples.",
+      "See how a lesson feels before you book. In this short video, Agatha explains musical ideas step by step - with clarity, patience and practical examples.",
     caption: "First steps in flute sound",
     videoUrl: "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ",
   },
@@ -219,7 +210,7 @@ const baseContent: SiteContent = {
       title: "Open lesson",
       type: "video",
       thumbnail: "/images/open-lesson.svg",
-      caption: "A short look at Agathe's teaching style.",
+      caption: "A short look at Agatha's teaching style.",
     },
     {
       title: "Flute practice",
@@ -243,7 +234,7 @@ const baseContent: SiteContent = {
   reviews: {
     heading: "Students notice the clarity",
     intro:
-      "Students often highlight Agathe's patience, clear explanations, flexible approach and practical examples. Lessons are adapted to the student's level and supported step by step.",
+      "Students often highlight Agatha's patience, clear explanations, flexible approach and practical examples. Lessons are adapted to the student's level and supported step by step.",
     items: [
       {
         title: "Clear explanations",
@@ -275,7 +266,7 @@ const baseContent: SiteContent = {
       {title: "Choose a time", text: "Pick a slot that works for you."},
       {
         title: "Share your goal",
-        text: "Tell Agathe your level, instrument and what you want to learn.",
+        text: "Tell Agatha your level, instrument and what you want to learn.",
       },
       {
         title: "Meet online",
@@ -334,7 +325,7 @@ const baseContent: SiteContent = {
     {
       question: "What instruments do you teach?",
       answer:
-        "Agathe teaches flute, recorder and piccolo. She also teaches music theory, solfege, ear training and music history.",
+        "Agatha teaches flute, recorder and piccolo. She also teaches music theory, solfege, ear training and music history.",
       category: "lessons",
       order: 4,
     },
@@ -356,7 +347,7 @@ const baseContent: SiteContent = {
   contact: {
     heading: "Get in touch",
     copy:
-      "Have a question before booking? Send a message and Agathe will help you choose the right format.",
+      "Have a question before booking? Send a message and Agatha will help you choose the right format.",
   },
   legal: {
     impressumTitle: "Impressum",
@@ -374,78 +365,74 @@ export const siteContent: Record<Locale, SiteContent> = {
       ...item,
       label:
         {
-          Lessons: "Unterricht",
-          Method: "Methode",
-          About: "Ueber Agathe",
-          Reviews: "Stimmen",
+          "About me": "Ueber mich",
+          Classes: "Unterricht",
           Media: "Medien",
-          FAQ: "FAQ",
-          Contact: "Kontakt",
         }[item.label] ?? item.label,
     })),
     cta: {
       primary: "Probestunde buchen",
-      secondary: "Offene Stunde ansehen",
+      secondary: "Unterricht ansehen",
       contact: "Nachricht senden",
     },
-    hero: {
-      ...baseContent.hero,
-      eyebrow: "Floete · Blockfloete · Musiktheorie",
-      heading: "Musik soll moeglich fuehlen.",
-      subheading:
-        "Floeten-, Blockfloeten- und Musiktheorieunterricht fuer Kinder, Erwachsene und angehende Musiker - auf Russisch, Englisch oder Deutsch.",
-      support:
-        "Klare Erklaerungen, gesunde Technik und Musik, die du wirklich gern spielst.",
-      trust: "Unterricht seit 2014 · Schueler von 6-60 · 400+ Online-Stunden",
+    pages: {
+      classes: {
+        heading: "Entdecke und waehle, was du lernen moechtest",
+      },
+      about: {
+        trustHeading: "Worauf sich Schueler verlassen koennen",
+        faqHeading: "Fragen vor der ersten Stunde",
+      },
+      media: {
+        eyebrow: "Medien",
+        heading: "Unterricht, Materialien und musikalische Momente im Prozess",
+        galleryHeading: "Musik im Werden",
+      },
     },
-    dashboard: {
-      ...baseContent.dashboard,
-      eyebrow: "Floete · Blockfloete · Musiktheorie",
-      heading:
-        "Musikunterricht mit ruhiger Struktur und klaren naechsten Schritten.",
-      subheading:
-        "Fuer Kinder, erwachsene Anfaenger und angehende Musiker, die aufmerksamen Online-Unterricht auf Russisch, Englisch oder Deutsch suchen.",
-      trustLine:
-        "Unterricht seit 2014 · Schueler von 6-60 · Musikschulen, Privatunterricht und Online-Stunden.",
-      fitHeading: "Geeignet fuer",
-      fitItems: [
-        "Kinder und Jugendliche, die geduldige Struktur brauchen",
-        "Erwachsene Anfaenger, die ohne Druck anfangen moechten",
-        "Floete, Blockfloete, Piccolo und Musiktheorie",
-        "Schueler, die Erklaerungen auf Russisch, Englisch oder Deutsch moechten",
-      ],
-      styleHeading: "Unterrichtsstil",
-      styleIntro:
-        "Ruhig, strukturiert und praktisch mit gesunder Technik, klaren Erklaerungen und Notizen nach der Stunde.",
-      styleTags: [
-        "Ruhig",
-        "Strukturiert",
-        "Aufmerksam",
-        "Praktisch",
-        "Gesunde Technik",
-        "Uebenotizen",
-      ],
-      trialHeading: "Was in der Probestunde passiert",
-      trialSteps: [
-        "Kennenlernen und Ziel klaeren.",
-        "Niveau, Atmung, Haltung, Klang, Rhythmus oder Theoriebedarf pruefen.",
-        "Eine kurze Lernaktivitaet ausprobieren.",
-        "Mit Notizen und einer realistischen Empfehlung weitergehen.",
-      ],
-      proofHeading: "Warum Schueler Agathe vertrauen",
-      proofItems: [
-        "Akademischer Floetenhintergrund",
-        "Unterrichtserfahrung seit 2014",
-        "Klare Erklaerungen und geduldige Begleitung",
-        "Erfahrung mit Kindern, Erwachsenen und Online-Unterricht",
-      ],
-      practical: [
-        {label: "Sprachen", value: "Russisch · Englisch · Deutsch"},
-        {label: "Format", value: "Online-Unterricht"},
-        {label: "Erster Schritt", value: "Probestunde ueber Cal.com"},
-        {label: "Fokus", value: "Floete · Blockfloete · Theorie"},
-      ],
-      fullProfileCta: "Vollstaendiges Profil lesen",
+    home: {
+      ...baseContent.home,
+      heroTitle: ["Dein musikalischer", "Begleiter"],
+      heroSubtitle: "Floeten-, Blockfloeten- und Musiktheorieunterricht",
+      manifesto: {
+        heading:
+          "Musik wird moeglich, wenn sie sorgfaeltig erklaert, geduldig geuebt und aufmerksam gehoert wird.",
+        body:
+          "Ich unterrichte Floete, Blockfloete und Musiktheorie in kleinen realistischen Schritten - damit Klang, Sicherheit und musikalisches Verstehen wachsen.",
+      },
+      values: {
+        heading: "Meine Werte",
+        items: [
+          "Freundlichkeit",
+          "Sorgfalt",
+          "Geduld",
+          "Anpassung",
+          "Struktur",
+          "Freude",
+        ],
+        activeItem: "Freundlichkeit",
+        activeText:
+          "Freundlichkeit schafft den Raum, in dem Lernen wirklich passieren kann. In meinen Stunden duerfen Schueler fragen, Fehler machen und es ohne Bewertung noch einmal versuchen.",
+        itemTexts: [
+          "Musiklernen kann sich verletzlich anfuehlen, besonders am Anfang. Ich moechte, dass mein Unterricht ein freundlicher Raum ist, in dem Schueler Fragen stellen, Fehler machen und es ohne Angst vor Bewertung noch einmal versuchen koennen.",
+          "Ich achte nicht nur auf die Noten, sondern auf den Menschen, der sie lernt. Jeder Schueler hat sein eigenes Tempo, seine eigene Sicherheit, seinen Klang und seine Fragen - und ich gestalte die Stunde so, dass der naechste Schritt moeglich wird.",
+          "Musik braucht Zeit, Wiederholung und Vertrauen. Ich moechte nie, dass Schueler durch etwas Schwieriges gehetzt werden. Wir teilen Dinge in kleine Schritte, bis sie klar, natuerlich und moeglich werden.",
+          "Jeder Schueler lernt anders. Manche Stunden duerfen spielerisch sein, manche technisch, manche strukturiert, manche offener. Ich passe meinen Unterricht an Alter, Niveau, Ziele und Musikgeschmack an - mit einer klaren Richtung.",
+          "Ich glaube, Struktur macht Fortschritt weniger ueberwaeltigend. In jeder Stunde versuche ich, einen klaren Fokus, praktische Uebungen und einen naechsten Schritt fuer die Zeit nach dem Unterricht mitzugeben.",
+          "Musik soll lebendig sein. Ich verbinde Technik und Theorie mit echten Stuecken, Klaengen und Ideen, die der Schueler wirklich verstehen und spielen moechte - denn Lernen wird tiefer, wenn es persoenlich wird.",
+        ],
+      },
+      location: {
+        heading: "Vom Rhein, online",
+        body:
+          "Agatha lebt in der Region Koeln-Duesseldorf und unterrichtet online auf Russisch, Englisch und Deutsch. Wo auch immer die Stunde beginnt: Im Mittelpunkt stehen klare Begleitung, gesunde Technik und Musik, die persoenlich wird.",
+        cta: "Kontakt aufnehmen",
+      },
+      quote: {
+        body:
+          "Ich glaube, Musik wird leichter, wenn man sich sicher genug fuehlt, etwas auszuprobieren. In meinen Stunden begleite ich mit Geduld, klarer Struktur und kleinen realistischen Schritten - damit Klang, Rhythmus und Theorie Teil der eigenen musikalischen Stimme werden.",
+        signature: "Agatha Gurko",
+      },
+      footerNote: "Floeten-, Blockfloeten- und Musiktheorieunterricht online.",
     },
     legal: {
       impressumTitle: "Impressum",
@@ -458,78 +445,67 @@ export const siteContent: Record<Locale, SiteContent> = {
       ...item,
       label:
         {
-          Lessons: "Уроки",
-          Method: "Метод",
-          About: "Об Агате",
-          Reviews: "Отзывы",
+          "About me": "Обо мне",
+          Classes: "Уроки",
           Media: "Медиа",
-          FAQ: "FAQ",
-          Contact: "Контакты",
         }[item.label] ?? item.label,
     })),
     cta: {
       primary: "Записаться на пробный урок",
-      secondary: "Посмотреть открытый урок",
+      secondary: "Посмотреть уроки",
       contact: "Написать сообщение",
     },
-    hero: {
-      ...baseContent.hero,
-      eyebrow: "Флейта · Блокфлейта · Теория музыки",
-      heading: "Музыка может стать понятной.",
-      subheading:
-        "Уроки флейты, блокфлейты и теории музыки для детей, взрослых и начинающих музыкантов - на русском, английском или немецком.",
-      support:
-        "Понятные объяснения, здоровая техника и музыка, которую действительно хочется играть.",
-      trust: "Преподает с 2014 · Ученики 6-60 лет · 400+ онлайн-уроков",
+    pages: {
+      classes: {
+        heading: "Выберите, чему хотите учиться",
+      },
+      about: {
+        trustHeading: "На что могут рассчитывать ученики",
+        faqHeading: "Вопросы перед первым уроком",
+      },
+      media: {
+        eyebrow: "Медиа",
+        heading: "Уроки, материалы и моменты музыкального процесса",
+        galleryHeading: "Музыка в процессе",
+      },
     },
-    dashboard: {
-      ...baseContent.dashboard,
-      eyebrow: "Флейта · Блокфлейта · Теория музыки",
-      heading:
-        "Уроки музыки со спокойной структурой и понятным следующим шагом.",
-      subheading:
-        "Для детей, взрослых новичков и начинающих музыкантов, которым нужен внимательный онлайн-урок на русском, английском или немецком.",
-      trustLine:
-        "Преподает с 2014 · ученики 6-60 лет · музыкальные школы, частные уроки и онлайн-занятия.",
-      fitHeading: "Подходит для",
-      fitItems: [
-        "Детей и подростков, которым нужна терпеливая структура",
-        "Взрослых новичков, которые хотят начать без стыда и давления",
-        "Учеников по флейте, блокфлейте, пикколо и теории музыки",
-        "Тех, кому нужны объяснения на русском, английском или немецком",
-      ],
-      styleHeading: "Стиль урока",
-      styleIntro:
-        "Спокойно, структурно и практично: здоровая техника, понятные объяснения и заметки после занятия.",
-      styleTags: [
-        "Спокойно",
-        "Структурно",
-        "Внимательно",
-        "Практично",
-        "Здоровая техника",
-        "Заметки после урока",
-      ],
-      trialHeading: "Что будет на пробном уроке",
-      trialSteps: [
-        "Познакомимся и уточним цель.",
-        "Проверим уровень, дыхание, посадку, звук, ритм или вопросы по теории.",
-        "Попробуем короткое учебное задание.",
-        "Сформулируем заметки и реалистичный следующий шаг.",
-      ],
-      proofHeading: "Почему ученики доверяют Агате",
-      proofItems: [
-        "Академическая флейтовая база",
-        "Опыт преподавания с 2014 года",
-        "Понятные объяснения и терпеливая поддержка",
-        "Опыт с детьми, взрослыми и онлайн-уроками",
-      ],
-      practical: [
-        {label: "Языки", value: "Русский · Английский · Немецкий"},
-        {label: "Формат", value: "Онлайн-уроки"},
-        {label: "Первый шаг", value: "Пробный урок через Cal.com"},
-        {label: "Фокус", value: "Флейта · Блокфлейта · Теория"},
-      ],
-      fullProfileCta: "Открыть полный профиль",
+    home: {
+      ...baseContent.home,
+      heroTitle: ["Музыкальный", "проводник"],
+      heroSubtitle: "Уроки флейты, блокфлейты и теории музыки",
+      manifesto: {
+        heading:
+          "Музыка становится возможной, когда ее объясняют бережно, разбирают терпеливо и слушают внимательно.",
+        body:
+          "Я преподаю флейту, блокфлейту и теорию музыки через маленькие реалистичные шаги - чтобы у ученика росли уверенность, звук и музыкальное понимание.",
+      },
+      values: {
+        heading: "Мои ценности",
+        items: ["Доброта", "Забота", "Терпение", "Гибкость", "Структура", "Радость"],
+        activeItem: "Доброта",
+        activeText:
+          "Доброта создает пространство, в котором действительно можно учиться. На моих уроках можно задавать вопросы, ошибаться и пробовать снова без страха оценки.",
+        itemTexts: [
+          "Учиться музыке бывает уязвимо, особенно в начале. Я хочу, чтобы уроки были добрым пространством, где можно задавать вопросы, ошибаться и пробовать снова без страха осуждения.",
+          "Я обращаю внимание не только на ноты, но и на человека, который их учит. У каждого ученика свой темп, уверенность, звук и вопросы - и я строю урок вокруг того, что помогает двигаться дальше.",
+          "Музыка требует времени, повторения и доверия. Я не хочу, чтобы ученик чувствовал спешку в сложном месте. Мы делим материал на маленькие шаги, пока он не становится понятным, естественным и возможным.",
+          "Каждый ученик учится по-своему. Одним урокам нужна игра, другим техника, структура или больше поиска. Я адаптирую преподавание под возраст, уровень, цели и музыкальный вкус ученика - сохраняя ясное направление.",
+          "Я верю, что структура делает прогресс менее перегружающим. На каждом уроке я стараюсь дать ясный фокус, практические упражнения и следующий шаг, с которым можно продолжить после занятия.",
+          "Музыка должна быть живой. Я связываю технику и теорию с настоящими пьесами, звуками и идеями, которые ученик действительно хочет понять и сыграть, потому что обучение становится глубже, когда оно личное.",
+        ],
+      },
+      location: {
+        heading: "С Рейна - онлайн",
+        body:
+          "Агата живет в районе Кельна и Дюссельдорфа и преподает онлайн на русском, английском и немецком. Где бы ни начинался урок, в центре остаются понятное сопровождение, здоровая техника и музыка, которая становится личной.",
+        cta: "Связаться",
+      },
+      quote: {
+        body:
+          "Я верю, что музыка становится легче, когда достаточно спокойно пробовать. На уроках я веду учеников терпеливо, структурно и маленькими реалистичными шагами - чтобы звук, ритм и теория становились частью собственного музыкального голоса.",
+        signature: "Агата Гурко",
+      },
+      footerNote: "Онлайн-уроки флейты, блокфлейты и теории музыки.",
     },
     legal: {
       impressumTitle: "Impressum",

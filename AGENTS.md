@@ -11,7 +11,7 @@ notices.
 # AGENTS.md
 
 ## Project
-Agathe G. Musik is a static-first multilingual marketing and booking website
+Agatha Music is a static-first multilingual marketing and booking website
 for a music teacher. The site presents lessons, teaching method, media, reviews,
 booking, FAQ, contact, and German legal pages.
 
@@ -44,11 +44,11 @@ Use `npm.cmd` in PowerShell when `npm.ps1` is blocked by execution policy.
 - Production build: `npm.cmd run build`
 
 ## Structure
-- `app/[locale]/` - localized landing and booking pages
+- `app/[locale]/` - localized editorial and booking pages
 - `app/api/contact/route.ts` - contact form endpoint
 - `app/api/cal/webhook/route.ts` - optional Cal.com webhook endpoint
 - `components/layout/` - header and footer
-- `components/sections/` - landing page sections
+- `components/sections/` - focused reusable sections
 - `components/ui/` - small reusable UI primitives
 - `content/` - typed marketing content and content models
 - `messages/` - `next-intl` message files

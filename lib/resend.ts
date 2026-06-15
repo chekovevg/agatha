@@ -50,7 +50,7 @@ export async function sendContactEmails(input: ContactInput) {
     to: input.email,
     subject: "Thank you for your message",
     text:
-      "Thank you for writing to Agathe G. Musik. Agathe will reply soon with the next steps for your lessons.",
+      "Thank you for writing to Agatha Music. Agatha will reply soon with the next steps for your lessons.",
   });
 
   return {skipped: false};

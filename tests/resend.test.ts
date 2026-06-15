@@ -32,11 +32,11 @@ describe("Resend email sender", () => {
     sendEmail.mockReset();
     sendEmail.mockResolvedValue({data: {id: "email_123"}});
     process.env.RESEND_API_KEY = "re_test";
-    process.env.CONTACT_TO_EMAIL = "agathe@example.com";
+    process.env.CONTACT_TO_EMAIL = "agatha@example.com";
     process.env.CONTACT_FROM_EMAIL = "hello@agathamusic.com";
   });
 
-  it("uses Agathe display name with the verified sender address", async () => {
+  it("uses Agatha display name with the verified sender address", async () => {
     const {sendContactEmails} = await import("@/lib/resend");
 
     const result = await sendContactEmails(contactInput());

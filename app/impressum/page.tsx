@@ -2,24 +2,24 @@ import type {Metadata} from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Impressum | Agathe G. Musik",
-  description: "Provider information for Agathe G. Musik.",
+  title: "Impressum | Agatha Music",
+  description: "Provider information for Agatha Music.",
 };
 
 export default function ImpressumPage() {
   return (
-    <main className="mx-auto max-w-3xl px-5 py-16">
-      <Link className="font-ui text-sm font-medium underline" href="/en">
+    <main className="mai-body mx-auto max-w-3xl px-5 py-16">
+      <Link className="mai-ui underline" href="/en">
         Back to site
       </Link>
-      <h1 className="font-display mt-8 text-4xl font-normal">Impressum</h1>
+      <h1 className="mai-h4 mt-8 break-words">Impressum</h1>
       <div className="mt-8 space-y-5 rounded-[var(--radius-card)] bg-[var(--card)] p-6 text-[var(--muted)] shadow-[var(--shadow-elevated)]">
         <p>
           This page is intentionally blocked from production launch until real
           provider details are supplied and reviewed. Do not invent legal data.
         </p>
         <section>
-          <h2 className="font-display text-xl font-normal text-[var(--ink)]">
+          <h2 className="mai-h7 text-[var(--ink)]">
             Required launch inputs
           </h2>
           <ul className="mt-3 list-disc space-y-2 pl-5">

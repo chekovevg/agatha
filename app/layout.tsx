@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { EB_Garamond, Geist, Newsreader, Red_Hat_Mono } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -9,13 +9,23 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const redHatMono = Red_Hat_Mono({
+  variable: "--font-red-hat-mono",
+  subsets: ["latin"],
+});
+
+const ebGaramond = EB_Garamond({
+  variable: "--font-eb-garamond",
+  subsets: ["latin", "cyrillic"],
+});
+
+const newsreader = Newsreader({
+  variable: "--font-newsreader",
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "Agathe G. Musik",
+  title: "Agatha Music",
   description: "Flute, recorder and music theory lessons online.",
 };
 
@@ -27,7 +37,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${redHatMono.variable} ${ebGaramond.variable} ${newsreader.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         {children}

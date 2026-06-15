@@ -38,7 +38,7 @@ export function VideoPreview({
           </>
         )}
       </div>
-      <p className="font-display border-t border-[var(--line)] px-5 py-4 font-normal">{title}</p>
+      <p className="mai-body border-t border-[var(--line)] px-5 py-4">{title}</p>
     </div>
   );
 }

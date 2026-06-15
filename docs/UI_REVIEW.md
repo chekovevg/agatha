@@ -1,14 +1,14 @@
 # Anti-AI-Slop UI Review
 
-Use this review before treating the compact dashboard or any visual redesign as
-beta-ready. The goal is to remove generic AI output and make the site feel like
-a specific, trustworthy teacher profile.
+Use this review before treating the editorial Agatha Music site as beta-ready.
+The goal is to remove generic AI output and make the site feel like a specific,
+trustworthy teacher profile.
 
 ## Review Goals
 
-- Make the first screen feel specific to Agathe, not like a template.
+- Make the first screen feel specific to Agatha, not like a template.
 - Replace generic claims with concrete fit, trust and trial-lesson information.
-- Keep the compact dashboard scannable without making it cold or mechanical.
+- Keep the editorial pages focused without turning them into a generic profile.
 - Make mobile feel designed, not merely stacked.
 - Improve conversion by reducing visitor anxiety before booking.
 
@@ -23,24 +23,23 @@ a specific, trustworthy teacher profile.
   training, languages, lesson format or review theme.
 - [ ] The trial lesson is described as a clear scenario, not just "book a first
   lesson".
-- [ ] The dashboard answers three questions quickly: "Is this for me?", "Can I
-  trust her?", "What happens first?"
+- [ ] The home, classes, about, media and booking pages answer: "Is this for
+  me?", "Can I trust her?", and "What happens first?"
 
 ## Layout Checks
 
-- [ ] The first viewport has one clear focal path: read fit, trust the teacher,
-  book or open the full profile.
+- [ ] The first viewport has one clear focal path: understand the teacher, pick
+  a lesson path, or book a trial class.
 - [ ] Cards/panels do not repeat the same generic pattern without a reason.
-- [ ] The compact dashboard does not become a dense admin dashboard; it still
-  feels human and teacher-led.
-- [ ] The old long profile remains available through `/[locale]/full`.
+- [ ] The about page carries biography, method, reviews, FAQ and contact
+  without relying on the removed `/[locale]/full` route.
 - [ ] Header links match the actual page structure and do not point to missing
   sections.
 
 ## Visual Identity Checks
 
-- [ ] The page has a recognizable Agathe/music-teacher mood, not a generic SaaS
-  dashboard mood.
+- [ ] The page has a recognizable Agatha/music-teacher mood, not a generic SaaS
+  or template mood.
 - [ ] The palette, borders, image treatment and typography feel intentional
   together.
 - [ ] SVG placeholders are either replaced with approved real media or
@@ -56,16 +55,15 @@ a specific, trustworthy teacher profile.
 - [ ] Long words and translated strings fit inside buttons and panels.
 - [ ] There is no horizontal overflow at 390px width.
 - [ ] The mobile menu opens, closes and links to real destinations.
-- [ ] The page still feels compact after stacking.
+- [ ] The pages still feel intentional after stacking.
 
 ## Conversion Checks
 
-- [ ] Primary CTA is visible near the top and repeated after the proof/style
-  block.
-- [ ] Secondary path is clear: ask a question or read the full profile.
+- [ ] Primary CTA is visible near the top and repeated on relevant pages.
+- [ ] Secondary paths are clear: classes, about, media, or contact.
 - [ ] Booking copy makes Cal.com feel like the normal booking authority.
 - [ ] Contact path leads to a real form or real external contact link.
-- [ ] No important practical information is hidden only in the long profile.
+- [ ] No important practical information is hidden in removed or orphaned pages.
 
 ## Review Output
 
