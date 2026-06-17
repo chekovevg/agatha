@@ -2,7 +2,6 @@ import type {SiteContent} from "@/content/types";
 import type {Locale} from "@/lib/routing";
 import Link from "next/link";
 import Image from "next/image";
-import {env} from "@/lib/env";
 
 export function Footer({
   content,
@@ -11,70 +10,80 @@ export function Footer({
   content: SiteContent;
   locale: Locale;
 }) {
-  const externalLinks = [
-    content.social.email
-      ? {label: "Email", href: `mailto:${content.social.email}`}
-      : null,
-    env.NEXT_PUBLIC_PREPLY_URL
-      ? {label: "Preply", href: env.NEXT_PUBLIC_PREPLY_URL}
-      : null,
-    env.NEXT_PUBLIC_INSTAGRAM_URL
-      ? {label: "Instagram", href: env.NEXT_PUBLIC_INSTAGRAM_URL}
-      : null,
-    env.NEXT_PUBLIC_WHATSAPP_URL
-      ? {label: "WhatsApp", href: env.NEXT_PUBLIC_WHATSAPP_URL}
-      : null,
-  ].filter(Boolean) as {label: string; href: string}[];
-  const footerNav = [
-    ...content.nav.map((item) => ({
-      label: item.label,
-      href: `/${locale}${item.href}`,
-    })),
+  const footerNav = content.nav.map((item) => ({
+    label: item.label,
+    href: `/${locale}${item.href}`,
+  }));
+  const socialLinks = [
+    {label: "Email", href: "#"},
+    {label: "Telegram", href: "#"},
+    {label: "WhatsApp", href: "#"},
   ];
 
   return (
-    <footer className="bg-[var(--background)] text-[var(--ink)]">
-      <div className="mx-auto grid max-w-[1408px] gap-8 px-6 pb-6 pt-0 md:grid-cols-[minmax(150px,1fr)_112px_112px_184px_minmax(240px,1fr)] md:items-start xl:px-0">
-        <div>
-          <p className="font-display text-[calc(24_*_var(--unit-fx-type))] leading-none">
-            {content.brand}
-          </p>
-        </div>
-        <nav className="mai-ui grid content-start gap-3">
-          {footerNav.map((item) => (
-            <a key={item.href} href={item.href}>
-              {item.label}
-            </a>
-          ))}
-        </nav>
-        <nav className="mai-ui grid content-start gap-3">
-          {externalLinks.map((link) => (
-            <a key={link.href} href={link.href} target="_blank" rel="noreferrer">
-              {link.label}
-            </a>
-          ))}
-        </nav>
-        <nav className="mai-ui grid content-start gap-3">
-          <a href={`/${locale}/book`} className="inline-flex items-center gap-2">
-            {content.cta.primary}
-            <Image
-              src="/icons/arrow-up-right.svg"
-              alt=""
-              aria-hidden="true"
-              width={18}
-              height={18}
-              className="h-[18px] w-[18px]"
-            />
-          </a>
-          <Link href="/impressum">Impressum</Link>
-          <Link href="/datenschutz">Privacy and Cookies</Link>
-        </nav>
-        <div>
-          <p className="mai-ui max-w-xs leading-[1.4] text-[var(--ink)]">
-            {content.home.footerNote}
-          </p>
-        </div>
+    <footer className="mx-auto mt-[calc(320*var(--unit-fx))] grid max-w-[calc(1660*var(--unit-fx))] grid-cols-[repeat(24,minmax(0,1fr))] gap-[calc(20*var(--unit-fx))] bg-[var(--background)] px-[calc(22*var(--unit-fx))] pb-[27px] font-ui text-[var(--ink)] max-[600px]:block max-[600px]:w-[calc(100%_-_calc(32*var(--unit-fx)))] max-[600px]:space-y-[calc(40*var(--unit-fx))] max-[600px]:px-0">
+      <div className="col-span-4">
+        <Link href={`/${locale}`} aria-label={`${content.brand} home`}>
+          <Image
+            src="/images/agatha-gurko-music.svg"
+            alt="Agatha Gurko Music"
+            width={156}
+            height={19}
+            className="h-auto w-[156px] max-w-full"
+          />
+        </Link>
       </div>
+      <nav
+        aria-label="Site links"
+        className="ag-footer-link-list col-start-8 col-span-2"
+        data-footer-section="site"
+      >
+        {footerNav.map((item) => (
+          <a key={item.href} href={item.href}>
+            {item.label}
+          </a>
+        ))}
+      </nav>
+      <nav
+        aria-label="Social links"
+        className="ag-footer-link-list col-start-10 col-span-3"
+        data-footer-section="social"
+      >
+        {socialLinks.map((link) => (
+          <a key={link.label} href={link.href} aria-disabled="true" tabIndex={-1}>
+            {link.label}
+          </a>
+        ))}
+      </nav>
+      <nav
+        aria-label="Legal links"
+        className="ag-footer-link-list col-start-13 col-span-4"
+        data-footer-section="legal"
+      >
+        <a className="footer-book-link items-center gap-[calc(10*var(--unit-fx))]" href={`/${locale}/book`}>
+          {content.cta.primary}
+          <Image
+            src="/icons/arrow-up-right.svg"
+            alt=""
+            aria-hidden="true"
+            width={18}
+            height={18}
+            className="h-[18px] w-[18px]"
+          />
+        </a>
+        <Link href="/impressum">Impressum</Link>
+        <Link href="/datenschutz">Privacy &amp; Cookies</Link>
+      </nav>
+      <div className="col-start-20 col-span-5 max-[600px]:w-full">
+        <p className="ag-footer-note text-[var(--ink)]">
+          {content.home.footerNote}
+        </p>
+      </div>
+      <div
+        aria-hidden="true"
+        className="ag-footer-bottom-spacer col-start-13 col-span-12 max-[600px]:w-full"
+        data-footer-section="bottom-spacer"
+      />
     </footer>
   );
 }

@@ -24,20 +24,21 @@ export function AboutPage({
   return (
     <div className="editorial-shell min-h-screen">
       <Header content={content} locale={locale} />
-      <main className="mx-auto grid w-full max-w-[1376px] gap-28 px-5 pb-28 pt-24 sm:px-8 lg:gap-[150px] lg:pb-[150px] lg:pt-[160px] xl:px-0">
+      <main className="mx-auto grid w-full max-w-[calc(1660*var(--unit-fx))] gap-28 px-[22px] pb-28 pt-8 min-[601px]:px-[calc(22*var(--unit-fx))] min-[861px]:gap-[150px] min-[861px]:pb-[150px] min-[861px]:pt-[160px]">
         <section
           aria-labelledby="about-title"
-          className="grid gap-14 lg:grid-cols-[179px_minmax(0,643px)] lg:gap-[clamp(96px,14.3vw,206px)] lg:px-[22px]"
+          className="grid gap-10 min-[861px]:grid-cols-[repeat(24,minmax(0,1fr))] min-[861px]:gap-x-[calc(20*var(--unit-fx))] min-[861px]:gap-y-0"
         >
-          <div className="grid w-[179px] max-w-full content-start gap-4 justify-self-center lg:justify-self-start">
-            <div className="relative h-[273px] w-full overflow-hidden rounded-[var(--radius-card)] bg-[var(--paper)]">
+          <div className="grid w-full content-start gap-4 justify-self-center min-[861px]:col-span-5 min-[861px]:w-[245px] min-[861px]:justify-self-start">
+            <div className="relative aspect-[1086/1448] w-full overflow-hidden rounded-[var(--radius-card)] bg-[var(--paper)] min-[861px]:h-[328px] min-[861px]:aspect-auto">
               <Image
-                src="/images/home/agatha-pic.webp"
-                alt="Agatha Gurko playing flute in an ensemble"
+                src="/images/about/agatha-portrait.png"
+                alt="Agatha Gurko portrait"
                 fill
-                priority
-                sizes="179px"
-                className="object-cover object-[50%_35%]"
+                preload
+                quality={95}
+                sizes="(max-width: 860px) calc(100vw - 44px), 245px"
+                className="object-cover object-center"
               />
             </div>
             <ButtonLink
@@ -50,7 +51,7 @@ export function AboutPage({
             </ButtonLink>
           </div>
 
-          <div className="grid max-w-[643px] gap-14 text-[var(--ink)]">
+          <div className="grid max-w-[643px] gap-14 text-[var(--ink)] min-[861px]:col-start-8 min-[861px]:col-span-11">
             <h1
               id="about-title"
               className="font-display-regular text-[48px] leading-none tracking-[-1.2px] md:text-[62px] md:tracking-[-1.44px]"

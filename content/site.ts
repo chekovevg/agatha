@@ -11,7 +11,7 @@ const baseContent: SiteContent = {
   brand: "Agatha Music",
   nav,
   cta: {
-    primary: "Book Trial Class",
+    primary: "Book a trial lesson",
     secondary: "Explore Classes",
     contact: "Text me",
   },
@@ -34,7 +34,7 @@ const baseContent: SiteContent = {
     },
     media: {
       eyebrow: "Media",
-      heading: "Lessons, materials and moments of music in progress",
+      heading: "How I teach",
       galleryHeading: "Music in progress",
     },
   },
@@ -48,7 +48,7 @@ const baseContent: SiteContent = {
         "I teach flute, recorder and music theory through small realistic steps - helping students build confidence, sound and musical understanding.",
     },
     values: {
-      heading: "My Values",
+      heading: "Values",
       items: ["Kindness", "Care", "Patience", "Adaptability", "Structure", "Joy"],
       activeItem: "Kindness",
       activeText:
@@ -199,11 +199,10 @@ const baseContent: SiteContent = {
     ],
   },
   openLesson: {
-    heading: "Watch an open lesson",
-    copy:
-      "See how a lesson feels before you book. In this short video, Agatha explains musical ideas step by step - with clarity, patience and practical examples.",
-    caption: "First steps in flute sound",
-    videoUrl: "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ",
+    heading: "How I teach",
+    copy: "See how a lesson feels before you book.",
+    caption: "Lesson preview with Agatha",
+    videoUrl: "https://www.youtube-nocookie.com/embed/9_d_45Zp7gs",
   },
   media: [
     {

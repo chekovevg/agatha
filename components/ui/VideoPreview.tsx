@@ -9,16 +9,22 @@ export function VideoPreview({
   title,
   thumbnail,
   videoUrl,
+  playLabel = "Play video",
+  className = "",
+  unoptimizedThumbnail = false,
 }: {
   title: string;
   thumbnail: string;
   videoUrl?: string;
+  playLabel?: string;
+  className?: string;
+  unoptimizedThumbnail?: boolean;
 }) {
   const [loaded, setLoaded] = useState(false);
 
   return (
-    <div className="overflow-hidden rounded-[var(--radius-media)] bg-[var(--card)] shadow-[var(--shadow-elevated)]">
-      <div className="relative aspect-video">
+    <div className={className}>
+      <div className="relative aspect-video overflow-hidden rounded-[var(--radius-media)]">
         {loaded && videoUrl ? (
           <iframe
             className="h-full w-full"
@@ -29,16 +35,28 @@ export function VideoPreview({
           />
         ) : (
           <>
-            <Image src={thumbnail} alt={title} fill className="object-cover" />
-            <div className="absolute inset-0 flex items-center justify-center bg-black/10">
-              <Button type="button" onClick={() => setLoaded(true)}>
-                Play video
+            <Image
+              src={thumbnail}
+              alt={title}
+              fill
+              sizes="(max-width: 768px) 100vw, 1440px"
+              className="object-cover"
+              quality={95}
+              priority
+              unoptimized={unoptimizedThumbnail}
+            />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Button
+                type="button"
+                className="min-w-[12em] bg-[var(--paper)] px-[3em] text-[var(--ink)] hover:bg-[var(--ink)] hover:text-[var(--paper)]"
+                onClick={() => setLoaded(true)}
+              >
+                {playLabel}
               </Button>
             </div>
           </>
         )}
       </div>
-      <p className="mai-body border-t border-[var(--line)] px-5 py-4">{title}</p>
     </div>
   );
 }

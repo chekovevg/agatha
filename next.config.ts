@@ -2,6 +2,12 @@ import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 
 const nextConfig: NextConfig = {
+  experimental: {
+    cpus: 1,
+  },
+  images: {
+    qualities: [75, 95],
+  },
   reactStrictMode: true,
 };
 

@@ -1,6 +1,9 @@
 import type {AnchorHTMLAttributes, ButtonHTMLAttributes} from "react";
 
+import {cn} from "@/lib/utils";
+
 type ButtonVariant = "primary" | "secondary" | "plain";
+type ButtonLinkVariant = ButtonVariant | "split";
 
 const variants: Record<ButtonVariant, string> = {
   primary:
@@ -18,8 +21,17 @@ export function ButtonLink({
   variant = "primary",
   className = "",
   ...props
-}: AnchorHTMLAttributes<HTMLAnchorElement> & {variant?: ButtonVariant}) {
-  return <a className={`${base} ${variants[variant]} ${className}`} {...props} />;
+}: AnchorHTMLAttributes<HTMLAnchorElement> & {variant?: ButtonLinkVariant}) {
+  if (variant === "split") {
+    return (
+      <a
+        className={cn("split-link-button mai-ui focus-visible:outline-2", className)}
+        {...props}
+      />
+    );
+  }
+
+  return <a className={cn(base, variants[variant], className)} {...props} />;
 }
 
 export function Button({
@@ -28,6 +40,6 @@ export function Button({
   ...props
 }: ButtonHTMLAttributes<HTMLButtonElement> & {variant?: ButtonVariant}) {
   return (
-    <button className={`${base} ${variants[variant]} ${className}`} {...props} />
+    <button className={cn(base, variants[variant], className)} {...props} />
   );
 }
