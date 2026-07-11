@@ -15,6 +15,20 @@ adapts, or intentionally does not copy.
 - Soft row / menu surface: `#FBF0DC`
 - Small UI chip surface: `#F7ECD9`
 
+## Hero background variants
+
+- Production default: animated 2D Canvas.
+- `?hero=webgl`: retained legacy single-pass WebGL experiment.
+- `?hero=reference-webgl`: WebGL2 multipass reference implementation with
+  half-resolution framebuffer rendering and generated local textures.
+- `?ascii=1`: Canvas plus the decorative ASCII overlay.
+- `?heroCompare=1`: exposes the local comparison control; it is not part of the
+  default production UI.
+
+The Reference GL variant reproduces the rendering architecture and behavior
+observed on microsoft.ai without copying its source or assets. The site's
+200vh sticky continuation remains deferred.
+
 ## Block Map
 
 | Microsoft AI order | Microsoft AI block | Agatha Music decision |
