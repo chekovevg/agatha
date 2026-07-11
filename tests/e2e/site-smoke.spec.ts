@@ -125,3 +125,71 @@ test("reference WebGL hero is opt-in and renders at half resolution", async ({
   ).toHaveCount(1);
   await expect(page.locator(".reference-webgl-hero-bg")).toHaveCount(0);
 });
+
+test("reference WebGL recovers when intersection changes during context loss", async ({
+  page,
+}) => {
+  const pageErrors: string[] = [];
+  page.on("pageerror", (error) => pageErrors.push(error.message));
+
+  await page.goto("/?hero=reference-webgl&heroCompare=1&ascii=0");
+
+  const canvas = page.locator(".reference-webgl-hero-canvas");
+  await expect(canvas).toHaveAttribute("data-reference-webgl-status", "ready");
+
+  const canLoseContext = await canvas.evaluate((element) => {
+    const htmlCanvas = element as HTMLCanvasElement;
+    const context = htmlCanvas.getContext("webgl2");
+    const extension = context?.getExtension("WEBGL_lose_context");
+    if (!extension) return false;
+
+    (
+      window as typeof window & {
+        __referenceLoseContext?: WEBGL_lose_context;
+      }
+    ).__referenceLoseContext = extension;
+    extension.loseContext();
+    return true;
+  });
+  expect(canLoseContext).toBe(true);
+  await expect(canvas).toHaveAttribute(
+    "data-reference-webgl-status",
+    "context-lost",
+  );
+
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+  await expect
+    .poll(() =>
+      canvas.evaluate((element) => {
+        const rect = element.getBoundingClientRect();
+        return rect.bottom < -300 || rect.top > window.innerHeight + 300;
+      }),
+    )
+    .toBe(true);
+
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await expect
+    .poll(() =>
+      canvas.evaluate((element) => {
+        const rect = element.getBoundingClientRect();
+        return rect.bottom >= -300 && rect.top <= window.innerHeight + 300;
+      }),
+    )
+    .toBe(true);
+  await page.waitForTimeout(250);
+  await expect(canvas).toHaveAttribute(
+    "data-reference-webgl-status",
+    "context-lost",
+  );
+
+  await page.evaluate(() => {
+    (
+      window as typeof window & {
+        __referenceLoseContext?: WEBGL_lose_context;
+      }
+    ).__referenceLoseContext?.restoreContext();
+  });
+
+  await expect(canvas).toHaveAttribute("data-reference-webgl-status", "ready");
+  expect(pageErrors).toEqual([]);
+});

@@ -21,6 +21,7 @@ export function ReferenceWebGLHeroBackground() {
 
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     let renderer: ReferenceHeroRenderer | null = null;
+    let contextLost = false;
     let disposed = false;
     let generation = 0;
     let importStarted = false;
@@ -61,7 +62,7 @@ export function ReferenceWebGLHeroBackground() {
     };
 
     const initialize = async () => {
-      if (disposed || importStarted || !intersecting) return;
+      if (disposed || contextLost || importStarted || !intersecting) return;
       importStarted = true;
       const currentGeneration = ++generation;
       setStatus("loading");
@@ -81,7 +82,10 @@ export function ReferenceWebGLHeroBackground() {
         setStatus("ready");
         reconcileMotionState();
       } catch {
-        if (!disposed && currentGeneration === generation) setStatus("error");
+        if (!disposed && currentGeneration === generation) {
+          importStarted = false;
+          setStatus("error");
+        }
       }
     };
 
@@ -110,6 +114,7 @@ export function ReferenceWebGLHeroBackground() {
     };
     const handleContextLost = (event: Event) => {
       event.preventDefault();
+      contextLost = true;
       generation += 1;
       renderer?.destroy();
       renderer = null;
@@ -117,6 +122,8 @@ export function ReferenceWebGLHeroBackground() {
       setStatus("context-lost");
     };
     const handleContextRestored = () => {
+      contextLost = false;
+      importStarted = false;
       setStatus("idle");
       void initialize();
     };
