@@ -704,42 +704,80 @@ type RenderTarget = {
   texture: WebGLTexture;
 };
 
-function compileShader(gl: WebGL2RenderingContext, type: number, source: string) {
+const PASS_DESCRIPTORS = [
+  {name: "background", fragmentSource: REFERENCE_FRAGMENT_SHADERS.background},
+  {name: "vignette", fragmentSource: REFERENCE_FRAGMENT_SHADERS.vignette},
+  {name: "sine", fragmentSource: REFERENCE_FRAGMENT_SHADERS.sine},
+  {name: "shatter", fragmentSource: REFERENCE_FRAGMENT_SHADERS.shatter},
+  {name: "bokeh", fragmentSource: REFERENCE_FRAGMENT_SHADERS.bokeh},
+  {name: "composite", fragmentSource: REFERENCE_FRAGMENT_SHADERS.composite},
+] as const satisfies ReadonlyArray<{
+  name: PassName;
+  fragmentSource: string;
+}>;
+
+function compileShader(
+  gl: WebGL2RenderingContext,
+  type: number,
+  source: string,
+) {
   const shader = gl.createShader(type);
   if (!shader) throw new Error("Unable to create Reference GL shader");
-  gl.shaderSource(shader, source);
-  gl.compileShader(shader);
-  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-    const message = gl.getShaderInfoLog(shader) || "Unknown shader error";
+
+  try {
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+      const message = gl.getShaderInfoLog(shader) || "Unknown shader error";
+      throw new Error(message);
+    }
+    return shader;
+  } catch (error) {
     gl.deleteShader(shader);
-    throw new Error(message);
+    throw error;
   }
-  return shader;
 }
 
-function createProgram(gl: WebGL2RenderingContext, fragmentSource: string): ProgramInfo {
-  const vertex = compileShader(gl, gl.VERTEX_SHADER, REFERENCE_VERTEX_SHADER);
-  const fragment = compileShader(gl, gl.FRAGMENT_SHADER, fragmentSource);
-  const program = gl.createProgram();
-  if (!program) throw new Error("Unable to create Reference GL program");
-  gl.attachShader(program, vertex);
-  gl.attachShader(program, fragment);
-  gl.linkProgram(program);
-  gl.deleteShader(vertex);
-  gl.deleteShader(fragment);
-  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-    const message = gl.getProgramInfoLog(program) || "Unknown program error";
-    gl.deleteProgram(program);
-    throw new Error(message);
+function createProgram(
+  gl: WebGL2RenderingContext,
+  fragmentSource: string,
+): ProgramInfo {
+  let vertex: WebGLShader | null = null;
+  let fragment: WebGLShader | null = null;
+  let program: WebGLProgram | null = null;
+
+  try {
+    vertex = compileShader(gl, gl.VERTEX_SHADER, REFERENCE_VERTEX_SHADER);
+    fragment = compileShader(gl, gl.FRAGMENT_SHADER, fragmentSource);
+    program = gl.createProgram();
+    if (!program) throw new Error("Unable to create Reference GL program");
+
+    gl.attachShader(program, vertex);
+    gl.attachShader(program, fragment);
+    gl.linkProgram(program);
+    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+      const message = gl.getProgramInfoLog(program) || "Unknown program error";
+      throw new Error(message);
+    }
+
+    const linkedProgram = program;
+    const uniforms = new Map<string, WebGLUniformLocation | null>();
+    program = null;
+
+    return {
+      program: linkedProgram,
+      uniform(name) {
+        if (!uniforms.has(name)) {
+          uniforms.set(name, gl.getUniformLocation(linkedProgram, name));
+        }
+        return uniforms.get(name) ?? null;
+      },
+    };
+  } finally {
+    if (program) gl.deleteProgram(program);
+    if (fragment) gl.deleteShader(fragment);
+    if (vertex) gl.deleteShader(vertex);
   }
-  const uniforms = new Map<string, WebGLUniformLocation | null>();
-  return {
-    program,
-    uniform(name) {
-      if (!uniforms.has(name)) uniforms.set(name, gl.getUniformLocation(program, name));
-      return uniforms.get(name) ?? null;
-    },
-  };
 }
 
 function createTexture(
@@ -752,47 +790,63 @@ function createTexture(
 ) {
   const texture = gl.createTexture();
   if (!texture) throw new Error("Unable to create Reference GL texture");
-  gl.bindTexture(gl.TEXTURE_2D, texture);
-  gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
-  gl.texImage2D(
-    gl.TEXTURE_2D,
-    0,
-    internalFormat,
-    width,
-    height,
-    0,
-    format,
-    gl.UNSIGNED_BYTE,
-    data,
-  );
-  return texture;
+
+  try {
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+    gl.texImage2D(
+      gl.TEXTURE_2D,
+      0,
+      internalFormat,
+      width,
+      height,
+      0,
+      format,
+      gl.UNSIGNED_BYTE,
+      data,
+    );
+    return texture;
+  } catch (error) {
+    gl.deleteTexture(texture);
+    throw error;
+  }
 }
 
 function createRenderTarget(gl: WebGL2RenderingContext): RenderTarget {
-  const texture = createTexture(gl, 1, 1, gl.RGBA8, gl.RGBA, null);
-  const framebuffer = gl.createFramebuffer();
-  if (!framebuffer) {
-    gl.deleteTexture(texture);
-    throw new Error("Unable to create Reference GL framebuffer");
+  let texture: WebGLTexture | null = null;
+  let framebuffer: WebGLFramebuffer | null = null;
+
+  try {
+    texture = createTexture(gl, 1, 1, gl.RGBA8, gl.RGBA, null);
+    framebuffer = gl.createFramebuffer();
+    if (!framebuffer) {
+      throw new Error("Unable to create Reference GL framebuffer");
+    }
+
+    gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
+    gl.framebufferTexture2D(
+      gl.FRAMEBUFFER,
+      gl.COLOR_ATTACHMENT0,
+      gl.TEXTURE_2D,
+      texture,
+      0,
+    );
+    if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) !== gl.FRAMEBUFFER_COMPLETE) {
+      throw new Error("Reference GL framebuffer is incomplete");
+    }
+
+    const target = {framebuffer, texture};
+    framebuffer = null;
+    texture = null;
+    return target;
+  } finally {
+    if (framebuffer) gl.deleteFramebuffer(framebuffer);
+    if (texture) gl.deleteTexture(texture);
   }
-  gl.bindFramebuffer(gl.FRAMEBUFFER, framebuffer);
-  gl.framebufferTexture2D(
-    gl.FRAMEBUFFER,
-    gl.COLOR_ATTACHMENT0,
-    gl.TEXTURE_2D,
-    texture,
-    0,
-  );
-  if (gl.checkFramebufferStatus(gl.FRAMEBUFFER) !== gl.FRAMEBUFFER_COMPLETE) {
-    gl.deleteFramebuffer(framebuffer);
-    gl.deleteTexture(texture);
-    throw new Error("Reference GL framebuffer is incomplete");
-  }
-  return {framebuffer, texture};
 }
 
 function resizeRenderTarget(
@@ -815,6 +869,24 @@ function resizeRenderTarget(
   );
 }
 
+function createCleanupStack() {
+  const callbacks: Array<() => void> = [];
+  let released = false;
+
+  return {
+    add(callback: () => void) {
+      callbacks.push(callback);
+    },
+    release() {
+      if (released) return;
+      released = true;
+      for (let index = callbacks.length - 1; index >= 0; index -= 1) {
+        callbacks[index]();
+      }
+    },
+  };
+}
+
 export function createReferenceHeroRenderer(
   canvas: HTMLCanvasElement,
 ): ReferenceHeroRenderer | null {
@@ -828,38 +900,67 @@ export function createReferenceHeroRenderer(
   });
   if (!gl) return null;
 
-  const programs = Object.fromEntries(
-    (Object.keys(REFERENCE_FRAGMENT_SHADERS) as PassName[]).map((name) => [
-      name,
-      createProgram(gl, REFERENCE_FRAGMENT_SHADERS[name]),
-    ]),
-  ) as Record<PassName, ProgramInfo>;
-  const vertexArray = gl.createVertexArray();
-  const vertexBuffer = gl.createBuffer();
-  if (!vertexArray || !vertexBuffer) throw new Error("Unable to create Reference GL geometry");
-  gl.bindVertexArray(vertexArray);
-  gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
-  gl.enableVertexAttribArray(0);
-  gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+  const resources = createCleanupStack();
 
-  const gradient = createTexture(
-    gl,
-    256,
-    154,
-    gl.RGBA8,
-    gl.RGBA,
-    createReferenceGradientData(256, 154),
-  );
-  const noise = createTexture(
-    gl,
-    256,
-    256,
-    gl.RG8,
-    gl.RG,
-    createReferenceNoiseData(256),
-  );
-  const targets = [createRenderTarget(gl), createRenderTarget(gl)] as const;
+  try {
+    const programs = {} as Record<PassName, ProgramInfo>;
+    for (const descriptor of PASS_DESCRIPTORS) {
+      const info = createProgram(gl, descriptor.fragmentSource);
+      programs[descriptor.name] = info;
+      resources.add(() => gl.deleteProgram(info.program));
+    }
+
+    const vertexArray = gl.createVertexArray();
+    if (!vertexArray) {
+      throw new Error("Unable to create Reference GL vertex array");
+    }
+    resources.add(() => gl.deleteVertexArray(vertexArray));
+
+    const vertexBuffer = gl.createBuffer();
+    if (!vertexBuffer) {
+      throw new Error("Unable to create Reference GL vertex buffer");
+    }
+    resources.add(() => gl.deleteBuffer(vertexBuffer));
+
+    gl.bindVertexArray(vertexArray);
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+    gl.bufferData(
+      gl.ARRAY_BUFFER,
+      new Float32Array([-1, -1, 3, -1, -1, 3]),
+      gl.STATIC_DRAW,
+    );
+    gl.enableVertexAttribArray(0);
+    gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+
+    const gradient = createTexture(
+      gl,
+      256,
+      154,
+      gl.RGBA8,
+      gl.RGBA,
+      createReferenceGradientData(256, 154),
+    );
+    resources.add(() => gl.deleteTexture(gradient));
+
+    const noise = createTexture(
+      gl,
+      256,
+      256,
+      gl.RG8,
+      gl.RG,
+      createReferenceNoiseData(256),
+    );
+    resources.add(() => gl.deleteTexture(noise));
+
+    const firstTarget = createRenderTarget(gl);
+    resources.add(() => gl.deleteTexture(firstTarget.texture));
+    resources.add(() => gl.deleteFramebuffer(firstTarget.framebuffer));
+
+    const secondTarget = createRenderTarget(gl);
+    resources.add(() => gl.deleteTexture(secondTarget.texture));
+    resources.add(() => gl.deleteFramebuffer(secondTarget.framebuffer));
+
+    const targets = [firstTarget, secondTarget] as const;
   let width = 1;
   let height = 1;
   let disposed = false;
@@ -943,15 +1044,7 @@ export function createReferenceHeroRenderer(
       if (disposed) return;
       disposed = true;
       scheduler.destroy();
-      targets.forEach((target) => {
-        gl.deleteFramebuffer(target.framebuffer);
-        gl.deleteTexture(target.texture);
-      });
-      Object.values(programs).forEach(({program}) => gl.deleteProgram(program));
-      gl.deleteTexture(gradient);
-      gl.deleteTexture(noise);
-      gl.deleteBuffer(vertexBuffer);
-      gl.deleteVertexArray(vertexArray);
+      resources.release();
     },
     drawStaticFrame() {
       lastTimestamp = null;
@@ -962,6 +1055,7 @@ export function createReferenceHeroRenderer(
       lastTimestamp = null;
     },
     resize(cssWidth, cssHeight) {
+      if (disposed) return;
       const size = getReferenceRenderSize(cssWidth, cssHeight);
       width = size.width;
       height = size.height;
@@ -978,81 +1072,26 @@ export function createReferenceHeroRenderer(
       pointerTarget.y = Math.max(0, Math.min(1, y));
     },
   };
+  } catch (error) {
+    resources.release();
+    throw error;
+  }
 }
 ```
 
-Add this cleanup helper above the exported factory:
+The implementation above is normative for resource ownership:
 
-```ts
-function createCleanupStack() {
-  const callbacks: Array<() => void> = [];
-  let released = false;
-
-  return {
-    add(callback: () => void) {
-      callbacks.push(callback);
-    },
-    release() {
-      if (released) return;
-      released = true;
-      for (let index = callbacks.length - 1; index >= 0; index -= 1) {
-        callbacks[index]();
-      }
-    },
-  };
-}
-```
-
-Inside `createReferenceHeroRenderer`, create `const resources =
-createCleanupStack()` immediately after the successful `webgl2` lookup. Replace
-the `Object.fromEntries` program creation with this registration loop:
-
-```ts
-const programs = {} as Record<PassName, ProgramInfo>;
-for (const name of Object.keys(REFERENCE_FRAGMENT_SHADERS) as PassName[]) {
-  const info = createProgram(gl, REFERENCE_FRAGMENT_SHADERS[name]);
-  programs[name] = info;
-  resources.add(() => gl.deleteProgram(info.program));
-}
-```
-
-Register every subsequently created resource immediately after successful
-creation:
-
-```ts
-resources.add(() => gl.deleteVertexArray(vertexArray));
-resources.add(() => gl.deleteBuffer(vertexBuffer));
-resources.add(() => gl.deleteTexture(gradient));
-resources.add(() => gl.deleteTexture(noise));
-targets.forEach((target) => {
-  resources.add(() => gl.deleteFramebuffer(target.framebuffer));
-  resources.add(() => gl.deleteTexture(target.texture));
-});
-```
-
-Wrap all creation after `resources` plus the returned controller in `try/catch`.
-The catch path must be exactly:
-
-```ts
-} catch (error) {
-  resources.release();
-  throw error;
-}
-```
-
-Replace the controller's individual GL delete calls with:
-
-```ts
-destroy() {
-  if (disposed) return;
-  disposed = true;
-  scheduler.destroy();
-  resources.release();
-},
-```
-
-This gives compile, link, geometry, texture, and framebuffer failures the same
-idempotent cleanup path as normal disposal.
+- `PASS_DESCRIPTORS` fixes compilation order explicitly as background,
+  vignette, sine, shatter, bokeh, and composite; do not derive it from object
+  key iteration.
+- `compileShader`, `createProgram`, `createTexture`, and `createRenderTarget`
+  retain local ownership until success and clean up partial failures locally.
+- The factory registers every transferred program, geometry object, texture,
+  and render target immediately on the LIFO cleanup stack. Register each target
+  texture before its framebuffer so reverse release deletes the framebuffer
+  first.
+- The factory catch path releases the stack before rethrowing, while `destroy()`
+  destroys the scheduler and releases the same idempotent stack exactly once.
 
 - [ ] **Step 4: Add and verify unsupported-context behavior**
 
