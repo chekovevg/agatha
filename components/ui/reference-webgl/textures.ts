@@ -41,38 +41,133 @@ const REFERENCE_BRUSH_STROKES: ReadonlyArray<BrushStroke> = [
   {centerAcross: -1.02, centerAlong: 1.45, intensity: 0.78, length: 0.48, phase: 3.4, width: 0.065},
 ] as const;
 
-function getBrushAmount(u: number, v: number, aspect: number) {
-  const directionX = Math.SQRT1_2;
-  const directionY = Math.SQRT1_2;
-  let remainingRose = 1;
+type IndexBounds = {maximum: number; minimum: number};
+type PixelBounds = {x: IndexBounds; y: IndexBounds};
+type StrokeRaster = PixelBounds & {
+  maximumAcross: number;
+  maximumBeyondEnd: number;
+};
 
-  for (const stroke of REFERENCE_BRUSH_STROKES) {
-    const pointX = u * aspect;
-    const along =
-      pointX * directionX + v * directionY - stroke.centerAlong;
-    const across =
-      -pointX * directionY + v * directionX - stroke.centerAcross;
-    const edgeWobble =
-      Math.sin(along * 31 + stroke.phase) * stroke.width * 0.11 +
-      Math.sin(along * 67 - stroke.phase * 1.7) * stroke.width * 0.035;
-    const widthVariation =
-      1 +
-      Math.sin(along * 18 + stroke.phase) * 0.13 +
-      Math.sin(along * 43 - stroke.phase) * 0.045;
-    const beyondEnd = Math.max(0, Math.abs(along) - stroke.length * 0.5);
-    const distance = Math.hypot(
-      across - edgeWobble,
-      beyondEnd * 1.35,
-    );
-    const radius = stroke.width * widthVariation;
-    const mask =
-      (1 - smoothstep(radius * 0.34, radius * 1.04, distance)) *
-      stroke.intensity;
+const DIRECTION = Math.SQRT1_2;
+const MAX_RADIUS_FACTOR = 1 + 0.13 + 0.045;
+const MAX_WOBBLE_FACTOR = 0.11 + 0.035;
+const OUTER_EDGE_FACTOR = 1.04;
+const END_DISTANCE_SCALE = 1.35;
 
-    remainingRose *= 1 - mask;
+function getIndexBounds(
+  minimumCoordinate: number,
+  maximumCoordinate: number,
+  size: number,
+): IndexBounds | null {
+  if (maximumCoordinate < 0 || minimumCoordinate > 1) return null;
+
+  if (size === 1) {
+    return minimumCoordinate <= 0.5 && maximumCoordinate >= 0.5
+      ? {maximum: 0, minimum: 0}
+      : null;
   }
 
-  return 1 - remainingRose;
+  const maximumIndex = size - 1;
+  return {
+    maximum: Math.min(
+      maximumIndex,
+      Math.ceil(maximumCoordinate * maximumIndex),
+    ),
+    minimum: Math.max(0, Math.floor(minimumCoordinate * maximumIndex)),
+  };
+}
+
+function getStrokeRaster(
+  stroke: BrushStroke,
+  aspect: number,
+  width: number,
+  height: number,
+): StrokeRaster | null {
+  const maximumRadius = stroke.width * MAX_RADIUS_FACTOR;
+  const maximumAcross =
+    maximumRadius * OUTER_EDGE_FACTOR + stroke.width * MAX_WOBBLE_FACTOR;
+  const maximumBeyondEnd =
+    (maximumRadius * OUTER_EDGE_FACTOR) / END_DISTANCE_SCALE;
+  const alongExtent = stroke.length * 0.5 + maximumBeyondEnd;
+  const cartesianExtent = (alongExtent + maximumAcross) * DIRECTION;
+  const centerX =
+    (stroke.centerAlong - stroke.centerAcross) * DIRECTION;
+  const centerY =
+    (stroke.centerAlong + stroke.centerAcross) * DIRECTION;
+  const x = getIndexBounds(
+    (centerX - cartesianExtent) / aspect,
+    (centerX + cartesianExtent) / aspect,
+    width,
+  );
+  const y = getIndexBounds(
+    centerY - cartesianExtent,
+    centerY + cartesianExtent,
+    height,
+  );
+
+  return x && y ? {maximumAcross, maximumBeyondEnd, x, y} : null;
+}
+
+function createReferenceBrushField(
+  width: number,
+  height: number,
+  aspect: number,
+) {
+  const remainingRose = new Float64Array(width * height);
+  remainingRose.fill(1);
+
+  for (const stroke of REFERENCE_BRUSH_STROKES) {
+    const raster = getStrokeRaster(stroke, aspect, width, height);
+    if (!raster) continue;
+
+    const halfLength = stroke.length * 0.5;
+    const secondaryPhase = stroke.phase * 1.7;
+
+    for (let y = raster.y.minimum; y <= raster.y.maximum; y += 1) {
+      const v = height === 1 ? 0.5 : y / (height - 1);
+
+      for (let x = raster.x.minimum; x <= raster.x.maximum; x += 1) {
+        const u = width === 1 ? 0.5 : x / (width - 1);
+        const pointX = u * aspect;
+        const along =
+          pointX * DIRECTION + v * DIRECTION - stroke.centerAlong;
+        const across =
+          -pointX * DIRECTION + v * DIRECTION - stroke.centerAcross;
+        const beyondEnd = Math.max(
+          0,
+          Math.abs(along) - halfLength,
+        );
+
+        if (
+          Math.abs(across) >= raster.maximumAcross ||
+          beyondEnd >= raster.maximumBeyondEnd
+        ) {
+          continue;
+        }
+
+        const edgeWobble =
+          Math.sin(along * 31 + stroke.phase) * stroke.width * 0.11 +
+          Math.sin(along * 67 - secondaryPhase) * stroke.width * 0.035;
+        const widthVariation =
+          1 +
+          Math.sin(along * 18 + stroke.phase) * 0.13 +
+          Math.sin(along * 43 - stroke.phase) * 0.045;
+        const distance = Math.hypot(
+          across - edgeWobble,
+          beyondEnd * END_DISTANCE_SCALE,
+        );
+        const radius = stroke.width * widthVariation;
+        const mask =
+          (1 - smoothstep(radius * 0.34, radius * OUTER_EDGE_FACTOR, distance)) *
+          stroke.intensity;
+        const index = y * width + x;
+
+        remainingRose[index] *= 1 - mask;
+      }
+    }
+  }
+
+  return remainingRose;
 }
 
 function createRandom(seed: number) {
@@ -98,12 +193,13 @@ export function createReferenceGradientData(width: number, height: number) {
   const peach = [255, 168, 125];
   const apricot = [255, 198, 150];
   const aspect = width / height;
+  const remainingRose = createReferenceBrushField(width, height, aspect);
 
   for (let y = 0; y < height; y += 1) {
     for (let x = 0; x < width; x += 1) {
       const u = width === 1 ? 0.5 : x / (width - 1);
       const v = height === 1 ? 0.5 : y / (height - 1);
-      const brush = getBrushAmount(u, v, aspect);
+      const brush = 1 - remainingRose[y * width + x];
       const ambientGlow = Math.exp(
         -(
           ((u - 0.52) * (u - 0.52)) / 0.42 +

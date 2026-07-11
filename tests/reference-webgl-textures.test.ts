@@ -57,6 +57,34 @@ describe("reference WebGL generated textures", () => {
     expect(new Set(first).size).toBeGreaterThan(8);
   });
 
+  it("bounds expensive brush rasterization work at the renderer texture size", () => {
+    const originalHypot = Math.hypot;
+    const originalSin = Math.sin;
+    let hypotCalls = 0;
+    let sinCalls = 0;
+
+    Math.hypot = (...values: number[]) => {
+      hypotCalls += 1;
+      return originalHypot(...values);
+    };
+    Math.sin = (value: number) => {
+      sinCalls += 1;
+      return originalSin(value);
+    };
+
+    try {
+      createReferenceGradientData(256, 154);
+    } finally {
+      Math.hypot = originalHypot;
+      Math.sin = originalSin;
+    }
+
+    expect(
+      sinCalls < 250_000 && hypotCalls < 100_000,
+      `expensive call budget exceeded: sin=${sinCalls}, hypot=${hypotCalls}`,
+    ).toBe(true);
+  });
+
   it("creates a high-contrast brush field without flooding the frame with highlights", () => {
     const luminance = getLuminanceField(128, 77);
     const low = quantile(luminance, 0.05);
