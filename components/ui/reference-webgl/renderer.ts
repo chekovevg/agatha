@@ -31,36 +31,73 @@ type RenderTarget = {
   framebuffer: WebGLFramebuffer;
   texture: WebGLTexture;
 };
+type RenderTargetIndex = 0 | 1;
+type TextureSource = "gradient" | "noise" | "target0" | "target1";
+type RuntimeUniform = "pointer" | "resolution" | "time";
+type PassDescriptor = {
+  name: PassName;
+  fragmentSource: string;
+  output: RenderTargetIndex | null;
+  textureBindings: ReadonlyArray<{
+    name: string;
+    source: TextureSource;
+    unit: 0 | 1;
+  }>;
+  runtimeUniforms: ReadonlyArray<RuntimeUniform>;
+};
 
 const PASS_DESCRIPTORS = [
   {
     name: "background",
     fragmentSource: REFERENCE_FRAGMENT_SHADERS.background,
+    output: 0,
+    textureBindings: [
+      {name: "u_gradient", source: "gradient", unit: 0},
+    ],
+    runtimeUniforms: [],
   },
   {
     name: "vignette",
     fragmentSource: REFERENCE_FRAGMENT_SHADERS.vignette,
+    output: 1,
+    textureBindings: [{name: "u_input", source: "target0", unit: 0}],
+    runtimeUniforms: ["pointer", "resolution"],
   },
   {
     name: "sine",
     fragmentSource: REFERENCE_FRAGMENT_SHADERS.sine,
+    output: 0,
+    textureBindings: [{name: "u_input", source: "target1", unit: 0}],
+    runtimeUniforms: ["resolution", "time"],
   },
   {
     name: "shatter",
     fragmentSource: REFERENCE_FRAGMENT_SHADERS.shatter,
+    output: 1,
+    textureBindings: [{name: "u_input", source: "target0", unit: 0}],
+    runtimeUniforms: ["resolution", "time"],
   },
   {
     name: "bokeh",
     fragmentSource: REFERENCE_FRAGMENT_SHADERS.bokeh,
+    output: 0,
+    textureBindings: [
+      {name: "u_input", source: "target1", unit: 0},
+      {name: "u_noise", source: "noise", unit: 1},
+    ],
+    runtimeUniforms: ["resolution", "time"],
   },
   {
     name: "composite",
     fragmentSource: REFERENCE_FRAGMENT_SHADERS.composite,
+    output: null,
+    textureBindings: [
+      {name: "u_input", source: "target0", unit: 0},
+      {name: "u_gradient", source: "gradient", unit: 1},
+    ],
+    runtimeUniforms: [],
   },
-] as const satisfies ReadonlyArray<{
-  name: PassName;
-  fragmentSource: string;
-}>;
+] as const satisfies ReadonlyArray<PassDescriptor>;
 
 function compileShader(
   gl: WebGL2RenderingContext,
@@ -307,6 +344,12 @@ export function createReferenceHeroRenderer(
     resources.add(() => gl.deleteFramebuffer(secondTarget.framebuffer));
 
     const targets = [firstTarget, secondTarget] as const;
+    const textureSources: Record<TextureSource, WebGLTexture> = {
+      gradient,
+      noise,
+      target0: firstTarget.texture,
+      target1: secondTarget.texture,
+    };
     let width = 1;
     let height = 1;
     let disposed = false;
@@ -326,17 +369,42 @@ export function createReferenceHeroRenderer(
       gl.uniform1i(program.uniform(name), unit);
     };
 
-    const renderPass = (
-      name: PassName,
-      output: RenderTarget | null,
-      configure: (program: ProgramInfo) => void,
-    ) => {
-      const info = programs[name];
+    const renderPass = (descriptor: PassDescriptor) => {
+      const info = programs[descriptor.name];
+      const output =
+        descriptor.output === null ? null : targets[descriptor.output];
       gl.bindFramebuffer(gl.FRAMEBUFFER, output?.framebuffer ?? null);
       gl.viewport(0, 0, width, height);
       gl.useProgram(info.program);
       gl.bindVertexArray(vertexArray);
-      configure(info);
+
+      for (const binding of descriptor.textureBindings) {
+        bindTexture(
+          info,
+          binding.name,
+          textureSources[binding.source],
+          binding.unit,
+        );
+      }
+
+      for (const uniform of descriptor.runtimeUniforms) {
+        switch (uniform) {
+          case "pointer":
+            gl.uniform2f(
+              info.uniform("u_pointer"),
+              pointerCurrent.x,
+              pointerCurrent.y,
+            );
+            break;
+          case "resolution":
+            gl.uniform2f(info.uniform("u_resolution"), width, height);
+            break;
+          case "time":
+            gl.uniform1f(info.uniform("u_time"), elapsed);
+            break;
+        }
+      }
+
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     };
 
@@ -352,38 +420,9 @@ export function createReferenceHeroRenderer(
       pointerCurrent.x += (pointerTarget.x - pointerCurrent.x) * 0.1;
       pointerCurrent.y += (pointerTarget.y - pointerCurrent.y) * 0.1;
 
-      renderPass("background", targets[0], (program) => {
-        bindTexture(program, "u_gradient", gradient, 0);
-      });
-      renderPass("vignette", targets[1], (program) => {
-        bindTexture(program, "u_input", targets[0].texture, 0);
-        gl.uniform2f(
-          program.uniform("u_pointer"),
-          pointerCurrent.x,
-          pointerCurrent.y,
-        );
-        gl.uniform2f(program.uniform("u_resolution"), width, height);
-      });
-      renderPass("sine", targets[0], (program) => {
-        bindTexture(program, "u_input", targets[1].texture, 0);
-        gl.uniform2f(program.uniform("u_resolution"), width, height);
-        gl.uniform1f(program.uniform("u_time"), elapsed);
-      });
-      renderPass("shatter", targets[1], (program) => {
-        bindTexture(program, "u_input", targets[0].texture, 0);
-        gl.uniform2f(program.uniform("u_resolution"), width, height);
-        gl.uniform1f(program.uniform("u_time"), elapsed);
-      });
-      renderPass("bokeh", targets[0], (program) => {
-        bindTexture(program, "u_input", targets[1].texture, 0);
-        bindTexture(program, "u_noise", noise, 1);
-        gl.uniform2f(program.uniform("u_resolution"), width, height);
-        gl.uniform1f(program.uniform("u_time"), elapsed);
-      });
-      renderPass("composite", null, (program) => {
-        bindTexture(program, "u_input", targets[0].texture, 0);
-        bindTexture(program, "u_gradient", gradient, 1);
-      });
+      for (const descriptor of PASS_DESCRIPTORS) {
+        renderPass(descriptor);
+      }
     };
 
     const scheduler = createSingleFrameScheduler(
