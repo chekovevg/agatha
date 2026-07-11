@@ -34,4 +34,13 @@ describe("reference WebGL shaders", () => {
     expect(REFERENCE_FRAGMENT_SHADERS.bokeh).toContain("GOLDEN_ANGLE");
     expect(REFERENCE_FRAGMENT_SHADERS.bokeh).toContain("u_noise");
   });
+
+  it("uses ordered smoothstep edges for shatter strength", () => {
+    expect(REFERENCE_FRAGMENT_SHADERS.shatter).not.toContain(
+      "smoothstep(0.48, 0.02, nearestDistance)",
+    );
+    expect(REFERENCE_FRAGMENT_SHADERS.shatter).toContain(
+      "float strength = (1.0 - smoothstep(0.02, 0.48, nearestDistance)) * 0.018;",
+    );
+  });
 });

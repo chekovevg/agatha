@@ -546,7 +546,7 @@ void main() {
       }
     }
   }
-  float strength = smoothstep(0.48, 0.02, nearestDistance) * 0.018;
+  float strength = (1.0 - smoothstep(0.02, 0.48, nearestDistance)) * 0.018;
   fragColor = texture(u_input, v_uv + normalize(nearest + 0.0001) * strength);
 }`,
   bokeh: `${header}
