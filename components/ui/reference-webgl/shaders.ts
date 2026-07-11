@@ -91,6 +91,8 @@ uniform vec2 u_resolution;
 uniform float u_time;
 const int ITERATIONS = 50;
 const float GOLDEN_ANGLE = 2.39996323;
+const float BOKEH_RADIUS = 0.036;
+const float BOKEH_HIGHLIGHT_WEIGHT = 96.0;
 void main() {
   float aspect = u_resolution.x / max(1.0, u_resolution.y);
   vec2 noiseUv = fract(v_uv * u_resolution / 256.0);
@@ -107,9 +109,10 @@ void main() {
     float radius = sqrt(sampleIndex / float(ITERATIONS));
     float angle = sampleIndex * GOLDEN_ANGLE;
     vec2 offset = rotation * vec2(cos(angle), sin(angle));
-    offset *= radius * vec2(0.085 / aspect, 0.085);
+    offset *= radius * vec2(BOKEH_RADIUS / aspect, BOKEH_RADIUS);
     vec3 sampleColor = texture(u_input, v_uv + offset).rgb;
-    vec3 sampleWeight = vec3(5.0) + pow(max(sampleColor, 0.0), vec3(9.0)) * 150.0;
+    vec3 sampleWeight = vec3(4.0) +
+      pow(max(sampleColor, 0.0), vec3(7.0)) * BOKEH_HIGHLIGHT_WEIGHT;
     accumulated += sampleColor * sampleWeight;
     weights += sampleWeight;
   }
@@ -121,11 +124,11 @@ uniform sampler2D u_gradient;
 void main() {
   vec3 base = texture(u_gradient, v_uv).rgb;
   vec3 bokeh = texture(u_input, v_uv).rgb;
-  vec3 multiplyBlend = base * mix(vec3(1.0), bokeh, 0.34);
+  vec3 screenBlend = vec3(1.0) - (vec3(1.0) - base) * (vec3(1.0) - bokeh);
   vec3 apricot = vec3(1.0, 0.79, 0.62);
   float luminance = dot(bokeh, vec3(0.299, 0.587, 0.114));
-  vec3 color = mix(base, multiplyBlend, 0.56);
-  color = mix(color, apricot, smoothstep(0.56, 0.92, luminance) * 0.18);
+  vec3 color = mix(base, screenBlend, 0.32);
+  color = mix(color, apricot, smoothstep(0.62, 0.9, luminance) * 0.1);
   fragColor = vec4(color, 1.0);
 }`,
 } as const;

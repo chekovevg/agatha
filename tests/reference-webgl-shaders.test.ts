@@ -43,4 +43,22 @@ describe("reference WebGL shaders", () => {
       "float strength = (1.0 - smoothstep(0.02, 0.48, nearestDistance)) * 0.018;",
     );
   });
+
+  it("keeps brush silhouettes through compact bokeh and screen composite", () => {
+    expect(REFERENCE_FRAGMENT_SHADERS.bokeh).toContain(
+      "const float BOKEH_RADIUS = 0.036;",
+    );
+    expect(REFERENCE_FRAGMENT_SHADERS.bokeh).toContain(
+      "const float BOKEH_HIGHLIGHT_WEIGHT = 96.0;",
+    );
+    expect(REFERENCE_FRAGMENT_SHADERS.bokeh).toContain(
+      "vec2(BOKEH_RADIUS / aspect, BOKEH_RADIUS)",
+    );
+    expect(REFERENCE_FRAGMENT_SHADERS.composite).toContain(
+      "vec3 screenBlend = vec3(1.0) - (vec3(1.0) - base) * (vec3(1.0) - bokeh);",
+    );
+    expect(REFERENCE_FRAGMENT_SHADERS.composite).toContain(
+      "vec3 color = mix(base, screenBlend, 0.32);",
+    );
+  });
 });
