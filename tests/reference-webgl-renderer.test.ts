@@ -65,6 +65,11 @@ type FakeWebGlRecords = {
     texture: number | null;
     width: number;
   }>;
+  texParameteriCalls: Array<{
+    pname: number;
+    texture: number | null;
+    value: number;
+  }>;
   uniform1iCalls: Array<{
     name: string;
     program: PassName | "unknown";
@@ -122,11 +127,13 @@ function createFakeWebGlHarness(options: FakeWebGlOptions = {}) {
       vertexArrays: {created: [], deleted: []},
     },
     texImage2DCalls: [],
+    texParameteriCalls: [],
     uniform1iCalls: [],
     viewportCalls: [],
   };
   const constants = {
     ARRAY_BUFFER: 0x8892,
+    CLAMP_TO_EDGE: 0x812f,
     COLOR_ATTACHMENT0: 0x8ce0,
     COMPILE_STATUS: 0x8b81,
     FLOAT: 0x1406,
@@ -316,7 +323,13 @@ function createFakeWebGlHarness(options: FakeWebGlOptions = {}) {
         width,
       });
     },
-    texParameteri() {},
+    texParameteri(_target: number, pname: number, value: number) {
+      records.texParameteriCalls.push({
+        pname,
+        texture: boundTextures.get(activeTextureUnit)?.id ?? null,
+        value,
+      });
+    },
     uniform1f() {},
     uniform1i(location: FakeUniformLocation | null, value: number) {
       if (!location) return;
@@ -556,6 +569,56 @@ describe("reference WebGL renderer", () => {
         internalFormat: harness.gl.RGBA8,
         texture: 4,
       }),
+    ]);
+
+    renderer.destroy();
+  });
+
+  it("clamps the gradient and render targets while repeating only noise", () => {
+    const harness = createFakeWebGlHarness();
+    const renderer = createRenderer(harness);
+    const wrapParameters = new Set<number>([
+      harness.gl.TEXTURE_WRAP_S,
+      harness.gl.TEXTURE_WRAP_T,
+    ]);
+
+    expect(
+      harness.records.texParameteriCalls.filter(({pname}) =>
+        wrapParameters.has(pname),
+      ),
+    ).toEqual([
+      {
+        pname: harness.gl.TEXTURE_WRAP_S,
+        texture: 1,
+        value: harness.gl.CLAMP_TO_EDGE,
+      },
+      {
+        pname: harness.gl.TEXTURE_WRAP_T,
+        texture: 1,
+        value: harness.gl.CLAMP_TO_EDGE,
+      },
+      {pname: harness.gl.TEXTURE_WRAP_S, texture: 2, value: harness.gl.REPEAT},
+      {pname: harness.gl.TEXTURE_WRAP_T, texture: 2, value: harness.gl.REPEAT},
+      {
+        pname: harness.gl.TEXTURE_WRAP_S,
+        texture: 3,
+        value: harness.gl.CLAMP_TO_EDGE,
+      },
+      {
+        pname: harness.gl.TEXTURE_WRAP_T,
+        texture: 3,
+        value: harness.gl.CLAMP_TO_EDGE,
+      },
+      {
+        pname: harness.gl.TEXTURE_WRAP_S,
+        texture: 4,
+        value: harness.gl.CLAMP_TO_EDGE,
+      },
+      {
+        pname: harness.gl.TEXTURE_WRAP_T,
+        texture: 4,
+        value: harness.gl.CLAMP_TO_EDGE,
+      },
     ]);
 
     renderer.destroy();

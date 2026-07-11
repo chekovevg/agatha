@@ -171,6 +171,7 @@ function createTexture(
   internalFormat: number,
   format: number,
   data: Uint8Array | null,
+  wrapMode: number,
 ) {
   const texture = gl.createTexture();
   if (!texture) throw new Error("Unable to create Reference GL texture");
@@ -180,8 +181,8 @@ function createTexture(
     gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, wrapMode);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, wrapMode);
     gl.texImage2D(
       gl.TEXTURE_2D,
       0,
@@ -205,7 +206,15 @@ function createRenderTarget(gl: WebGL2RenderingContext): RenderTarget {
   let framebuffer: WebGLFramebuffer | null = null;
 
   try {
-    texture = createTexture(gl, 1, 1, gl.RGBA8, gl.RGBA, null);
+    texture = createTexture(
+      gl,
+      1,
+      1,
+      gl.RGBA8,
+      gl.RGBA,
+      null,
+      gl.CLAMP_TO_EDGE,
+    );
     framebuffer = gl.createFramebuffer();
     if (!framebuffer) {
       throw new Error("Unable to create Reference GL framebuffer");
@@ -323,6 +332,7 @@ export function createReferenceHeroRenderer(
       gl.RGBA8,
       gl.RGBA,
       createReferenceGradientData(256, 154),
+      gl.CLAMP_TO_EDGE,
     );
     resources.add(() => gl.deleteTexture(gradient));
 
@@ -333,6 +343,7 @@ export function createReferenceHeroRenderer(
       gl.RG8,
       gl.RG,
       createReferenceNoiseData(256),
+      gl.REPEAT,
     );
     resources.add(() => gl.deleteTexture(noise));
 

@@ -699,22 +699,6 @@ select {
     opacity: 1;
   }
 
-  @media (width < 600px) {
-    .hero-background-switcher {
-      bottom: 12px;
-      left: 12px;
-      max-width: calc(100vw - 24px);
-      overflow-x: auto;
-      right: auto;
-    }
-
-    .hero-background-switcher-button {
-      flex: 0 0 auto;
-      font-size: 11px;
-      padding: 8px 9px;
-    }
-  }
-
   @media (prefers-reduced-motion: reduce) {
     .reference-webgl-hero-canvas {
       transition: none;
@@ -973,6 +957,20 @@ select {
   }
 
   @media (width < 600px) {
+    .hero-background-switcher {
+      bottom: 12px;
+      left: 12px;
+      max-width: calc(100vw - 24px);
+      overflow-x: auto;
+      right: auto;
+    }
+
+    .hero-background-switcher-button {
+      flex: 0 0 auto;
+      font-size: 11px;
+      padding: 8px 9px;
+    }
+
     .ascii-hero-reveal {
       -webkit-mask-image: radial-gradient(
         circle 280px at var(--ascii-x) var(--ascii-y),
