@@ -233,6 +233,37 @@ describe("home hero", () => {
     expect(html).toContain("<canvas");
   });
 
+  it("keeps Reference GL as an opt-in fourth hero variant", () => {
+    const switcherUrl = new URL(
+      "../components/ui/HomeHeroBackground.tsx",
+      import.meta.url,
+    );
+    const componentUrl = new URL(
+      "../components/ui/ReferenceWebGLHeroBackground.tsx",
+      import.meta.url,
+    );
+    const componentExists = existsSync(componentUrl);
+    const switcherSource = readFileSync(switcherUrl, "utf8");
+
+    expect(componentExists).toBe(true);
+    expect(switcherSource).toContain('"reference-webgl"');
+    expect(switcherSource).toContain("<ReferenceWebGLHeroBackground />");
+    expect(switcherSource).toContain("Legacy GL");
+    expect(switcherSource).toContain("Reference GL");
+    expect(switcherSource).toContain("Canvas");
+    expect(switcherSource).toContain("ASCII");
+
+    if (!componentExists) return;
+    const componentSource = readFileSync(componentUrl, "utf8");
+    expect(componentSource).toContain('data-hero-background="reference-webgl"');
+    expect(componentSource).toContain("data-reference-webgl-status");
+    expect(componentSource).toContain('"./reference-webgl/renderer"');
+    expect(componentSource).toContain("IntersectionObserver");
+    expect(componentSource).toContain("prefers-reduced-motion: reduce");
+    expect(componentSource).toContain("webglcontextlost");
+    expect(componentSource).toContain("webglcontextrestored");
+  });
+
   it("guards the WebGL animation loop before disposing GL resources", () => {
     const source = readFileSync(
       new URL("../components/ui/WebGLHeroBackground.tsx", import.meta.url),

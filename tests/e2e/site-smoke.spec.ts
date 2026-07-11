@@ -82,3 +82,46 @@ test("contact network failure is announced and remains retryable", async ({
   );
   await expect(page.getByRole("button", {name: "Send message"})).toBeEnabled();
 });
+
+test("reference WebGL hero is opt-in and renders at half resolution", async ({
+  page,
+}) => {
+  const pageErrors: string[] = [];
+  page.on("pageerror", (error) => pageErrors.push(error.message));
+
+  const response = await page.goto(
+    "/?hero=reference-webgl&heroCompare=1&ascii=0",
+  );
+  expect(response?.status()).toBe(200);
+
+  const referenceButton = page.getByRole("button", {name: "Reference GL"});
+  await expect(referenceButton).toHaveAttribute("aria-pressed", "true");
+
+  const canvas = page.locator(".reference-webgl-hero-canvas");
+  await expect(canvas).toHaveCount(1);
+  await expect(canvas).toHaveAttribute("data-reference-webgl-status", "ready");
+
+  const dimensions = await canvas.evaluate((element) => {
+    const htmlCanvas = element as HTMLCanvasElement;
+    const rect = htmlCanvas.getBoundingClientRect();
+    return {
+      cssHeight: rect.height,
+      cssWidth: rect.width,
+      height: htmlCanvas.height,
+      width: htmlCanvas.width,
+    };
+  });
+  expect(
+    Math.abs(dimensions.width - Math.round(dimensions.cssWidth * 0.5)),
+  ).toBeLessThanOrEqual(1);
+  expect(
+    Math.abs(dimensions.height - Math.round(dimensions.cssHeight * 0.5)),
+  ).toBeLessThanOrEqual(1);
+  expect(pageErrors).toEqual([]);
+
+  await page.goto("/?ascii=0");
+  await expect(
+    page.locator('[data-home-hero-background-switcher="canvas"]'),
+  ).toHaveCount(1);
+  await expect(page.locator(".reference-webgl-hero-bg")).toHaveCount(0);
+});

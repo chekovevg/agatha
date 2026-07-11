@@ -3,19 +3,17 @@
 import {useEffect, useState} from "react";
 
 import {AsciiHeroReveal} from "@/components/ui/AsciiHeroReveal";
+import {ReferenceWebGLHeroBackground} from "@/components/ui/ReferenceWebGLHeroBackground";
 import {WatercolorHeroBackground} from "@/components/ui/WatercolorHeroBackground";
 import {WebGLHeroBackground} from "@/components/ui/WebGLHeroBackground";
 
-type HeroBackgroundVariant = "canvas" | "webgl";
+type HeroBackgroundVariant = "canvas" | "webgl" | "reference-webgl";
 
 function readHeroVariant(): HeroBackgroundVariant {
-  if (typeof window === "undefined") {
-    return "canvas";
-  }
+  if (typeof window === "undefined") return "canvas";
 
-  return new URLSearchParams(window.location.search).get("hero") === "webgl"
-    ? "webgl"
-    : "canvas";
+  const value = new URLSearchParams(window.location.search).get("hero");
+  return value === "webgl" || value === "reference-webgl" ? value : "canvas";
 }
 
 function readHeroCompareEnabled() {
@@ -33,7 +31,10 @@ function readAsciiEnabled() {
 
   const searchParams = new URLSearchParams(window.location.search);
 
-  if (searchParams.get("hero") === "webgl") {
+  if (
+    searchParams.get("hero") === "webgl" ||
+    searchParams.get("hero") === "reference-webgl"
+  ) {
     return false;
   }
 
@@ -75,8 +76,8 @@ export function HomeHeroBackground() {
 
     const url = new URL(window.location.href);
 
-    if (nextVariant === "webgl") {
-      url.searchParams.set("hero", "webgl");
+    if (nextVariant !== "canvas") {
+      url.searchParams.set("hero", nextVariant);
       url.searchParams.delete("ascii");
     } else {
       url.searchParams.delete("hero");
@@ -115,10 +116,12 @@ export function HomeHeroBackground() {
       data-home-hero-background-switcher={
         variant === "canvas" && isAsciiEnabled ? "ascii" : variant
       }
-      data-webgl-preview={variant === "webgl" ? "enabled" : "available"}
+      data-webgl-preview={variant === "canvas" ? "available" : "enabled"}
     >
       {variant === "webgl" ? (
         <WebGLHeroBackground />
+      ) : variant === "reference-webgl" ? (
+        <ReferenceWebGLHeroBackground />
       ) : (
         <>
           <WatercolorHeroBackground />
@@ -143,7 +146,16 @@ export function HomeHeroBackground() {
             aria-pressed={variant === "webgl"}
             onClick={() => selectVariant("webgl")}
           >
-            WebGL
+            Legacy GL
+          </button>
+          <button
+            type="button"
+            className="hero-background-switcher-button"
+            data-active={variant === "reference-webgl"}
+            aria-pressed={variant === "reference-webgl"}
+            onClick={() => selectVariant("reference-webgl")}
+          >
+            Reference GL
           </button>
           <button
             type="button"
