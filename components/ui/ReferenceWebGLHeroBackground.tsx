@@ -41,7 +41,7 @@ export function ReferenceWebGLHeroBackground() {
 
       if (reducedMotion.matches) {
         renderer.pause();
-        renderer.setPointer(0.5, 0.5);
+        renderer.centerPointer();
         if (!staticFrameDrawn) {
           renderer.drawStaticFrame();
           staticFrameDrawn = true;
@@ -83,6 +83,8 @@ export function ReferenceWebGLHeroBackground() {
         reconcileMotionState();
       } catch {
         if (!disposed && currentGeneration === generation) {
+          renderer?.destroy();
+          renderer = null;
           importStarted = false;
           setStatus("error");
         }

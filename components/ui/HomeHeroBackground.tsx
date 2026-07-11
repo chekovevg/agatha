@@ -129,7 +129,11 @@ export function HomeHeroBackground() {
         </>
       )}
       {isCompareEnabled ? (
-        <div className="hero-background-switcher" aria-label="Hero background">
+        <div
+          className="hero-background-switcher"
+          role="group"
+          aria-label="Hero background"
+        >
           <button
             type="button"
             className="hero-background-switcher-button"

@@ -94,13 +94,13 @@ test.describe("reference WebGL lifecycle probe", () => {
   test("reduced motion stays static through input and resize, then resumes", async ({
     page,
   }) => {
-    await page.emulateMedia({reducedMotion: "reduce"});
     await installReferenceWebGLProbe(page, {intersectionMode: "controlled"});
     await page.goto(REFERENCE_HERO_URL);
 
     const canvas = page.locator(".reference-webgl-hero-canvas");
     await expect(canvas).toHaveAttribute("data-reference-webgl-status", "ready");
-    await expectDrawsStable(page);
+    const readyDraws = (await readReferenceWebGLProbe(page)).drawCount;
+    await expectDrawGrowth(page, readyDraws);
 
     await canvas.evaluate((element) => {
       const rect = element.getBoundingClientRect();
@@ -111,13 +111,43 @@ test.describe("reference WebGL lifecycle probe", () => {
         }),
       );
     });
+    await expect
+      .poll(async () => {
+        const pointer = (await readReferenceWebGLProbe(page)).pointerUniforms
+          .filter(({name}) => name === "u_pointer")
+          .at(-1);
+        return pointer
+          ? Math.abs(pointer.x - 0.5) + Math.abs(pointer.y - 0.5)
+          : 0;
+      })
+      .toBeGreaterThan(0.05);
+
+    await page.emulateMedia({reducedMotion: "reduce"});
     await expectDrawsStable(page);
     const reducedPointer = (await readReferenceWebGLProbe(page)).pointerUniforms
       .filter(({name}) => name === "u_pointer")
       .at(-1);
     expect(reducedPointer).toBeDefined();
-    expect(reducedPointer?.x).toBeCloseTo(0.5, 5);
-    expect(reducedPointer?.y).toBeCloseTo(0.5, 5);
+    expect(reducedPointer?.x).toBe(0.5);
+    expect(reducedPointer?.y).toBe(0.5);
+
+    await canvas.evaluate((element) => {
+      const rect = element.getBoundingClientRect();
+      window.dispatchEvent(
+        new PointerEvent("pointermove", {
+          clientX: rect.left + rect.width * 0.9,
+          clientY: rect.top + rect.height * 0.8,
+        }),
+      );
+    });
+    await expectDrawsStable(page);
+    const pointerAfterReducedInput = (
+      await readReferenceWebGLProbe(page)
+    ).pointerUniforms
+      .filter(({name}) => name === "u_pointer")
+      .at(-1);
+    expect(pointerAfterReducedInput?.x).toBe(0.5);
+    expect(pointerAfterReducedInput?.y).toBe(0.5);
 
     const beforeResize = (await readReferenceWebGLProbe(page)).drawCount;
     await page.setViewportSize({width: 1060, height: 780});
@@ -200,6 +230,35 @@ test.describe("reference WebGL lifecycle probe", () => {
       expect(pageErrors).toEqual([]);
     });
   }
+
+  test("cleans owned resources when the first render-target resize fails", async ({
+    page,
+  }) => {
+    const pageErrors: string[] = [];
+    page.on("pageerror", (error) => pageErrors.push(error.message));
+    await installReferenceWebGLProbe(page, {
+      failFirstRenderTargetResize: true,
+      intersectionMode: "controlled",
+    });
+    await page.goto(REFERENCE_HERO_URL);
+
+    const canvas = page.locator(".reference-webgl-hero-canvas");
+    await expect(canvas).toHaveAttribute("data-reference-webgl-status", "error");
+    await expect(canvas).toHaveCSS("opacity", "0");
+    await expectFallbackVisible(page);
+
+    const {deletions} = await readReferenceWebGLProbe(page);
+    for (const resource of [
+      "buffer",
+      "framebuffer",
+      "program",
+      "texture",
+      "vertexArray",
+    ] as const) {
+      expect(deletions[resource], resource).toBeGreaterThan(0);
+    }
+    expect(pageErrors).toEqual([]);
+  });
 
   test("initializes without IntersectionObserver", async ({page}) => {
     const pageErrors: string[] = [];

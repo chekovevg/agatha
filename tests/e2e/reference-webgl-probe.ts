@@ -1,6 +1,7 @@
 import type {Page} from "playwright/test";
 
 export type ReferenceWebGLProbeOptions = {
+  failFirstRenderTargetResize?: boolean;
   intersectionMode?: "controlled" | "missing" | "native";
   webglMode?: "normal" | "null" | "throw";
 };
@@ -35,7 +36,7 @@ export async function installReferenceWebGLProbe(
   options: ReferenceWebGLProbeOptions = {},
 ) {
   await page.addInitScript(
-    ({intersectionMode, webglMode}) => {
+    ({failFirstRenderTargetResize, intersectionMode, webglMode}) => {
       const selector = ".reference-webgl-hero-canvas";
       const metrics = {
         clearedScrollTimers: 0,
@@ -67,6 +68,7 @@ export async function installReferenceWebGLProbe(
       >();
       let nextHeldTimer = -1;
       let referenceIntersectionObserverMasked = false;
+      let renderTargetResizeFailed = false;
 
       const restoreReferenceIntersectionObserver = () => {
         if (!referenceIntersectionObserverMasked) return;
@@ -204,6 +206,30 @@ export async function installReferenceWebGLProbe(
       } as typeof nativeGetContext;
 
       const glPrototype = WebGL2RenderingContext.prototype;
+      const nativeTexImage2D = glPrototype.texImage2D;
+      glPrototype.texImage2D = function (
+        this: WebGL2RenderingContext,
+        ...args: unknown[]
+      ) {
+        const width = args[3];
+        const height = args[4];
+        const pixels = args[8];
+        if (
+          failFirstRenderTargetResize &&
+          !renderTargetResizeFailed &&
+          referenceContexts.has(this) &&
+          args.length >= 9 &&
+          typeof width === "number" &&
+          width > 1 &&
+          typeof height === "number" &&
+          height > 1 &&
+          pixels === null
+        ) {
+          renderTargetResizeFailed = true;
+          throw new Error("Reference WebGL probe render-target resize failure");
+        }
+        return Reflect.apply(nativeTexImage2D, this, args);
+      } as typeof nativeTexImage2D;
       const nativeDrawArrays = glPrototype.drawArrays;
       glPrototype.drawArrays = function (mode, first, count) {
         if (referenceContexts.has(this)) metrics.drawCount += 1;
@@ -423,6 +449,8 @@ export async function installReferenceWebGLProbe(
       };
     },
     {
+      failFirstRenderTargetResize:
+        options.failFirstRenderTargetResize ?? false,
       intersectionMode: options.intersectionMode ?? "native",
       webglMode: options.webglMode ?? "normal",
     },

@@ -135,7 +135,8 @@ test.describe("reference WebGL variant contract", () => {
     await page.setViewportSize({width: 390, height: 844});
     await page.goto(REFERENCE_HERO_URL);
 
-    const switcher = page.locator(".hero-background-switcher");
+    const switcher = page.getByRole("group", {name: "Hero background"});
+    await expect(switcher).toHaveCount(1);
     const buttons = switcher.getByRole("button");
     await expect(buttons).toHaveText([...SWITCHER_BUTTON_NAMES]);
     await expectOnlyButtonActive(buttons, 2);

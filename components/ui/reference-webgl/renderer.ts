@@ -14,6 +14,7 @@ import {
 export {createSingleFrameScheduler, getReferenceRenderSize};
 
 export type ReferenceHeroRenderer = {
+  centerPointer(): void;
   destroy(): void;
   drawStaticFrame(): void;
   pause(): void;
@@ -432,6 +433,12 @@ export function createReferenceHeroRenderer(
     );
 
     return {
+      centerPointer() {
+        pointerTarget.x = 0.5;
+        pointerTarget.y = 0.5;
+        pointerCurrent.x = 0.5;
+        pointerCurrent.y = 0.5;
+      },
       destroy() {
         if (disposed) return;
         disposed = true;
