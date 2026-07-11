@@ -47,6 +47,7 @@ describe("Resend email sender", () => {
       1,
       expect.objectContaining({
         from: "Agatha Music <hello@agathamusic.com>",
+        to: ["agathagurko@gmail.com", "agatha@example.com"],
         replyTo: "student@example.com",
       }),
     );
@@ -55,6 +56,50 @@ describe("Resend email sender", () => {
       expect.objectContaining({
         from: "Agatha Music <hello@agathamusic.com>",
         to: "student@example.com",
+      }),
+    );
+  });
+
+  it("sends contact notifications to Agatha's Gmail address by default", async () => {
+    delete process.env.CONTACT_TO_EMAIL;
+    const {sendContactEmails} = await import("@/lib/resend");
+
+    const result = await sendContactEmails(contactInput());
+
+    expect(result.skipped).toBe(false);
+    expect(sendEmail).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        to: ["agathagurko@gmail.com"],
+      }),
+    );
+  });
+
+  it("does not duplicate Agatha's Gmail address when CONTACT_TO_EMAIL matches it", async () => {
+    process.env.CONTACT_TO_EMAIL = "AGATHAGURKO@gmail.com";
+    const {sendContactEmails} = await import("@/lib/resend");
+
+    const result = await sendContactEmails(contactInput());
+
+    expect(result.skipped).toBe(false);
+    expect(sendEmail).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        to: ["agathagurko@gmail.com"],
+      }),
+    );
+  });
+
+  it("sends Cal.com webhook notifications to Agatha and the env test recipient", async () => {
+    const {sendCalWebhookNotification} = await import("@/lib/resend");
+
+    const result = await sendCalWebhookNotification({event: "booking.created"});
+
+    expect(result.skipped).toBe(false);
+    expect(sendEmail).toHaveBeenCalledWith(
+      expect.objectContaining({
+        subject: "New Cal.com booking event",
+        to: ["agathagurko@gmail.com", "agatha@example.com"],
       }),
     );
   });

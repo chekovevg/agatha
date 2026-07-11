@@ -22,7 +22,7 @@ adapts, or intentionally does not copy.
 | 1 | Header | Reused structurally as the Agatha header. |
 | 2 | Hero | Reused as the Agatha hero with music-teacher copy and watercolor canvas. |
 | 3 | Large image/news link after Hero | Not reused for v1. Do not copy to home. |
-| 4 | Models list | Not reused on home. The same list-row logic is adapted on `/[locale]/classes`. |
+| 4 | Models list | Not reused on home. The same list-row logic is adapted on `/classes`. |
 | 5 | Manifesto copy | Reused as `Music becomes possible...` plus the teaching subtitle. |
 | 6 | Our Values | Reused as `My Values`. Microsoft scroll-sensitive value switching is intentionally simplified to hover/focus/click text switching. |
 | 7 | Join Us photo zoom block | Not reused for v1. Keep as a possible future pattern only. |

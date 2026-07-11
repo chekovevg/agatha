@@ -89,7 +89,7 @@ Do not auto-load third-party video embeds before user interaction.
 - Do not edit legal production text.
 - Do not add a CMS, database, auth, payments or custom calendar.
 - Do not add dependencies.
-- Preserve multilingual routing for `en`, `de`, and `ru`.
+- Preserve multilingual routing for `en` and `de`.
 - Keep content separation in `content/`.
 
 ## Verification
@@ -106,7 +106,7 @@ npm.cmd run build
 Browser QA:
 
 - `/` redirects to `/en`.
-- `/en`, `/de`, `/ru` render the new home.
+- `/en`, `/de` render the new home.
 - `/en/classes`, `/en/about`, `/en/media` render.
 - `/en/book` still renders booking.
 - `/impressum` and `/datenschutz` still render.

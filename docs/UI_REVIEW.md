@@ -32,7 +32,7 @@ trustworthy teacher profile.
   a lesson path, or book a trial class.
 - [ ] Cards/panels do not repeat the same generic pattern without a reason.
 - [ ] The about page carries biography, method, reviews, FAQ and contact
-  without relying on the removed `/[locale]/full` route.
+  without relying on the removed `/full` route.
 - [ ] Header links match the actual page structure and do not point to missing
   sections.
 

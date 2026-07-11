@@ -1,6 +1,6 @@
 # Agatha Music
 
-Static-first multilingual Next.js site for a music teacher brand. The v1 site
+Static-first English Next.js site for a music teacher brand. The v1 site
 is a marketing and booking surface: lessons, method, about, media, reviews,
 booking, FAQ, contact, and German legal pages.
 
@@ -9,7 +9,6 @@ booking, FAQ, contact, and German legal pages.
 - Next.js 16 App Router
 - TypeScript
 - Tailwind CSS 4
-- `next-intl` for `en`, `de`, `ru`
 - Resend for contact email
 - Cal.com for booking
 - Vercel Analytics and Speed Insights
@@ -27,17 +26,19 @@ npm.cmd run dev
 Open:
 
 ```text
-http://127.0.0.1:3000/en
+http://127.0.0.1:3000
 ```
 
 ## Checks
 
 ```powershell
-npm.cmd run typecheck
-npm.cmd run lint
-npm.cmd test
-npm.cmd run build
+npm.cmd run check
+npm.cmd run e2e
 ```
+
+`check` runs typecheck, ESLint, Vitest, and the production build. `e2e` then
+runs the Playwright smoke suite against a production server on port 3101.
+GitHub Actions runs the same commands after a push or pull request.
 
 ## Environment
 
@@ -50,7 +51,6 @@ Required for production-like behavior:
 NEXT_PUBLIC_SITE_URL=
 NEXT_PUBLIC_CAL_LINK=
 RESEND_API_KEY=
-CONTACT_TO_EMAIL=
 CONTACT_FROM_EMAIL=
 ```
 
@@ -60,8 +60,20 @@ Optional public links:
 NEXT_PUBLIC_PREPLY_URL=
 NEXT_PUBLIC_INSTAGRAM_URL=
 NEXT_PUBLIC_WHATSAPP_URL=
+CONTACT_TO_EMAIL=
 CAL_WEBHOOK_SECRET=
 ```
+
+If `CONTACT_TO_EMAIL` is omitted, contact and Cal.com notification emails are
+sent to `agathagurko@gmail.com`. If it is set, notifications are sent to both
+`agathagurko@gmail.com` and `CONTACT_TO_EMAIL`.
+
+The contact rate limiter is intentionally process-local for v1. Use Vercel
+Firewall or distributed storage if production abuse requires a global limit.
+
+`npm audit` currently reports the PostCSS advisory inherited through Next.js.
+The suggested forced fix downgrades Next.js to 9.x and must not be applied;
+track a supported Next.js release that updates its bundled PostCSS instead.
 
 ## Launch Blockers
 
@@ -72,16 +84,15 @@ Do not publish as production until these are resolved:
 - Resend uses a verified custom-domain sender instead of
   `onboarding@resend.dev`.
 - Placeholder SVG media is replaced or explicitly accepted for beta.
-- Optional Preply, Instagram, and WhatsApp URLs are added if they should be
-  displayed.
+- Optional Preply and Instagram URLs are added if they should be displayed.
 
 Already verified for beta infrastructure:
 
 - GitHub HTTPS push works and `main` is connected to Vercel.
 - Production URL: `https://agatha-pied.vercel.app`.
-- `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_CAL_LINK`, `RESEND_API_KEY`,
-  `CONTACT_TO_EMAIL`, and `CONTACT_FROM_EMAIL` are configured in Vercel.
-- `/en/book` renders Cal.com booking.
+- `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_CAL_LINK`, `RESEND_API_KEY`, and
+  `CONTACT_FROM_EMAIL` are configured in Vercel.
+- `/book` renders Cal.com booking.
 - Contact form sends notification and auto-reply emails through Resend using
   the temporary `onboarding@resend.dev` sender.
 

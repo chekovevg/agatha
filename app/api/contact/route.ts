@@ -1,12 +1,20 @@
 import {NextResponse} from "next/server";
 
 import {sendContactEmails} from "@/lib/resend";
+import {createRateLimiter} from "@/lib/rate-limit";
+import {readJsonBody} from "@/lib/request-json";
 import {contactSchema} from "@/lib/validators";
 
-const submissions = new Map<string, number[]>();
+const MAX_CONTACT_BODY_BYTES = 16_384;
 const WINDOW_MS = 60_000;
 const MAX_REQUESTS = 5;
+const MAX_RATE_LIMIT_KEYS = 10_000;
 const MIN_FORM_FILL_MS = 2_500;
+const rateLimiter = createRateLimiter({
+  windowMs: WINDOW_MS,
+  maxRequests: MAX_REQUESTS,
+  maxKeys: MAX_RATE_LIMIT_KEYS,
+});
 
 const MARKETING_SPAM_SNIPPETS = [
   "attirer plus d eleves",
@@ -21,19 +29,6 @@ const MARKETING_SPAM_SNIPPETS = [
   "seo services",
   "website traffic",
 ];
-
-function isRateLimited(ip: string, now = Date.now()) {
-  const previous = submissions.get(ip) ?? [];
-  const recent = previous.filter((timestamp) => now - timestamp < WINDOW_MS);
-
-  if (recent.length >= MAX_REQUESTS) {
-    submissions.set(ip, recent);
-    return true;
-  }
-
-  submissions.set(ip, [...recent, now]);
-  return false;
-}
 
 function getStringField(payload: unknown, field: string) {
   if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
@@ -74,23 +69,17 @@ function isMarketingSpam(input: {
 }
 
 export async function POST(request: Request) {
-  const ip =
-    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-    request.headers.get("x-real-ip") ??
-    "local";
+  const body = await readJsonBody(request, MAX_CONTACT_BODY_BYTES);
 
-  if (isRateLimited(ip)) {
-    return NextResponse.json({error: "Too many requests"}, {status: 429});
-  }
+  if (!body.ok) {
+    if (body.reason === "too-large") {
+      return NextResponse.json({error: "Request too large"}, {status: 413});
+    }
 
-  let payload: unknown;
-
-  try {
-    payload = await request.json();
-  } catch {
     return NextResponse.json({error: "Invalid request"}, {status: 400});
   }
 
+  const payload = body.data;
   const parsed = contactSchema.safeParse(payload);
 
   if (!parsed.success) {
@@ -105,9 +94,26 @@ export async function POST(request: Request) {
     return NextResponse.json({ok: true});
   }
 
+  const ip =
+    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+    request.headers.get("x-real-ip") ??
+    "local";
+
+  if (rateLimiter.isLimited(ip)) {
+    return NextResponse.json({error: "Too many requests"}, {status: 429});
+  }
+
   try {
     const result = await sendContactEmails(parsed.data);
-    return NextResponse.json({ok: true, emailSkipped: result.skipped});
+
+    if (result.skipped) {
+      return NextResponse.json(
+        {error: "Email service unavailable"},
+        {status: 503},
+      );
+    }
+
+    return NextResponse.json({ok: true});
   } catch {
     return NextResponse.json(
       {error: "Unable to send message"},

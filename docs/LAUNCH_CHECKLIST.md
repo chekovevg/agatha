@@ -16,7 +16,8 @@ Use this checklist before treating the site as beta-ready or production-ready.
 - [x] `NEXT_PUBLIC_SITE_URL` points to `https://agatha-pied.vercel.app`.
 - [x] `NEXT_PUBLIC_CAL_LINK` is set.
 - [x] `RESEND_API_KEY` is set.
-- [x] `CONTACT_TO_EMAIL` is set.
+- [x] Contact notifications include `agathagurko@gmail.com`.
+- [x] `CONTACT_TO_EMAIL` can duplicate notifications to a test recipient.
 - [x] `CONTACT_FROM_EMAIL` is set to the temporary Resend sender
   `onboarding@resend.dev`.
 - [ ] Replace the temporary Resend sender with a verified custom-domain sender.
@@ -24,7 +25,7 @@ Use this checklist before treating the site as beta-ready or production-ready.
 
 ## Booking
 
-- [x] `/en/book` renders a real Cal.com embed or a real fallback link.
+- [x] `/book` renders a real Cal.com embed or a real fallback link.
 - [x] Trial Lesson event exists in Cal.com.
 - [ ] Intake questions are configured in Cal.com.
 - [ ] Calendar sync is configured in Cal.com.
@@ -37,8 +38,7 @@ Use this checklist before treating the site as beta-ready or production-ready.
 - [ ] Honeypot submissions do not send email.
 - [x] Test receiver receives the notification email.
 - [x] Test visitor receives the auto-reply email.
-- [ ] Replace temporary test receiver/sender setup with real Agatha email and
-  verified domain sender.
+- [ ] Replace temporary sender setup with a verified domain sender.
 
 ## Legal
 
@@ -51,13 +51,11 @@ Use this checklist before treating the site as beta-ready or production-ready.
 ## Content And Media
 
 - [ ] English source copy is reviewed.
-- [ ] German draft copy is reviewed by a human speaker.
-- [ ] Russian draft copy is reviewed by a human speaker.
 - [ ] Anti-AI-slop review in `docs/UI_REVIEW.md` is completed for the editorial
   site.
 - [ ] Placeholder SVGs are replaced with approved photos/media or accepted for
   beta.
-- [ ] Preply, Instagram, and WhatsApp links are real if displayed.
+- [ ] Preply and Instagram links are real if displayed.
 
 ## Verification
 
@@ -66,17 +64,21 @@ npm.cmd run typecheck
 npm.cmd run lint
 npm.cmd test
 npm.cmd run build
+npm.cmd run e2e:run
 ```
+
+- [x] `npm.cmd run check` covers typecheck, lint, unit tests, and build.
+- [x] GitHub Actions runs the same checks plus Playwright browser smoke tests.
 
 Browser QA:
 
-- [x] `/` redirects to `/en`.
-- [x] `/en`, `/de`, `/ru` render.
-- [x] `/en/book` renders booking.
+- [x] `/`, `/about`, `/classes`, and `/media` render.
+- [x] `/book` renders booking.
+- [x] `/en`, `/de`, `/ru`, and their nested paths return 404.
 - [x] `/impressum` and `/datenschutz` render.
 - [x] Video iframe is absent before click and present after click.
 - [x] Contact form success state works on production.
-- [ ] Contact form error state is checked manually in browser after final
+- [x] Contact form error state is checked manually in browser after final
   content pass.
 - [x] Mobile header/menu and hero are usable.
 - [x] `/sitemap.xml` and `/robots.txt` are reachable and use the production

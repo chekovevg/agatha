@@ -1,14 +1,14 @@
 "use client";
 
 import {useEffect, useRef, useState} from "react";
-import {useTranslations} from "next-intl";
 
 import {Button} from "@/components/ui/Button";
+import {contactFormContent as copy} from "@/content/contact-form";
+import {submitContact} from "@/lib/contact-client";
 
 type FormState = "idle" | "submitting" | "success" | "error";
 
 export function ContactForm() {
-  const t = useTranslations("ContactForm");
   const formStartedAt = useRef("");
   const [state, setState] = useState<FormState>("idle");
 
@@ -24,14 +24,11 @@ export function ContactForm() {
     const formData = new FormData(form);
     formData.set("formStartedAt", formStartedAt.current);
 
-    const response = await fetch("/api/contact", {
-      method: "POST",
-      body: JSON.stringify(Object.fromEntries(formData)),
-      headers: {"Content-Type": "application/json"},
-    });
+    const submitted = await submitContact(Object.fromEntries(formData));
 
-    if (response.ok) {
+    if (submitted) {
       form.reset();
+      formStartedAt.current = String(Date.now());
       setState("success");
     } else {
       setState("error");
@@ -42,10 +39,11 @@ export function ContactForm() {
     <form
       className="grid gap-4 rounded-[var(--radius-media)] bg-[var(--card)] p-5 shadow-[var(--shadow-elevated)]"
       onSubmit={handleSubmit}
+      aria-busy={state === "submitting"}
     >
       <input name="website" className="hidden" tabIndex={-1} autoComplete="off" />
       <label className="mai-ui grid gap-2">
-        {t("name")}
+        {copy.name}
         <input
           name="name"
           required
@@ -53,7 +51,7 @@ export function ContactForm() {
         />
       </label>
       <label className="mai-ui grid gap-2">
-        {t("email")}
+        {copy.email}
         <input
           name="email"
           required
@@ -63,28 +61,27 @@ export function ContactForm() {
       </label>
       <div className="grid gap-4 md:grid-cols-2">
         <label className="mai-ui grid gap-2">
-          {t("studentAge")}
+          {copy.studentAge}
           <input
             name="studentAge"
             className="mai-body rounded px-4 py-3 shadow-[var(--shadow-inset)]"
           />
         </label>
         <label className="mai-ui grid gap-2">
-          {t("preferredLanguage")}
+          {copy.preferredLanguage}
           <select
             name="preferredLanguage"
             className="mai-body rounded px-4 py-3 shadow-[var(--shadow-inset)]"
             defaultValue="Not sure"
           >
-            <option>English</option>
-            <option>German</option>
-            <option>Russian</option>
-            <option>Not sure</option>
+            {copy.preferredLanguageOptions.map((option) => (
+              <option key={option}>{option}</option>
+            ))}
           </select>
         </label>
       </div>
       <label className="mai-ui grid gap-2">
-        {t("subject")}
+        {copy.subject}
         <input
           name="subject"
           required
@@ -92,7 +89,7 @@ export function ContactForm() {
         />
       </label>
       <label className="mai-ui grid gap-2">
-        {t("message")}
+        {copy.message}
         <textarea
           name="message"
           required
@@ -101,14 +98,16 @@ export function ContactForm() {
         />
       </label>
       <Button type="submit" disabled={state === "submitting"}>
-        {state === "submitting" ? "Sending..." : t("submit")}
+        {state === "submitting" ? copy.sending : copy.submit}
       </Button>
-      {state === "success" ? (
-        <p className="mai-caption text-[var(--muted)]">{t("success")}</p>
-      ) : null}
-      {state === "error" ? (
-        <p className="mai-caption text-[var(--ink)]">{t("error")}</p>
-      ) : null}
+      <div role="status" aria-live="polite">
+        {state === "success" ? (
+          <p className="mai-caption text-[var(--muted)]">{copy.success}</p>
+        ) : null}
+        {state === "error" ? (
+          <p className="mai-caption text-[var(--ink)]">{copy.error}</p>
+        ) : null}
+      </div>
     </form>
   );
 }

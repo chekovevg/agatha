@@ -720,6 +720,10 @@ select {
     display: block;
   }
 
+  .ascii-hero-cluster span::before {
+    content: attr(data-ascii-line);
+  }
+
   .ascii-hero-cluster span:nth-child(2n) {
     animation-delay: -0.6s;
     opacity: 0.88;

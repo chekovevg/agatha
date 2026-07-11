@@ -102,6 +102,41 @@ describe("POST /api/contact", () => {
     expect(sendContactEmails).not.toHaveBeenCalled();
   });
 
+  it("rejects oversized request bodies before processing", async () => {
+    const {POST} = await import("@/app/api/contact/route");
+    const oversizedRequest = new Request("http://localhost/api/contact", {
+      method: "POST",
+      headers: {
+        "content-length": "20000",
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(validPayload()),
+    });
+    const response = await POST(oversizedRequest);
+    const body = await response.json();
+
+    expect(response.status).toBe(413);
+    expect(body.error).toBe("Request too large");
+    expect(sendContactEmails).not.toHaveBeenCalled();
+  });
+
+  it("does not consume valid submission quota for rejected spam", async () => {
+    const {POST} = await import("@/app/api/contact/route");
+    const ip = "203.0.113.77";
+
+    for (let index = 0; index < 6; index += 1) {
+      const spamResponse = await POST(
+        request(validPayload({website: `spam-${index}.example`}), ip),
+      );
+      expect(spamResponse.status).toBe(200);
+    }
+
+    const validResponse = await POST(request(validPayload(), ip));
+
+    expect(validResponse.status).toBe(200);
+    expect(sendContactEmails).toHaveBeenCalledTimes(1);
+  });
+
   it("sends expected payload for valid submission", async () => {
     const {POST} = await import("@/app/api/contact/route");
     const payload = validPayload();
@@ -109,6 +144,16 @@ describe("POST /api/contact", () => {
 
     expect(response.status).toBe(200);
     expect(sendContactEmails).toHaveBeenCalledWith(expectedContactPayload(payload));
+  });
+
+  it("reports unavailable email delivery instead of a false success", async () => {
+    sendContactEmails.mockResolvedValue({skipped: true});
+    const {POST} = await import("@/app/api/contact/route");
+    const response = await POST(request(validPayload()));
+    const body = await response.json();
+
+    expect(response.status).toBe(503);
+    expect(body.error).toBe("Email service unavailable");
   });
 
   it("does not expose internal send errors", async () => {

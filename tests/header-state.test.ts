@@ -1,0 +1,65 @@
+import {describe, expect, it} from "vitest";
+
+import {shouldHideHeader} from "@/components/layout/header-state";
+
+describe("header visibility state", () => {
+  it("always reveals the header at the page top", () => {
+    expect(
+      shouldHideHeader({
+        currentScrollY: 1,
+        lastScrollY: 100,
+        viewportWidth: 1440,
+        menuVisible: false,
+      }),
+    ).toBe(false);
+  });
+
+  it("always reveals the header on mobile and while the menu is visible", () => {
+    expect(
+      shouldHideHeader({
+        currentScrollY: 200,
+        lastScrollY: 100,
+        viewportWidth: 600,
+        menuVisible: false,
+      }),
+    ).toBe(false);
+    expect(
+      shouldHideHeader({
+        currentScrollY: 200,
+        lastScrollY: 100,
+        viewportWidth: 1440,
+        menuVisible: true,
+      }),
+    ).toBe(false);
+  });
+
+  it("hides on meaningful downward scroll and reveals on upward scroll", () => {
+    expect(
+      shouldHideHeader({
+        currentScrollY: 107,
+        lastScrollY: 100,
+        viewportWidth: 1440,
+        menuVisible: false,
+      }),
+    ).toBe(true);
+    expect(
+      shouldHideHeader({
+        currentScrollY: 93,
+        lastScrollY: 100,
+        viewportWidth: 1440,
+        menuVisible: false,
+      }),
+    ).toBe(false);
+  });
+
+  it("preserves the current state for small scroll deltas", () => {
+    expect(
+      shouldHideHeader({
+        currentScrollY: 106,
+        lastScrollY: 100,
+        viewportWidth: 1440,
+        menuVisible: false,
+      }),
+    ).toBeNull();
+  });
+});

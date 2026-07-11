@@ -4,7 +4,6 @@ import {Footer} from "@/components/layout/Footer";
 import {Header} from "@/components/layout/Header";
 import {ButtonLink} from "@/components/ui/Button";
 import type {Lesson, SiteContent} from "@/content/types";
-import type {Locale} from "@/lib/routing";
 
 const lessonImages: Record<string, string> = {
   flute: "/images/classes/flute.png",
@@ -26,14 +25,12 @@ const lessonOrder = [
 
 export function ClassesPage({
   content,
-  locale,
 }: {
   content: SiteContent;
-  locale: Locale;
 }) {
   return (
     <div className="editorial-shell min-h-screen">
-      <Header content={content} locale={locale} />
+      <Header content={content} />
       <main className="editorial-container py-[calc(144_*_var(--unit-fx))]">
         <h1 className="mai-h4 mx-auto max-w-[613px] text-center">
           {content.pages.classes.heading}
@@ -46,24 +43,21 @@ export function ClassesPage({
               <LessonRow
                 key={lesson.slug}
                 lesson={lesson}
-                locale={locale}
                 bookingLabel={content.cta.primary}
               />
             ))}
         </div>
       </main>
-      <Footer content={content} locale={locale} />
+      <Footer content={content} />
     </div>
   );
 }
 
 function LessonRow({
   lesson,
-  locale,
   bookingLabel,
 }: {
   lesson: Lesson;
-  locale: Locale;
   bookingLabel: string;
 }) {
   return (
@@ -84,7 +78,7 @@ function LessonRow({
         <h2 className="mai-h4 mt-[calc(24_*_var(--unit-fx))]">
           {lesson.title}
         </h2>
-        <ButtonLink href={`/${locale}/book`} className="mt-[calc(32_*_var(--unit-fx))]">
+        <ButtonLink href="/book" className="mt-[calc(32_*_var(--unit-fx))]">
           {lesson.ctaLabel}
         </ButtonLink>
       </div>

@@ -10,8 +10,8 @@ Avoid broad "finish the whole site" requests. The project is small enough that
 focused tasks produce better diffs and fewer regressions.
 
 ## Current Project State
-- Product: multilingual static-first website for Agatha Music.
-- Stack: Next.js 16 App Router, TypeScript, Tailwind CSS 4, `next-intl`,
+- Product: English static-first website for Agatha Music.
+- Stack: Next.js 16 App Router, TypeScript, Tailwind CSS 4,
   Resend, Cal.com, Vercel Analytics, Vitest, Playwright.
 - Git branch: `main`.
 - Git remote: `https://github.com/chekovevg/agatha.git`.
@@ -34,12 +34,14 @@ npm.cmd run typecheck
 npm.cmd run lint
 npm.cmd test
 npm.cmd run build
+npm.cmd run check
+npm.cmd run e2e
 ```
 
 Dev URL:
 
 ```text
-http://127.0.0.1:3000/en
+http://127.0.0.1:3000
 ```
 
 ## Environment Variables
@@ -50,24 +52,30 @@ Required for production-like MVP behavior:
 - `NEXT_PUBLIC_SITE_URL`
 - `NEXT_PUBLIC_CAL_LINK`
 - `RESEND_API_KEY`
-- `CONTACT_TO_EMAIL`
 - `CONTACT_FROM_EMAIL`
 
 Optional:
 - `NEXT_PUBLIC_PREPLY_URL`
 - `NEXT_PUBLIC_INSTAGRAM_URL`
 - `NEXT_PUBLIC_WHATSAPP_URL`
+- `CONTACT_TO_EMAIL` to add a duplicate notification recipient
 - `CAL_WEBHOOK_SECRET`
 
 Do not add Stripe, Supabase, CMS, or auth variables unless v1 scope changes.
 
 ## Installed Project Tooling
-- `next-intl`: locale routing and messages.
 - `zod`: validation for contact and webhook payloads.
 - `resend`: outbound contact and booking notification emails.
 - `@vercel/analytics` and `@vercel/speed-insights`: cookieless Vercel metrics.
 - `vitest`: API/unit tests.
-- `playwright`: local browser QA when UI behavior needs verification.
+- `playwright`: committed browser smoke suite for routes, mobile navigation,
+  video loading, and contact failure behavior.
+
+GitHub Actions runs `npm run check` and `npm run e2e:run` on pushes and pull
+requests. The Playwright production server uses port 3101.
+
+The in-process contact rate limiter is best-effort in serverless deployments;
+use Vercel Firewall or distributed storage if a global limit becomes necessary.
 
 No extra MCP server is required for normal development right now.
 
@@ -109,7 +117,7 @@ Rules:
 4. Replace SVG placeholders with approved photos/media.
 5. Run the anti-AI-slop design and copy review in `docs/UI_REVIEW.md` before
    visual polish.
-6. Add real optional public links if available: Preply, Instagram, WhatsApp.
+6. Add real optional public links if available: Preply, Instagram.
 7. Run the full local checks and production browser QA after final content.
 
 ## What Not To Touch Without Approval

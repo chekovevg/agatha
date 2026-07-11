@@ -5,6 +5,30 @@ import type {ContactInput} from "@/lib/validators";
 
 const resend = env.RESEND_API_KEY ? new Resend(env.RESEND_API_KEY) : null;
 const senderName = "Agatha Music";
+const defaultContactToEmail = "agathagurko@gmail.com";
+
+function getRecipientAddresses() {
+  return [defaultContactToEmail, env.CONTACT_TO_EMAIL].reduce<string[]>(
+    (recipients, email) => {
+      if (!email) {
+        return recipients;
+      }
+
+      const normalizedEmail = email.toLowerCase();
+
+      if (
+        recipients.some(
+          (recipient) => recipient.toLowerCase() === normalizedEmail,
+        )
+      ) {
+        return recipients;
+      }
+
+      return [...recipients, email];
+    },
+    [],
+  );
+}
 
 function getSenderAddress() {
   return env.CONTACT_FROM_EMAIL
@@ -13,11 +37,15 @@ function getSenderAddress() {
 }
 
 export function isEmailConfigured() {
-  return Boolean(resend && env.CONTACT_TO_EMAIL && env.CONTACT_FROM_EMAIL);
+  return Boolean(
+    resend && getRecipientAddresses().length > 0 && env.CONTACT_FROM_EMAIL,
+  );
 }
 
 export async function sendContactEmails(input: ContactInput) {
-  if (!resend || !env.CONTACT_TO_EMAIL || !env.CONTACT_FROM_EMAIL) {
+  const recipients = getRecipientAddresses();
+
+  if (!resend || recipients.length === 0 || !env.CONTACT_FROM_EMAIL) {
     return {skipped: true};
   }
 
@@ -39,7 +67,7 @@ export async function sendContactEmails(input: ContactInput) {
 
   await resend.emails.send({
     from,
-    to: env.CONTACT_TO_EMAIL,
+    to: recipients,
     replyTo: input.email,
     subject: `New lesson inquiry: ${input.subject}`,
     text: details,
@@ -57,7 +85,9 @@ export async function sendContactEmails(input: ContactInput) {
 }
 
 export async function sendCalWebhookNotification(payload: unknown) {
-  if (!resend || !env.CONTACT_TO_EMAIL || !env.CONTACT_FROM_EMAIL) {
+  const recipients = getRecipientAddresses();
+
+  if (!resend || recipients.length === 0 || !env.CONTACT_FROM_EMAIL) {
     return {skipped: true};
   }
 
@@ -69,7 +99,7 @@ export async function sendCalWebhookNotification(payload: unknown) {
 
   await resend.emails.send({
     from,
-    to: env.CONTACT_TO_EMAIL,
+    to: recipients,
     subject: "New Cal.com booking event",
     text: JSON.stringify(payload, null, 2),
   });

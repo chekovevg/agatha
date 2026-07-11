@@ -1,0 +1,17 @@
+.git
+.next
+node_modules
+
+.env
+.env.*
+
+.codex-run
+.superpowers
+coverage
+out
+build
+
+*.log
+*.err.log
+*.tsbuildinfo
+footer-debug-*.png

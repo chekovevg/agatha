@@ -7,7 +7,6 @@ import {ButtonLink} from "@/components/ui/Button";
 import {HomeHeroBackground} from "@/components/ui/HomeHeroBackground";
 import {HomeScrollBackground} from "@/components/ui/HomeScrollBackground";
 import type {SiteContent} from "@/content/types";
-import type {Locale} from "@/lib/routing";
 
 function AgathaQuoteImage() {
   const common = {
@@ -46,11 +45,9 @@ function AgathaQuoteImage() {
 
 export function HomePage({
   content,
-  locale,
   showActions = true,
 }: {
   content: SiteContent;
-  locale: Locale;
   showActions?: boolean;
 }) {
   const home = content.home;
@@ -58,7 +55,7 @@ export function HomePage({
   return (
     <div className="editorial-shell home-reference-shell min-h-screen">
       <HomeScrollBackground />
-      <Header content={content} locale={locale} variant="home" />
+      <Header content={content} variant="home" />
       <main>
         <section
           className="watercolor-hero relative isolate h-[100svh] overflow-hidden text-center"
@@ -138,7 +135,7 @@ export function HomePage({
               </p>
             </div>
             {showActions ? (
-              <ButtonLink href={`/${locale}/book`} variant="split">
+              <ButtonLink href="/book" variant="split">
                 {home.location.cta}
               </ButtonLink>
             ) : null}
@@ -163,7 +160,7 @@ export function HomePage({
           </section>
         </div>
       </main>
-      <Footer content={content} locale={locale} />
+      <Footer content={content} />
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import {readFileSync} from "node:fs";
+import {existsSync, readFileSync} from "node:fs";
 import {createElement} from "react";
 import {renderToStaticMarkup} from "react-dom/server";
 import {describe, expect, it, vi} from "vitest";
@@ -16,24 +16,6 @@ function getPngSize(path: URL) {
     width: buffer.readUInt32BE(16),
   };
 }
-
-vi.mock("next-intl/navigation", () => ({
-  createNavigation: () => ({
-    Link: "a",
-    getPathname: vi.fn(),
-    redirect: vi.fn(),
-    usePathname: vi.fn(),
-    useRouter: vi.fn(),
-  }),
-}));
-
-vi.mock("next-intl/routing", () => ({
-  defineRouting: (config: unknown) => config,
-}));
-
-vi.mock("next-intl", () => ({
-  useTranslations: () => (key: string) => key,
-}));
 
 vi.mock("next/link", () => ({
   default: "a",
@@ -68,45 +50,149 @@ vi.mock("next/image", async () => {
 
 import sitemap from "@/app/sitemap";
 import {AboutPage} from "@/components/pages/AboutPage";
+import {BookingSection} from "@/components/sections/BookingSection";
 import {siteContent} from "@/content/site";
-import {locales} from "@/lib/routing";
 
 describe("editorial site structure", () => {
   it("uses Agatha Music as the public brand", () => {
-    expect(siteContent.en.brand).toBe("Agatha Music");
-    expect(siteContent.de.brand).toBe("Agatha Music");
-    expect(siteContent.ru.brand).toBe("Agatha Music");
+    expect(siteContent.brand).toBe("Agatha Music");
+  });
+
+  it("uses a single English content object with no locale keys", () => {
+    expect(siteContent).not.toHaveProperty("en");
+    expect(siteContent).not.toHaveProperty("de");
+    expect(siteContent).not.toHaveProperty("ru");
   });
 
   it("uses the new editorial top-level navigation", () => {
-    expect(siteContent.en.nav).toEqual([
+    expect(siteContent.nav).toEqual([
       {label: "About me", href: "/about"},
       {label: "Classes", href: "/classes"},
       {label: "Media", href: "/media"},
     ]);
   });
 
-  it("publishes localized home, classes, about, media and booking URLs", () => {
+  it("publishes only unprefixed English application URLs", () => {
     const paths = sitemap().map((entry) => new URL(entry.url).pathname);
 
-    for (const locale of locales) {
-      expect(paths).toContain(`/${locale}`);
-      expect(paths).toContain(`/${locale}/classes`);
-      expect(paths).toContain(`/${locale}/about`);
-      expect(paths).toContain(`/${locale}/media`);
-      expect(paths).toContain(`/${locale}/book`);
-      expect(paths).not.toContain(`/${locale}/full`);
+    expect(paths).toEqual([
+      "/",
+      "/book",
+      "/classes",
+      "/about",
+      "/media",
+      "/impressum",
+      "/datenschutz",
+    ]);
+    expect(sitemap().every((entry) => entry.lastModified == null)).toBe(true);
+  });
+
+  it("defines unprefixed pages and removes locale routes and redirects", () => {
+    const root = new URL("..", import.meta.url);
+
+    for (const path of [
+      "app/page.tsx",
+      "app/about/page.tsx",
+      "app/classes/page.tsx",
+      "app/media/page.tsx",
+      "app/book/page.tsx",
+    ]) {
+      expect(existsSync(new URL(path, root))).toBe(true);
     }
+
+    expect(existsSync(new URL("app/[locale]", root))).toBe(false);
+    expect(existsSync(new URL("proxy.ts", root))).toBe(false);
+  });
+
+  it("removes the localization runtime and keeps the booking iframe lazy", () => {
+    const root = new URL("..", import.meta.url);
+    const packageJson = JSON.parse(
+      readFileSync(new URL("package.json", root), "utf8"),
+    ) as {dependencies?: Record<string, string>};
+    const nextConfig = readFileSync(new URL("next.config.ts", root), "utf8");
+    const bookingSource = readFileSync(
+      new URL("components/sections/BookingSection.tsx", root),
+      "utf8",
+    );
+
+    expect(packageJson.dependencies).not.toHaveProperty("next-intl");
+    expect(nextConfig).not.toContain("next-intl");
+    expect(existsSync(new URL("i18n", root))).toBe(false);
+    expect(existsSync(new URL("messages", root))).toBe(false);
+    expect(bookingSource).toContain('loading="lazy"');
+    expect(bookingSource).toContain('referrerPolicy="strict-origin-when-cross-origin"');
+  });
+
+  it("ignores reproducible local QA artifacts", () => {
+    const gitignore = readFileSync(
+      new URL("../.gitignore", import.meta.url),
+      "utf8",
+    );
+
+    expect(gitignore).toContain("/next-*.log");
+    expect(gitignore).toContain("/*-debug-*.png");
+    expect(gitignore).toContain("/playwright-report/");
+    expect(gitignore).toContain("/test-results/");
+  });
+
+  it("defines CI for the same checks used locally", () => {
+    const workflowUrl = new URL(
+      "../.github/workflows/ci.yml",
+      import.meta.url,
+    );
+
+    expect(existsSync(workflowUrl)).toBe(true);
+
+    const workflow = readFileSync(workflowUrl, "utf8");
+    expect(workflow).toContain("actions/checkout@v4");
+    expect(workflow).toContain("actions/setup-node@v4");
+    expect(workflow).toContain("node-version: 20");
+    expect(workflow).toContain("npm ci");
+    expect(workflow).toContain("npm run check");
+    expect(workflow).toContain("playwright install --with-deps chromium");
+    expect(workflow).toContain("npm run e2e:run");
   });
 
   it("uses the about profile title and contact label from the approved design", () => {
-    expect(siteContent.en.about.heading).toBe("Agatha Gurko");
-    expect(siteContent.en.cta.contact).toBe("Text me");
+    expect(siteContent.about.heading).toBe("Agatha Gurko");
+    expect(siteContent.cta.contact).toBe("Text me");
+  });
+
+  it("uses German diacritics in visible education and location copy", () => {
+    const englishAbout = JSON.stringify(siteContent.about);
+
+    expect(siteContent.home.location.body).toContain(
+      "Cologne–Düsseldorf area",
+    );
+    expect(siteContent.about.paragraphs.join("\n")).toContain(
+      "Hochschule für Musik und Tanz Köln",
+    );
+    expect(siteContent.about.facts[0]?.values.join("\n")).toContain(
+      "Instrumental-/Gesangspädagogik",
+    );
+    expect(englishAbout).not.toMatch(/fuer|Koeln|Gesangspaedagogik/);
+    expect(siteContent.home.location.body).not.toContain(
+      "Cologne-Duesseldorf",
+    );
+  });
+
+  it("does not repeat the vulnerability paragraph as the Kindness value", () => {
+    const vulnerabilityIntro =
+      "Learning music can feel vulnerable, especially at the beginning. I want my lessons to be a kind space where students can ask questions, make mistakes and try again without fear of being judged.";
+    const values = siteContent.home.values;
+    const serializedValues = JSON.stringify(values);
+    const occurrenceCount = serializedValues.split(vulnerabilityIntro).length - 1;
+
+    expect(occurrenceCount).toBe(1);
+    expect(values.itemTexts?.[0]).toBe(
+      "Kindness means a lesson space where questions, mistakes and trying again are treated as normal parts of learning.",
+    );
+    expect(values.itemTexts?.[0]).not.toBe(values.activeText);
   });
 
   it("renders the about page with the high-quality portrait asset", () => {
     const html = renderToStaticMarkup(
-      createElement(AboutPage, {content: siteContent.en, locale: "en"}),
+      createElement(AboutPage, {content: siteContent}),
     );
 
     expect(html).toContain('src="/images/about/agatha-portrait.png"');
@@ -129,5 +215,18 @@ describe("editorial site structure", () => {
     expect(
       readFileSync(new URL("../next.config.ts", import.meta.url), "utf8"),
     ).toContain("qualities: [75, 95]");
+  });
+
+  it("links booking fallback contact CTA to the unprefixed contact form", () => {
+    const html = renderToStaticMarkup(
+      createElement(BookingSection, {
+        content: siteContent,
+        expanded: true,
+      }),
+    );
+
+    expect(html).toContain('href="/about#contact"');
+    expect(html).not.toMatch(/href="\/(en|de|ru)\//);
+    expect(html).not.toContain('href="#contact"');
   });
 });

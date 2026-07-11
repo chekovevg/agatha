@@ -318,9 +318,16 @@ export function AsciiHeroReveal() {
   return (
     <div ref={layerRef} className="ascii-hero-reveal" aria-hidden="true">
       {asciiClusters.map((cluster) => (
-        <pre className={cluster.className} key={cluster.className}>
+        <pre
+          className={cluster.className}
+          key={cluster.className}
+          role="presentation"
+        >
           {cluster.lines.map((line, index) => (
-            <span key={`${cluster.className}-${index}`}>{line}</span>
+            <span
+              data-ascii-line={line}
+              key={`${cluster.className}-${index}`}
+            />
           ))}
         </pre>
       ))}

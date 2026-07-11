@@ -1,4 +1,3 @@
-import type {Locale} from "@/lib/routing";
 import type {SiteContent} from "@/content/types";
 
 const nav = [
@@ -15,7 +14,11 @@ const baseContent: SiteContent = {
     secondary: "Explore Classes",
     contact: "Text me",
   },
-  social: {},
+  social: {
+    email: "agathagurko@gmail.com",
+    telegram: "https://t.me/youngbabypeach",
+    whatsapp: "https://wa.me/491636276938",
+  },
   seo: {
     title: "Agatha Music - Flute & Music Theory Lessons",
     description:
@@ -54,7 +57,7 @@ const baseContent: SiteContent = {
       activeText:
         "Learning music can feel vulnerable, especially at the beginning. I want my lessons to be a kind space where students can ask questions, make mistakes and try again without fear of being judged.",
       itemTexts: [
-        "Learning music can feel vulnerable, especially at the beginning. I want my lessons to be a kind space where students can ask questions, make mistakes and try again without fear of being judged.",
+        "Kindness means a lesson space where questions, mistakes and trying again are treated as normal parts of learning.",
         "I pay attention not only to the notes, but to the person learning them. Every student has their own pace, confidence, sound and questions - and I shape the lesson around what they need to move forward.",
         "Music takes time, repetition and trust. I never want students to feel rushed through something difficult. We break things down into small steps until they begin to feel clear, natural and possible.",
         "Every student learns differently. Some lessons need to be playful, some technical, some structured, some more exploratory. I adapt my teaching to the student's age, level, goals and musical taste - while keeping a clear direction.",
@@ -65,7 +68,7 @@ const baseContent: SiteContent = {
     location: {
       heading: "From the Rhine, online",
       body:
-        "Agatha is based in the Cologne-Duesseldorf area and teaches students online in Russian, English and German. Wherever the lesson begins, the focus stays the same: clear guidance, healthy technique and music that feels personal.",
+        "Agatha is based in the Cologne–Düsseldorf area and teaches students online in Russian, English and German. Wherever the lesson begins, the focus stays the same: clear guidance, healthy technique and music that feels personal.",
       cta: "Get in touch",
     },
     quote: {
@@ -140,7 +143,7 @@ const baseContent: SiteContent = {
   about: {
     heading: "Agatha Gurko",
     paragraphs: [
-      "Moscow-trained flutist and music teacher, currently continuing pedagogical studies at Hochschule fuer Musik und Tanz Koeln.",
+      "Moscow-trained flutist and music teacher, currently continuing pedagogical studies at Hochschule für Musik und Tanz Köln.",
       "She has been teaching since 2014 - in music schools, private lessons and online classes - working with children, adult beginners and students who want to understand music more deeply.",
       "Her lessons combine a strong musical foundation with a calm, attentive teaching style: clear technique, healthy breathing, ear training, theory and music that feels meaningful to the student.",
     ],
@@ -149,7 +152,7 @@ const baseContent: SiteContent = {
         label: "Education",
         values: [
           "Academic College of the Moscow Tchaikovsky Conservatory - Flute",
-          "Hochschule fuer Musik und Tanz Koeln - Instrumental-/Gesangspaedagogik",
+          "Hochschule für Musik und Tanz Köln - Instrumental-/Gesangspädagogik",
         ],
       },
       {
@@ -354,161 +357,4 @@ const baseContent: SiteContent = {
   },
 };
 
-// Draft localized content. English is the source of truth for v1; DE/RU can be
-// replaced by final human-approved translations without changing components.
-export const siteContent: Record<Locale, SiteContent> = {
-  en: baseContent,
-  de: {
-    ...baseContent,
-    nav: baseContent.nav.map((item) => ({
-      ...item,
-      label:
-        {
-          "About me": "Ueber mich",
-          Classes: "Unterricht",
-          Media: "Medien",
-        }[item.label] ?? item.label,
-    })),
-    cta: {
-      primary: "Probestunde buchen",
-      secondary: "Unterricht ansehen",
-      contact: "Nachricht senden",
-    },
-    pages: {
-      classes: {
-        heading: "Entdecke und waehle, was du lernen moechtest",
-      },
-      about: {
-        trustHeading: "Worauf sich Schueler verlassen koennen",
-        faqHeading: "Fragen vor der ersten Stunde",
-      },
-      media: {
-        eyebrow: "Medien",
-        heading: "Unterricht, Materialien und musikalische Momente im Prozess",
-        galleryHeading: "Musik im Werden",
-      },
-    },
-    home: {
-      ...baseContent.home,
-      heroTitle: ["Dein musikalischer", "Begleiter"],
-      heroSubtitle: "Floeten-, Blockfloeten- und Musiktheorieunterricht",
-      manifesto: {
-        heading:
-          "Musik wird moeglich, wenn sie sorgfaeltig erklaert, geduldig geuebt und aufmerksam gehoert wird.",
-        body:
-          "Ich unterrichte Floete, Blockfloete und Musiktheorie in kleinen realistischen Schritten - damit Klang, Sicherheit und musikalisches Verstehen wachsen.",
-      },
-      values: {
-        heading: "Meine Werte",
-        items: [
-          "Freundlichkeit",
-          "Sorgfalt",
-          "Geduld",
-          "Anpassung",
-          "Struktur",
-          "Freude",
-        ],
-        activeItem: "Freundlichkeit",
-        activeText:
-          "Freundlichkeit schafft den Raum, in dem Lernen wirklich passieren kann. In meinen Stunden duerfen Schueler fragen, Fehler machen und es ohne Bewertung noch einmal versuchen.",
-        itemTexts: [
-          "Musiklernen kann sich verletzlich anfuehlen, besonders am Anfang. Ich moechte, dass mein Unterricht ein freundlicher Raum ist, in dem Schueler Fragen stellen, Fehler machen und es ohne Angst vor Bewertung noch einmal versuchen koennen.",
-          "Ich achte nicht nur auf die Noten, sondern auf den Menschen, der sie lernt. Jeder Schueler hat sein eigenes Tempo, seine eigene Sicherheit, seinen Klang und seine Fragen - und ich gestalte die Stunde so, dass der naechste Schritt moeglich wird.",
-          "Musik braucht Zeit, Wiederholung und Vertrauen. Ich moechte nie, dass Schueler durch etwas Schwieriges gehetzt werden. Wir teilen Dinge in kleine Schritte, bis sie klar, natuerlich und moeglich werden.",
-          "Jeder Schueler lernt anders. Manche Stunden duerfen spielerisch sein, manche technisch, manche strukturiert, manche offener. Ich passe meinen Unterricht an Alter, Niveau, Ziele und Musikgeschmack an - mit einer klaren Richtung.",
-          "Ich glaube, Struktur macht Fortschritt weniger ueberwaeltigend. In jeder Stunde versuche ich, einen klaren Fokus, praktische Uebungen und einen naechsten Schritt fuer die Zeit nach dem Unterricht mitzugeben.",
-          "Musik soll lebendig sein. Ich verbinde Technik und Theorie mit echten Stuecken, Klaengen und Ideen, die der Schueler wirklich verstehen und spielen moechte - denn Lernen wird tiefer, wenn es persoenlich wird.",
-        ],
-      },
-      location: {
-        heading: "Vom Rhein, online",
-        body:
-          "Agatha lebt in der Region Koeln-Duesseldorf und unterrichtet online auf Russisch, Englisch und Deutsch. Wo auch immer die Stunde beginnt: Im Mittelpunkt stehen klare Begleitung, gesunde Technik und Musik, die persoenlich wird.",
-        cta: "Kontakt aufnehmen",
-      },
-      quote: {
-        body:
-          "Ich glaube, Musik wird leichter, wenn man sich sicher genug fuehlt, etwas auszuprobieren. In meinen Stunden begleite ich mit Geduld, klarer Struktur und kleinen realistischen Schritten - damit Klang, Rhythmus und Theorie Teil der eigenen musikalischen Stimme werden.",
-        signature: "Agatha Gurko",
-      },
-      footerNote: "Floeten-, Blockfloeten- und Musiktheorieunterricht online.",
-    },
-    legal: {
-      impressumTitle: "Impressum",
-      privacyTitle: "Datenschutzerklaerung",
-    },
-  },
-  ru: {
-    ...baseContent,
-    nav: baseContent.nav.map((item) => ({
-      ...item,
-      label:
-        {
-          "About me": "Обо мне",
-          Classes: "Уроки",
-          Media: "Медиа",
-        }[item.label] ?? item.label,
-    })),
-    cta: {
-      primary: "Записаться на пробный урок",
-      secondary: "Посмотреть уроки",
-      contact: "Написать сообщение",
-    },
-    pages: {
-      classes: {
-        heading: "Выберите, чему хотите учиться",
-      },
-      about: {
-        trustHeading: "На что могут рассчитывать ученики",
-        faqHeading: "Вопросы перед первым уроком",
-      },
-      media: {
-        eyebrow: "Медиа",
-        heading: "Уроки, материалы и моменты музыкального процесса",
-        galleryHeading: "Музыка в процессе",
-      },
-    },
-    home: {
-      ...baseContent.home,
-      heroTitle: ["Музыкальный", "проводник"],
-      heroSubtitle: "Уроки флейты, блокфлейты и теории музыки",
-      manifesto: {
-        heading:
-          "Музыка становится возможной, когда ее объясняют бережно, разбирают терпеливо и слушают внимательно.",
-        body:
-          "Я преподаю флейту, блокфлейту и теорию музыки через маленькие реалистичные шаги - чтобы у ученика росли уверенность, звук и музыкальное понимание.",
-      },
-      values: {
-        heading: "Мои ценности",
-        items: ["Доброта", "Забота", "Терпение", "Гибкость", "Структура", "Радость"],
-        activeItem: "Доброта",
-        activeText:
-          "Доброта создает пространство, в котором действительно можно учиться. На моих уроках можно задавать вопросы, ошибаться и пробовать снова без страха оценки.",
-        itemTexts: [
-          "Учиться музыке бывает уязвимо, особенно в начале. Я хочу, чтобы уроки были добрым пространством, где можно задавать вопросы, ошибаться и пробовать снова без страха осуждения.",
-          "Я обращаю внимание не только на ноты, но и на человека, который их учит. У каждого ученика свой темп, уверенность, звук и вопросы - и я строю урок вокруг того, что помогает двигаться дальше.",
-          "Музыка требует времени, повторения и доверия. Я не хочу, чтобы ученик чувствовал спешку в сложном месте. Мы делим материал на маленькие шаги, пока он не становится понятным, естественным и возможным.",
-          "Каждый ученик учится по-своему. Одним урокам нужна игра, другим техника, структура или больше поиска. Я адаптирую преподавание под возраст, уровень, цели и музыкальный вкус ученика - сохраняя ясное направление.",
-          "Я верю, что структура делает прогресс менее перегружающим. На каждом уроке я стараюсь дать ясный фокус, практические упражнения и следующий шаг, с которым можно продолжить после занятия.",
-          "Музыка должна быть живой. Я связываю технику и теорию с настоящими пьесами, звуками и идеями, которые ученик действительно хочет понять и сыграть, потому что обучение становится глубже, когда оно личное.",
-        ],
-      },
-      location: {
-        heading: "С Рейна - онлайн",
-        body:
-          "Агата живет в районе Кельна и Дюссельдорфа и преподает онлайн на русском, английском и немецком. Где бы ни начинался урок, в центре остаются понятное сопровождение, здоровая техника и музыка, которая становится личной.",
-        cta: "Связаться",
-      },
-      quote: {
-        body:
-          "Я верю, что музыка становится легче, когда достаточно спокойно пробовать. На уроках я веду учеников терпеливо, структурно и маленькими реалистичными шагами - чтобы звук, ритм и теория становились частью собственного музыкального голоса.",
-        signature: "Агата Гурко",
-      },
-      footerNote: "Онлайн-уроки флейты, блокфлейты и теории музыки.",
-    },
-    legal: {
-      impressumTitle: "Impressum",
-      privacyTitle: "Политика конфиденциальности",
-    },
-  },
-};
+export const siteContent: SiteContent = baseContent;

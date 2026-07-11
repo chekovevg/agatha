@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export default function ImpressumPage() {
   return (
     <main className="mai-body mx-auto max-w-3xl px-5 py-16">
-      <Link className="mai-ui underline" href="/en">
+      <Link className="mai-ui underline" href="/">
         Back to site
       </Link>
       <h1 className="mai-h4 mt-8 break-words">Impressum</h1>

@@ -2,55 +2,38 @@ import type {Metadata} from "next";
 
 import {siteContent} from "@/content/site";
 import {env} from "@/lib/env";
-import type {Locale} from "@/lib/routing";
-import {locales} from "@/lib/routing";
 
 export function siteUrl(path = "") {
   return new URL(path, env.NEXT_PUBLIC_SITE_URL).toString();
 }
 
-export function localizedAlternates(path = "") {
-  return Object.fromEntries(
-    locales.map((locale) => [locale, siteUrl(`/${locale}${path}`)]),
-  );
-}
-
-export function landingMetadata(locale: Locale): Metadata {
-  const seo = siteContent[locale].seo;
+export function landingMetadata(): Metadata {
+  const seo = siteContent.seo;
 
   return {
     title: seo.title,
     description: seo.description,
-    alternates: {
-      canonical: siteUrl(`/${locale}`),
-      languages: localizedAlternates(),
-    },
+    alternates: {canonical: siteUrl("/")},
     openGraph: {
       title: seo.ogTitle,
       description: seo.ogDescription,
-      url: siteUrl(`/${locale}`),
+      url: siteUrl("/"),
       siteName: "Agatha Music",
-      locale,
+      locale: "en",
       type: "website",
     },
   };
 }
 
-export function bookMetadata(locale: Locale): Metadata {
-  const content = siteContent[locale];
-
+export function bookMetadata(): Metadata {
   return {
-    title: `${content.booking.heading} | Agatha Music`,
-    description: content.booking.copy,
-    alternates: {
-      canonical: siteUrl(`/${locale}/book`),
-      languages: localizedAlternates("/book"),
-    },
+    title: `${siteContent.booking.heading} | Agatha Music`,
+    description: siteContent.booking.copy,
+    alternates: {canonical: siteUrl("/book")},
   };
 }
 
 function editorialPageMetadata(
-  locale: Locale,
   path: "/classes" | "/about" | "/media",
   title: string,
   description: string,
@@ -58,40 +41,30 @@ function editorialPageMetadata(
   return {
     title: `${title} | Agatha Music`,
     description,
-    alternates: {
-      canonical: siteUrl(`/${locale}${path}`),
-      languages: localizedAlternates(path),
-    },
+    alternates: {canonical: siteUrl(path)},
   };
 }
 
-export function classesMetadata(locale: Locale): Metadata {
+export function classesMetadata(): Metadata {
   return editorialPageMetadata(
-    locale,
     "/classes",
     "Classes",
     "Choose flute, recorder, piccolo, music theory, ear training and music history lessons with Agatha Music.",
   );
 }
 
-export function aboutMetadata(locale: Locale): Metadata {
-  const content = siteContent[locale];
-
+export function aboutMetadata(): Metadata {
   return editorialPageMetadata(
-    locale,
     "/about",
     "About me",
-    content.about.paragraphs[0] ?? content.seo.description,
+    siteContent.about.paragraphs[0] ?? siteContent.seo.description,
   );
 }
 
-export function mediaMetadata(locale: Locale): Metadata {
-  const content = siteContent[locale];
-
+export function mediaMetadata(): Metadata {
   return editorialPageMetadata(
-    locale,
     "/media",
     "Media",
-    content.openLesson.copy,
+    siteContent.openLesson.copy,
   );
 }

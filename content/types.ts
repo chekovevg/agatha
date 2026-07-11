@@ -9,6 +9,7 @@ export type SiteContent = {
   social: {
     preply?: string;
     instagram?: string;
+    telegram?: string;
     whatsapp?: string;
     email?: string;
   };

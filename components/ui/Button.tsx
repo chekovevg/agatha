@@ -1,6 +1,6 @@
 import type {AnchorHTMLAttributes, ButtonHTMLAttributes} from "react";
 
-import {cn} from "@/lib/utils";
+import {cn, isExternalHref} from "@/lib/utils";
 
 type ButtonVariant = "primary" | "secondary" | "plain";
 type ButtonLinkVariant = ButtonVariant | "split";
@@ -20,18 +20,36 @@ const base =
 export function ButtonLink({
   variant = "primary",
   className = "",
+  href,
+  rel,
+  target,
   ...props
 }: AnchorHTMLAttributes<HTMLAnchorElement> & {variant?: ButtonLinkVariant}) {
+  const isExternal = typeof href === "string" && isExternalHref(href);
+  const resolvedTarget = target ?? (isExternal ? "_blank" : undefined);
+  const resolvedRel = rel ?? (isExternal ? "noreferrer" : undefined);
+
   if (variant === "split") {
     return (
       <a
         className={cn("split-link-button mai-ui focus-visible:outline-2", className)}
+        href={href}
+        rel={resolvedRel}
+        target={resolvedTarget}
         {...props}
       />
     );
   }
 
-  return <a className={cn(base, variants[variant], className)} {...props} />;
+  return (
+    <a
+      className={cn(base, variants[variant], className)}
+      href={href}
+      rel={resolvedRel}
+      target={resolvedTarget}
+      {...props}
+    />
+  );
 }
 
 export function Button({

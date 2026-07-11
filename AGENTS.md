@@ -11,7 +11,7 @@ notices.
 # AGENTS.md
 
 ## Project
-Agatha Music is a static-first multilingual marketing and booking website
+Agatha Music is a static-first English marketing and booking website
 for a music teacher. The site presents lessons, teaching method, media, reviews,
 booking, FAQ, contact, and German legal pages.
 
@@ -25,7 +25,6 @@ See `docs/AI_WORKFLOW.md` for the longer AI-assisted development workflow.
 - Framework: Next.js 16 App Router
 - Language: TypeScript
 - Styling: Tailwind CSS 4
-- i18n: `next-intl` with `en`, `de`, `ru`
 - Forms/validation: Route Handlers + Zod
 - Email: Resend
 - Booking: Cal.com embed/link via `NEXT_PUBLIC_CAL_LINK`
@@ -42,16 +41,17 @@ Use `npm.cmd` in PowerShell when `npm.ps1` is blocked by execution policy.
 - Lint: `npm.cmd run lint`
 - Tests: `npm.cmd test`
 - Production build: `npm.cmd run build`
+- Full checks: `npm.cmd run check`
+- Browser smoke tests: `npm.cmd run e2e`
 
 ## Structure
-- `app/[locale]/` - localized editorial and booking pages
+- `app/` - English editorial and booking pages
 - `app/api/contact/route.ts` - contact form endpoint
 - `app/api/cal/webhook/route.ts` - optional Cal.com webhook endpoint
 - `components/layout/` - header and footer
 - `components/sections/` - focused reusable sections
 - `components/ui/` - small reusable UI primitives
 - `content/` - typed marketing content and content models
-- `messages/` - `next-intl` message files
 - `lib/` - env parsing, routing, SEO, validators, email helpers
 - `public/images/` - local visual assets
 - `tests/` - Vitest tests
@@ -65,8 +65,7 @@ Use `npm.cmd` in PowerShell when `npm.ps1` is blocked by execution policy.
   text, or deployment settings without explicit approval.
 - Do not implement a custom calendar, CRM, database, CMS, auth, or Stripe flow
   for v1 unless the user changes scope.
-- Preserve content separation: marketing copy lives in `content/` and
-  translations/messages live in `messages/`.
+- Preserve content separation: marketing copy lives in `content/`.
 - Prefer server components. Use client components only for real interactivity.
 - Use Next.js 16 local docs in `node_modules/next/dist/docs/` when touching
   routing, proxy, metadata, image, or App Router conventions.
@@ -88,12 +87,13 @@ npm.cmd run typecheck
 npm.cmd run lint
 npm.cmd test
 npm.cmd run build
+npm.cmd run e2e:run
 ```
 
 For UI work, also run browser QA on desktop and mobile. Verify:
-- `/` redirects to `/en`
-- `/en`, `/de`, `/ru` render
-- `/en/book` renders booking embed or fallback
+- `/`, `/about`, `/classes`, and `/media` render
+- `/book` renders booking embed or fallback
+- `/en`, `/de`, `/ru`, and their nested paths return 404
 - `/impressum` and `/datenschutz` render
 - contact form success/error states
 - video iframe loads only after click

@@ -28,7 +28,7 @@ function readHeroCompareEnabled() {
 
 function readAsciiEnabled() {
   if (typeof window === "undefined") {
-    return true;
+    return false;
   }
 
   const searchParams = new URLSearchParams(window.location.search);
@@ -37,13 +37,24 @@ function readAsciiEnabled() {
     return false;
   }
 
-  return searchParams.get("ascii") !== "0";
+  if (searchParams.get("ascii") === "1") {
+    return true;
+  }
+
+  if (searchParams.get("ascii") === "0") {
+    return false;
+  }
+
+  return (
+    window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1"
+  );
 }
 
 export function HomeHeroBackground() {
   const [variant, setVariant] = useState<HeroBackgroundVariant>("canvas");
   const [isCompareEnabled, setIsCompareEnabled] = useState(false);
-  const [isAsciiEnabled, setIsAsciiEnabled] = useState(true);
+  const [isAsciiEnabled, setIsAsciiEnabled] = useState(false);
 
   useEffect(() => {
     const updateState = () => {

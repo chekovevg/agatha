@@ -1,121 +1,54 @@
 "use client";
 
-import {useEffect, useRef, useState} from "react";
 import Image from "next/image";
+import Link from "next/link";
 
+import {useHeaderController} from "@/components/layout/useHeaderController";
 import type {SiteContent} from "@/content/types";
-import {Link, type Locale} from "@/lib/routing";
-import {cn} from "@/lib/utils";
+import {cn, getExternalLinkProps} from "@/lib/utils";
 
-type MenuState = "closed" | "opening" | "open" | "closing";
+const mobileFooterLinks = [
+  {label: "Contact", href: "/book"},
+  {label: "Privacy & Cookies", href: "/datenschutz"},
+  {label: "Impressum", href: "/impressum"},
+];
 
 export function Header({
   content,
-  locale,
   variant = "compact",
   showBookingCta = true,
-  showLocaleSwitcher = false,
 }: {
   content: SiteContent;
-  locale: Locale;
   variant?: "compact" | "full" | "home";
   showBookingCta?: boolean;
-  showLocaleSwitcher?: boolean;
 }) {
-  const [menuState, setMenuState] = useState<MenuState>("closed");
-  const [headerHidden, setHeaderHidden] = useState(false);
-  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const lastScrollYRef = useRef(0);
-  const scrollTickingRef = useRef(false);
-  const navItems = content.nav.map((item) => ({
-    ...item,
-    href: item.href.startsWith("/") ? `/${locale}${item.href}` : item.href,
-  }));
-  const mobileFooterLinks = [
-    {label: "Contact", href: `/${locale}/book`},
-    {label: "Privacy & Cookies", href: "/datenschutz"},
-    {label: "Impressum", href: "/impressum"},
-  ];
+  const {
+    closeMenu,
+    headerHidden,
+    menuExpanded,
+    menuState,
+    menuVisible,
+    openMenu,
+  } = useHeaderController();
+  const navItems = content.nav;
   const mobileSocialLinks = [
-    {label: "Email", href: "#"},
-    {label: "Telegram", href: "#"},
-    {label: "WhatsApp", href: "#"},
-  ];
-  const localeHref = "/";
+    content.social.email
+      ? {label: "Email", href: `mailto:${content.social.email}`}
+      : null,
+    content.social.preply
+      ? {label: "Preply", href: content.social.preply}
+      : null,
+    content.social.instagram
+      ? {label: "Instagram", href: content.social.instagram}
+      : null,
+    content.social.telegram
+      ? {label: "Telegram", href: content.social.telegram}
+      : null,
+    content.social.whatsapp
+      ? {label: "WhatsApp", href: content.social.whatsapp}
+      : null,
+  ].filter((link): link is {label: string; href: string} => link != null);
   const isHome = variant === "home";
-  const menuVisible = menuState !== "closed";
-  const menuExpanded = menuState === "open";
-
-  useEffect(() => {
-    return () => {
-      if (closeTimerRef.current) {
-        clearTimeout(closeTimerRef.current);
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    lastScrollYRef.current = window.scrollY;
-
-    function updateHeaderVisibility() {
-      const nextScrollY = Math.max(window.scrollY, 0);
-      const delta = nextScrollY - lastScrollYRef.current;
-      const isDesktop = window.innerWidth > 600;
-
-      if (!isDesktop || menuVisible || nextScrollY <= 1) {
-        setHeaderHidden(false);
-      } else if (delta > 6) {
-        setHeaderHidden(true);
-      } else if (delta < -6) {
-        setHeaderHidden(false);
-      }
-
-      lastScrollYRef.current = nextScrollY;
-      scrollTickingRef.current = false;
-    }
-
-    function handleScroll() {
-      if (scrollTickingRef.current) {
-        return;
-      }
-
-      scrollTickingRef.current = true;
-      requestAnimationFrame(updateHeaderVisibility);
-    }
-
-    function handleResize() {
-      if (window.innerWidth <= 600) {
-        setHeaderHidden(false);
-      }
-    }
-
-    window.addEventListener("scroll", handleScroll, {passive: true});
-    window.addEventListener("resize", handleResize);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-      window.removeEventListener("resize", handleResize);
-    };
-  }, [menuVisible]);
-
-  function openMenu() {
-    if (closeTimerRef.current) {
-      clearTimeout(closeTimerRef.current);
-    }
-
-    setHeaderHidden(false);
-    setMenuState("opening");
-    requestAnimationFrame(() => setMenuState("open"));
-  }
-
-  function closeMenu() {
-    if (closeTimerRef.current) {
-      clearTimeout(closeTimerRef.current);
-    }
-
-    setMenuState("closing");
-    closeTimerRef.current = setTimeout(() => setMenuState("closed"), 700);
-  }
 
   return (
     <>
@@ -145,7 +78,6 @@ export function Header({
         >
           <Link
             href="/"
-            locale={locale}
             aria-label="Home Agatha Music link"
             className="relative z-[2] justify-self-start py-[calc(22*var(--unit-fx))] max-[600px]:col-start-1 max-[600px]:row-start-1"
             onClick={closeMenu}
@@ -191,7 +123,7 @@ export function Header({
             </ul>
             {showBookingCta ? (
               <a
-                href={`/${locale}/book`}
+                href="/book"
                 className="font-ui mt-[calc(28*var(--unit-fx))] hidden items-center gap-[calc(10*var(--unit-fx))] hover:underline max-[600px]:mt-auto max-[600px]:flex max-[600px]:text-[16px] max-[600px]:leading-[1.8]"
                 onClick={closeMenu}
               >
@@ -222,28 +154,24 @@ export function Header({
                   </a>
                 ))}
               </nav>
-              <nav
-                aria-label="Social links"
-                className="w-1/2 font-ui text-[12px] leading-[1.8]"
-              >
-                {mobileSocialLinks.map((link) => (
-                  <a
-                    key={link.label}
-                    href={link.href}
-                    aria-disabled={link.href === "#"}
-                    className="block hover:underline"
-                    onClick={(event) => {
-                      if (link.href === "#") {
-                        event.preventDefault();
-                      }
-
-                      closeMenu();
-                    }}
-                  >
-                    {link.label}
-                  </a>
-                ))}
-              </nav>
+              {mobileSocialLinks.length > 0 ? (
+                <nav
+                  aria-label="Social links"
+                  className="w-1/2 font-ui text-[12px] leading-[1.8]"
+                >
+                  {mobileSocialLinks.map((link) => (
+                    <a
+                      key={link.label}
+                      href={link.href}
+                      {...getExternalLinkProps(link.href)}
+                      className="block hover:underline"
+                      onClick={closeMenu}
+                    >
+                      {link.label}
+                    </a>
+                  ))}
+                </nav>
+              ) : null}
             </div>
           </nav>
           <div
@@ -251,27 +179,9 @@ export function Header({
               "absolute right-[calc(22*var(--unit-fx))] top-1/2 hidden -translate-y-1/2 items-center gap-5 min-[601px]:flex",
             )}
           >
-            {showLocaleSwitcher ? (
-              <div className="font-ui flex text-xs font-normal text-[var(--muted)] max-[600px]:hidden">
-                {(["en", "de", "ru"] as const).map((item) => (
-                  <Link
-                    key={item}
-                    href={localeHref}
-                    locale={item}
-                    className={`rounded-full px-2 py-1 ${
-                      item === locale
-                        ? "text-[var(--ink)]"
-                        : "text-[var(--muted)] hover:text-[var(--ink)]"
-                    }`}
-                  >
-                    {item.toUpperCase()}
-                  </Link>
-                ))}
-              </div>
-            ) : null}
             {showBookingCta ? (
               <a
-                href={`/${locale}/book`}
+                href="/book"
                 className="mai-ui inline-flex items-center gap-[calc(10*var(--unit-fx))] leading-none hover:underline max-[600px]:w-full max-[600px]:text-[16px] max-[600px]:leading-[1.8]"
                 onClick={closeMenu}
               >

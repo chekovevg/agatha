@@ -40,20 +40,6 @@ function getWebpSize(path: URL) {
   throw new Error(`Could not read WebP dimensions for ${path.pathname}`);
 }
 
-vi.mock("next-intl/navigation", () => ({
-  createNavigation: () => ({
-    Link: "a",
-    getPathname: vi.fn(),
-    redirect: vi.fn(),
-    usePathname: vi.fn(),
-    useRouter: vi.fn(),
-  }),
-}));
-
-vi.mock("next-intl/routing", () => ({
-  defineRouting: (config: unknown) => config,
-}));
-
 vi.mock("next/image", async () => {
   const {createElement} = await import("react");
 
@@ -121,22 +107,21 @@ vi.mock("next/image", async () => {
 
 import {HomePage} from "@/components/pages/HomePage";
 import {ButtonLink} from "@/components/ui/Button";
+import {AsciiHeroReveal} from "@/components/ui/AsciiHeroReveal";
 import {SplitLinkButton} from "@/components/ui/SplitLinkButton";
 import {WebGLHeroBackground} from "@/components/ui/WebGLHeroBackground";
 import {siteContent} from "@/content/site";
 
 describe("home hero", () => {
-  it("uses the one-screen ASCII canvas hero instead of a raster or extended sticky intro", () => {
+  it("uses a one-screen canvas hero instead of a raster or extended sticky intro", () => {
     const html = renderToStaticMarkup(
-      <HomePage content={siteContent.en} locale="en" />,
+      <HomePage content={siteContent} />,
     );
 
     expect(html).toContain('data-home-hero="watercolor-intro"');
-    expect(html).toContain('data-home-hero-background-switcher="ascii"');
+    expect(html).toContain('data-home-hero-background-switcher="canvas"');
     expect(html).toContain("home-hero-canvas-stage");
     expect(html).toContain("watercolor-hero-bg");
-    expect(html).toContain("ascii-hero-reveal");
-    expect(html).toContain("scale: c d e f g a b");
     expect(html).toContain("<canvas");
     expect(html).toContain("h-[100svh]");
     expect(html).not.toContain("webgl-hero-bg");
@@ -146,9 +131,37 @@ describe("home hero", () => {
     expect(html).not.toContain("/images/home/hero-background.png");
   });
 
+  it("enables the ASCII hero layer by default on local browser hosts", () => {
+    const source = readFileSync(
+      new URL("../components/ui/HomeHeroBackground.tsx", import.meta.url),
+      "utf8",
+    );
+
+    expect(source).toContain('window.location.hostname === "localhost"');
+    expect(source).toContain('window.location.hostname === "127.0.0.1"');
+    expect(source).toContain('searchParams.get("ascii") === "0"');
+    expect(source).toContain("<AsciiHeroReveal />");
+  });
+
+  it("keeps ASCII hero decoration out of rendered text nodes", () => {
+    const html = renderToStaticMarkup(<AsciiHeroReveal />);
+    const css = readFileSync(
+      new URL("../app/globals.css", import.meta.url),
+      "utf8",
+    );
+
+    expect(html).toContain('aria-hidden="true"');
+    expect(html).toContain('data-ascii-line="scale: c d e f g a b"');
+    expect(html).not.toContain(">scale: c d e f g a b<");
+    expect(html).not.toContain(">breath.support = steady<");
+    expect(html).not.toContain(">flute.register.high<");
+    expect(css).toContain(".ascii-hero-cluster span::before");
+    expect(css).toContain("content: attr(data-ascii-line);");
+  });
+
   it("marks the reused Microsoft AI home sections and omits non-reused blocks", () => {
     const html = renderToStaticMarkup(
-      <HomePage content={siteContent.en} locale="en" />,
+      <HomePage content={siteContent} />,
     );
 
     expect(html).toContain('data-reference-section="hero"');
@@ -244,7 +257,7 @@ describe("home hero", () => {
 
   it("uses the optically tuned local hero typography on the home page", () => {
     const html = renderToStaticMarkup(
-      <HomePage content={siteContent.en} locale="en" />,
+      <HomePage content={siteContent} />,
     );
 
     expect(html).toContain("mai-h1");
@@ -276,22 +289,26 @@ describe("home hero", () => {
       new URL("../components/layout/Header.tsx", import.meta.url),
       "utf8",
     );
+    const controllerSource = readFileSync(
+      new URL("../components/layout/useHeaderController.ts", import.meta.url),
+      "utf8",
+    );
 
     expect(source).toContain("max-[600px]:fixed");
     expect(source).toContain("max-[600px]:inset-0");
     expect(source).toContain("max-[600px]:bg-[var(--background)]");
     expect(source).toContain("data-menu-state");
     expect(source).toContain("data-header-hidden");
-    expect(source).toContain("window.addEventListener(\"scroll\"");
-    expect(source).toContain("lastScrollYRef");
+    expect(controllerSource).toContain("window.addEventListener(\"scroll\"");
+    expect(controllerSource).toContain("lastScrollYRef");
     expect(source).toContain("headerHidden");
     expect(source).toContain("fixed");
     expect(source).toContain("top-0");
     expect(source).toContain("pt-[calc(33*var(--unit-fx))]");
     expect(source).toContain("max-[600px]:pt-5");
     expect(source).toContain("min-[601px]:-translate-y-[calc(100%+12px)]");
-    expect(source).toContain("requestAnimationFrame");
-    expect(source).toContain("setTimeout");
+    expect(controllerSource).toContain("requestAnimationFrame");
+    expect(controllerSource).toContain("setTimeout");
     expect(source).toContain("max-[600px]:fixed max-[600px]:inset-0");
     expect(source).toContain("max-[600px]:bg-[var(--background)]");
     expect(source).toContain("max-[600px]:transition-opacity");
@@ -334,6 +351,24 @@ describe("home hero", () => {
     expect(source).not.toContain("pb-[calc(132*var(--unit-fx))]");
     expect(source).not.toContain("Accessibility Mode");
     expect(source).not.toContain("max-[600px]:top-[calc(100%+calc(10*var(--unit-fx)))]");
+  });
+
+  it("renders configured contact links in the mobile header instead of disabled placeholders", () => {
+    const html = renderToStaticMarkup(
+      <HomePage content={siteContent} />,
+    );
+
+    expect(html).toContain('href="mailto:agathagurko@gmail.com"');
+    expect(html).toContain('href="https://t.me/youngbabypeach"');
+    expect(html).toContain('href="https://wa.me/491636276938"');
+    expect(html).toContain(
+      'href="https://t.me/youngbabypeach" target="_blank" rel="noreferrer"',
+    );
+    expect(html).toContain(
+      'href="https://wa.me/491636276938" target="_blank" rel="noreferrer"',
+    );
+    expect(html).not.toContain('href="#"');
+    expect(html).not.toContain('aria-disabled="true"');
   });
 
   it("defines the fluid reference-derived type ramp used by home page tokens", () => {
@@ -412,7 +447,7 @@ describe("home hero", () => {
 
   it("uses updated location artwork and a mobile-specific Agatha image", () => {
     const html = renderToStaticMarkup(
-      <HomePage content={siteContent.en} locale="en" />,
+      <HomePage content={siteContent} />,
     );
 
     expect(html).toContain('src="/images/home/from-the-rhine.webp"');
@@ -433,11 +468,16 @@ describe("home hero", () => {
 
   it("keeps split link button hover motion aligned with Microsoft AI", () => {
     const html = renderToStaticMarkup(
-      <SplitLinkButton href="/en/book">Get in touch</SplitLinkButton>,
+      <SplitLinkButton href="/book">Get in touch</SplitLinkButton>,
     );
     const sharedButtonHtml = renderToStaticMarkup(
-      <ButtonLink href="/en/book" variant="split">
+      <ButtonLink href="/book" variant="split">
         Book Trial Class
+      </ButtonLink>,
+    );
+    const externalButtonHtml = renderToStaticMarkup(
+      <ButtonLink href="https://example.com" variant="split">
+        External Link
       </ButtonLink>,
     );
     const css = readFileSync(
@@ -448,6 +488,8 @@ describe("home hero", () => {
     expect(html).toContain("split-link-button");
     expect(sharedButtonHtml).toContain("split-link-button");
     expect(sharedButtonHtml).toContain("Book Trial Class");
+    expect(externalButtonHtml).toContain('target="_blank"');
+    expect(externalButtonHtml).toContain('rel="noreferrer"');
     expect(html).not.toContain("split-link-button-label");
     expect(html).not.toContain("split-link-button-icon");
     expect(html).not.toContain("split-link-button-arrow");

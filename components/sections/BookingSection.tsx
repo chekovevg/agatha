@@ -1,5 +1,4 @@
 import type {SiteContent} from "@/content/types";
-import type {Locale} from "@/lib/routing";
 import {env} from "@/lib/env";
 import {Section} from "@/components/ui/Section";
 import {SectionHeader} from "@/components/ui/SectionHeader";
@@ -7,11 +6,9 @@ import {ButtonLink} from "@/components/ui/Button";
 
 export function BookingSection({
   content,
-  locale,
   expanded = false,
 }: {
   content: SiteContent;
-  locale: Locale;
   expanded?: boolean;
 }) {
   const calLink = env.NEXT_PUBLIC_CAL_LINK;
@@ -35,7 +32,7 @@ export function BookingSection({
             ))}
           </div>
           {!expanded ? (
-            <ButtonLink href={`/${locale}/book`} className="mt-8">
+            <ButtonLink href="/book" className="mt-8">
               {content.cta.primary}
             </ButtonLink>
           ) : null}
@@ -45,6 +42,8 @@ export function BookingSection({
             <iframe
               title="Book a trial lesson with Agatha"
               src={calLink}
+              loading="lazy"
+              referrerPolicy="strict-origin-when-cross-origin"
               className="min-h-[620px] w-full rounded-[var(--radius-card)]"
             />
           ) : (
@@ -55,7 +54,11 @@ export function BookingSection({
                 The site keeps Cal.com as the booking authority and does not
                 implement custom availability.
               </p>
-              <ButtonLink href="#contact" className="mt-6" variant="secondary">
+              <ButtonLink
+                href="/about#contact"
+                className="mt-6"
+                variant="secondary"
+              >
                 {content.booking.fallbackContactCta}
               </ButtonLink>
             </div>
