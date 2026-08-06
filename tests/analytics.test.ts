@@ -97,9 +97,14 @@ describe("analytics contracts", () => {
   it("accepts only Cal.com paths and allowlisted non-empty UTMs", () => {
     expect(calPathFromUrl("https://cal.com/agatha/trial/")).toBe("agatha/trial");
     expect(calPathFromUrl("https://app.cal.com/agatha")).toBeNull();
-    expect(readCalUtm("?utm_source=telegram&utm_medium=social&email=nope@example.com")).toEqual({
+    expect(
+      readCalUtm(
+        "?utm_source=telegram&utm_medium=social&utm_campaign=autumn&email=nope@example.com&booking_id=123&utm_term=piano&utm_content=hero",
+      ),
+    ).toEqual({
       utm_source: "telegram",
       utm_medium: "social",
+      utm_campaign: "autumn",
     });
     expect(readCalUtm("?utm_campaign=&booking_id=123")).toEqual({});
   });

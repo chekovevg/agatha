@@ -1,4 +1,5 @@
 import type {SiteContent} from "@/content/types";
+import {CalBookingEmbed} from "@/components/analytics/CalBookingEmbed";
 import {env} from "@/lib/env";
 import {Section} from "@/components/ui/Section";
 import {SectionHeader} from "@/components/ui/SectionHeader";
@@ -39,12 +40,9 @@ export function BookingSection({
         </div>
         <div className="rounded-[var(--radius-media)] bg-[var(--card)] p-5 shadow-[var(--shadow-elevated)]">
           {calLink ? (
-            <iframe
+            <CalBookingEmbed
+              url={calLink}
               title="Book a trial lesson with Agatha"
-              src={calLink}
-              loading="lazy"
-              referrerPolicy="strict-origin-when-cross-origin"
-              className="min-h-[620px] w-full rounded-[var(--radius-card)]"
             />
           ) : (
             <div className="flex min-h-[420px] flex-col items-start justify-center rounded-[var(--radius-card)] bg-[var(--paper)] p-8">

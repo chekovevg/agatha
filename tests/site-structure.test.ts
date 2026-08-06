@@ -52,6 +52,7 @@ import sitemap from "@/app/sitemap";
 import {AboutPage} from "@/components/pages/AboutPage";
 import {BookingSection} from "@/components/sections/BookingSection";
 import {siteContent} from "@/content/site";
+import {env} from "@/lib/env";
 
 describe("editorial site structure", () => {
   it("uses Agatha Music as the public brand", () => {
@@ -104,23 +105,53 @@ describe("editorial site structure", () => {
     expect(existsSync(new URL("proxy.ts", root))).toBe(false);
   });
 
-  it("removes the localization runtime and keeps the booking iframe lazy", () => {
+  it("removes the localization runtime", () => {
     const root = new URL("..", import.meta.url);
     const packageJson = JSON.parse(
       readFileSync(new URL("package.json", root), "utf8"),
     ) as {dependencies?: Record<string, string>};
     const nextConfig = readFileSync(new URL("next.config.ts", root), "utf8");
-    const bookingSource = readFileSync(
-      new URL("components/sections/BookingSection.tsx", root),
-      "utf8",
-    );
 
     expect(packageJson.dependencies).not.toHaveProperty("next-intl");
     expect(nextConfig).not.toContain("next-intl");
     expect(existsSync(new URL("i18n", root))).toBe(false);
     expect(existsSync(new URL("messages", root))).toBe(false);
-    expect(bookingSource).toContain('loading="lazy"');
-    expect(bookingSource).toContain('referrerPolicy="strict-origin-when-cross-origin"');
+  });
+
+  it("renders the Cal inline embed and a normal booking-link fallback when configured", () => {
+    const previousCalLink = env.NEXT_PUBLIC_CAL_LINK;
+    env.NEXT_PUBLIC_CAL_LINK = "https://cal.com/agatha/trial";
+
+    try {
+      const html = renderToStaticMarkup(
+        createElement(BookingSection, {
+          content: siteContent,
+          expanded: true,
+        }),
+      );
+
+      expect(html).toContain('id="agatha-cal-inline"');
+      expect(html).toContain('aria-label="Book a trial lesson with Agatha"');
+      expect(html).toContain('href="https://cal.com/agatha/trial"');
+      expect(html).not.toContain("<iframe");
+    } finally {
+      env.NEXT_PUBLIC_CAL_LINK = previousCalLink;
+    }
+  });
+
+  it("uses Cal's official loader and only the current booking-success event", () => {
+    const embedUrl = new URL(
+      "components/analytics/CalBookingEmbed.tsx",
+      new URL("..", import.meta.url),
+    );
+
+    expect(existsSync(embedUrl)).toBe(true);
+    if (!existsSync(embedUrl)) return;
+
+    const embedSource = readFileSync(embedUrl, "utf8");
+    expect(embedSource).toContain("https://app.cal.com/embed/embed.js");
+    expect(embedSource).toContain('action: "bookingSuccessfulV2"');
+    expect(embedSource).not.toContain('action: "bookingSuccessful"');
   });
 
   it("ignores reproducible local QA artifacts", () => {
@@ -218,15 +249,23 @@ describe("editorial site structure", () => {
   });
 
   it("links booking fallback contact CTA to the unprefixed contact form", () => {
-    const html = renderToStaticMarkup(
-      createElement(BookingSection, {
-        content: siteContent,
-        expanded: true,
-      }),
-    );
+    const previousCalLink = env.NEXT_PUBLIC_CAL_LINK;
+    env.NEXT_PUBLIC_CAL_LINK = undefined;
 
-    expect(html).toContain('href="/about#contact"');
-    expect(html).not.toMatch(/href="\/(en|de|ru)\//);
-    expect(html).not.toContain('href="#contact"');
+    try {
+      const html = renderToStaticMarkup(
+        createElement(BookingSection, {
+          content: siteContent,
+          expanded: true,
+        }),
+      );
+
+      expect(html).toContain("Booking link pending");
+      expect(html).toContain('href="/about#contact"');
+      expect(html).not.toMatch(/href="\/(en|de|ru)\//);
+      expect(html).not.toContain('href="#contact"');
+    } finally {
+      env.NEXT_PUBLIC_CAL_LINK = previousCalLink;
+    }
   });
 });
