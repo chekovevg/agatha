@@ -434,4 +434,3 @@ If not already explicit, ask before production deployment, GTM publication, or
 DNS verification. After those actions are authorized and completed, use GTM
 Preview and GA4 DebugView to verify one `book_trial_cta_click` and one redacted
 `generate_lead` from a test booking, then confirm Search Console is linked.
-

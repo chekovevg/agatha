@@ -122,4 +122,3 @@ pages without another visitor-tracking script.
 
 Production deployment, DNS changes, and GTM container publishing are performed
 only with explicit user authorization at the point they are needed.
-
