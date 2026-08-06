@@ -52,6 +52,7 @@ export function Footer({
         <a
           className="footer-book-link items-center gap-[calc(10*var(--unit-fx))]"
           href="/book"
+          data-analytics-booking-cta="footer"
         >
           {footerBookLabel}
           <Image

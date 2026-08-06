@@ -78,7 +78,7 @@ function LessonRow({
         <h2 className="mai-h4 mt-[calc(24_*_var(--unit-fx))]">
           {lesson.title}
         </h2>
-        <ButtonLink href="/book" className="mt-[calc(32_*_var(--unit-fx))]">
+        <ButtonLink href="/book" className="mt-[calc(32_*_var(--unit-fx))]" data-analytics-booking-cta="classes">
           {lesson.ctaLabel}
         </ButtonLink>
       </div>

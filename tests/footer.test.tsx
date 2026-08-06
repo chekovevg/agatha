@@ -59,6 +59,7 @@ describe("footer", () => {
     expect(html).toContain('data-footer-section="social"');
     expect(html).toContain('data-footer-section="legal"');
     expect(html).toContain("Book a lesson");
+    expect(html).toContain('data-analytics-booking-cta="footer"');
     expect(html).not.toContain("Book a trial lesson");
     expect(html.indexOf("Book a lesson")).toBeLessThan(
       html.indexOf("About me"),

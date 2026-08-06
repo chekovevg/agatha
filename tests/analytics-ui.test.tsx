@@ -1,12 +1,47 @@
 import {createElement} from "react";
 import {renderToStaticMarkup} from "react-dom/server";
-import {describe, expect, it} from "vitest";
+import {describe, expect, it, vi} from "vitest";
+
+vi.mock("next/image", async () => {
+  const {createElement} = await import("react");
+
+  return {
+    default: ({
+      fill: _fill,
+      priority: _priority,
+      src,
+      unoptimized: _unoptimized,
+      ...props
+    }: {
+      fill?: boolean;
+      priority?: boolean;
+      src: string | {src: string};
+      unoptimized?: boolean;
+    }) =>
+      createElement("img", {
+        ...props,
+        src: typeof src === "string" ? src : src.src,
+      }),
+    getImageProps: ({src, ...props}: {src: string | {src: string}}) => ({
+      props: {
+        ...props,
+        src: typeof src === "string" ? src : src.src,
+        srcSet: `${typeof src === "string" ? src : src.src} 1x`,
+      },
+    }),
+  };
+});
 
 import DatenschutzPage from "@/app/datenschutz/page";
 import {
   AnalyticsConsentBanner,
   deleteAnalyticsCookies,
 } from "@/components/analytics/AnalyticsManager";
+import {Header} from "@/components/layout/Header";
+import {ClassesPage} from "@/components/pages/ClassesPage";
+import {HomePage} from "@/components/pages/HomePage";
+import {MediaPage} from "@/components/pages/MediaPage";
+import {siteContent} from "@/content/site";
 
 describe("analytics consent UI", () => {
   it("renders accessible analytics consent choices", () => {
@@ -56,5 +91,17 @@ describe("analytics consent UI", () => {
     expect(writes).not.toContain("other=; Max-Age=0; path=/");
 
     Object.defineProperty(globalThis, "document", {configurable: true, value: originalDocument});
+  });
+
+  it("marks booking CTAs with their funnel locations", () => {
+    const headerHtml = renderToStaticMarkup(createElement(Header, {content: siteContent}));
+    const homeHtml = renderToStaticMarkup(createElement(HomePage, {content: siteContent}));
+    const classesHtml = renderToStaticMarkup(createElement(ClassesPage, {content: siteContent}));
+    const mediaHtml = renderToStaticMarkup(createElement(MediaPage, {content: siteContent}));
+
+    expect(headerHtml.match(/data-analytics-booking-cta="header"/g)).toHaveLength(2);
+    expect(homeHtml).toContain('data-analytics-booking-cta="home"');
+    expect(classesHtml).toContain('data-analytics-booking-cta="classes"');
+    expect(mediaHtml).toContain('data-analytics-booking-cta="media"');
   });
 });

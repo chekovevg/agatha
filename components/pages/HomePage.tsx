@@ -135,7 +135,7 @@ export function HomePage({
               </p>
             </div>
             {showActions ? (
-              <ButtonLink href="/book" variant="split">
+              <ButtonLink href="/book" variant="split" data-analytics-booking-cta="home">
                 {home.location.cta}
               </ButtonLink>
             ) : null}

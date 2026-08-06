@@ -124,6 +124,7 @@ export function Header({
             {showBookingCta ? (
               <a
                 href="/book"
+                data-analytics-booking-cta="header"
                 className="font-ui mt-[calc(28*var(--unit-fx))] hidden items-center gap-[calc(10*var(--unit-fx))] hover:underline max-[600px]:mt-auto max-[600px]:flex max-[600px]:text-[16px] max-[600px]:leading-[1.8]"
                 onClick={closeMenu}
               >
@@ -182,6 +183,7 @@ export function Header({
             {showBookingCta ? (
               <a
                 href="/book"
+                data-analytics-booking-cta="header"
                 className="mai-ui inline-flex items-center gap-[calc(10*var(--unit-fx))] leading-none hover:underline max-[600px]:w-full max-[600px]:text-[16px] max-[600px]:leading-[1.8]"
                 onClick={closeMenu}
               >
