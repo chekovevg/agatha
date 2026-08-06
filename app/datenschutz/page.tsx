@@ -33,6 +33,19 @@ export default function DatenschutzPage() {
             <li>Retention, controller identity, and user rights under GDPR.</li>
           </ul>
         </section>
+        <section>
+          <h2 className="mai-h7 text-[var(--ink)]">Google Analytics</h2>
+          <p className="mt-3">
+            Google Analytics is consent-based and remains disabled until you allow it. It is used to measure page and source visits and the booking funnel, without sending booking form contents.
+          </p>
+          <button
+            className="mai-ui mt-3 underline focus-visible:outline-2 focus-visible:outline-offset-4"
+            data-analytics-preferences
+            type="button"
+          >
+            Review analytics preferences
+          </button>
+        </section>
       </div>
     </main>
   );

@@ -1,0 +1,155 @@
+"use client";
+
+import Script from "next/script";
+import {useEffect, useRef, useState} from "react";
+
+import {
+  type AnalyticsConsent,
+  canLoadAnalytics,
+  createBookingClickEvent,
+  pushAnalyticsEvent,
+  readAnalyticsConsent,
+  writeAnalyticsConsent,
+} from "@/lib/analytics";
+
+const consentSettings = (analyticsStorage: AnalyticsConsent) => ({
+  ad_personalization: "denied",
+  ad_storage: "denied",
+  ad_user_data: "denied",
+  analytics_storage: analyticsStorage,
+});
+
+function enqueueConsent(
+  command: "default" | "update",
+  analyticsStorage: AnalyticsConsent,
+) {
+  const analyticsWindow = window as Window & {dataLayer?: unknown[]};
+  analyticsWindow.dataLayer ??= [];
+  analyticsWindow.dataLayer.push(["consent", command, consentSettings(analyticsStorage)]);
+}
+
+function deleteAnalyticsCookies() {
+  for (const cookie of document.cookie.split(";")) {
+    const name = cookie.trim().split("=", 1)[0];
+    if (name?.startsWith("_ga")) {
+      document.cookie = `${name}=; Max-Age=0; path=/`;
+    }
+  }
+}
+
+export function AnalyticsConsentBanner({
+  onAllow,
+  onDeny,
+}: {
+  onAllow: () => void;
+  onDeny: () => void;
+}) {
+  return (
+    <section
+      aria-label="Analytics preferences"
+      className="fixed inset-x-4 top-1/2 z-50 mx-auto max-w-xl -translate-y-1/2 rounded-[var(--radius-card)] bg-[var(--ink)] p-5 text-[var(--paper)] shadow-[var(--shadow-elevated)]"
+      role="region"
+    >
+      <p className="mai-ui text-sm">
+        We use optional analytics to understand page visits and the booking journey.
+      </p>
+      <p className="mt-2 text-sm text-[var(--paper)]/80">
+        <a className="underline focus-visible:outline-2 focus-visible:outline-offset-4" href="/datenschutz">
+          Read our privacy information
+        </a>
+      </p>
+      <div className="mt-4 flex flex-wrap gap-3">
+        <button
+          className="rounded-full bg-[var(--paper)] px-4 py-2 text-sm font-semibold text-[var(--ink)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--paper)]"
+          onClick={onAllow}
+          type="button"
+        >
+          Allow analytics
+        </button>
+        <button
+          className="rounded-full border border-[var(--paper)] px-4 py-2 text-sm font-semibold text-[var(--paper)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--paper)]"
+          onClick={onDeny}
+          type="button"
+        >
+          Continue without analytics
+        </button>
+      </div>
+    </section>
+  );
+}
+
+export function AnalyticsManager({gtmId}: {gtmId?: string}) {
+  const [consent, setConsent] = useState<AnalyticsConsent | null | undefined>(undefined);
+  const [showBanner, setShowBanner] = useState(false);
+  const [shouldLoadGtm, setShouldLoadGtm] = useState(false);
+  const gtmLoaded = useRef(false);
+
+  function allowAnalytics() {
+    writeAnalyticsConsent(window.localStorage, "granted");
+    setConsent("granted");
+    setShowBanner(false);
+    enqueueConsent("default", "granted");
+    const analyticsWindow = window as Window & {dataLayer?: unknown[]};
+    analyticsWindow.dataLayer?.push({event: "gtm.js", "gtm.start": Date.now()});
+    setShouldLoadGtm(canLoadAnalytics(window.location.hostname, gtmId, "granted"));
+  }
+
+  function denyAnalytics() {
+    writeAnalyticsConsent(window.localStorage, "denied");
+    setConsent("denied");
+    setShowBanner(false);
+    if (gtmLoaded.current) enqueueConsent("update", "denied");
+    deleteAnalyticsCookies();
+    setShouldLoadGtm(false);
+  }
+
+  useEffect(() => {
+    const timeout = window.setTimeout(() => {
+      const storedConsent = readAnalyticsConsent(window.localStorage);
+      setConsent(storedConsent);
+      setShowBanner(storedConsent === null);
+      if (storedConsent === "granted") allowAnalytics();
+    }, 0);
+
+    return () => window.clearTimeout(timeout);
+    // The stored choice is intentionally read once after hydration.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    function handleDocumentClick(event: MouseEvent) {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+
+      if (target.closest("[data-analytics-preferences]")) {
+        setShowBanner(true);
+        return;
+      }
+
+      const bookingCta = target.closest<HTMLElement>("[data-analytics-booking-cta]");
+      const ctaLocation = bookingCta?.dataset.analyticsBookingCta;
+      if (ctaLocation && readAnalyticsConsent(window.localStorage) === "granted") {
+        pushAnalyticsEvent(createBookingClickEvent(ctaLocation));
+      }
+    }
+
+    document.addEventListener("click", handleDocumentClick);
+    return () => document.removeEventListener("click", handleDocumentClick);
+  }, []);
+
+  return (
+    <>
+      {showBanner ? <AnalyticsConsentBanner onAllow={allowAnalytics} onDeny={denyAnalytics} /> : null}
+      {consent === "granted" && shouldLoadGtm && gtmId ? (
+        <Script
+          id="agatha-gtm"
+          onLoad={() => {
+            gtmLoaded.current = true;
+          }}
+          src={`https://www.googletagmanager.com/gtm.js?id=${gtmId}`}
+          strategy="afterInteractive"
+        />
+      ) : null}
+    </>
+  );
+}
