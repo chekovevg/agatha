@@ -48,6 +48,29 @@ describe("analytics contracts", () => {
     expect(readAnalyticsConsent(storage)).toBe("granted");
   });
 
+  it("fails closed when storage access is unavailable", () => {
+    const unavailableStorage = {
+      getItem: () => {
+        throw new DOMException("Storage unavailable", "SecurityError");
+      },
+    };
+    const originalWindow = globalThis.window;
+    Object.defineProperty(globalThis, "window", {
+      configurable: true,
+      value: {
+        get localStorage() {
+          throw new DOMException("Storage unavailable", "SecurityError");
+        },
+        location: {hostname: "agathamusic.com"},
+      },
+    });
+
+    expect(readAnalyticsConsent(unavailableStorage)).toBeNull();
+    expect(pushAnalyticsEvent(createLeadEvent())).toBe(false);
+
+    Object.defineProperty(globalThis, "window", {configurable: true, value: originalWindow});
+  });
+
   it("does not push events without stored granted consent on a production host", () => {
     const originalWindow = globalThis.window;
     const storage = new Map([[ANALYTICS_CONSENT_KEY, "denied"]]);

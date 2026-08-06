@@ -1,7 +1,7 @@
 "use client";
 
 import Script from "next/script";
-import {useEffect, useRef, useState} from "react";
+import {useEffect, useState} from "react";
 
 import {
   type AnalyticsConsent,
@@ -28,12 +28,50 @@ function enqueueConsent(
   analyticsWindow.dataLayer.push(["consent", command, consentSettings(analyticsStorage)]);
 }
 
-function deleteAnalyticsCookies() {
-  for (const cookie of document.cookie.split(";")) {
-    const name = cookie.trim().split("=", 1)[0];
-    if (name?.startsWith("_ga")) {
-      document.cookie = `${name}=; Max-Age=0; path=/`;
+export function deleteAnalyticsCookies(hostname: string) {
+  try {
+    const domains = new Set<string>();
+    if (hostname.includes(".") && !/^\d+(?:\.\d+){3}$/.test(hostname)) {
+      domains.add(hostname);
+      domains.add(hostname.split(".").slice(-2).join("."));
     }
+
+    for (const cookie of document.cookie.split(";")) {
+      const name = cookie.trim().split("=", 1)[0];
+      if (!name?.startsWith("_ga")) continue;
+
+      document.cookie = `${name}=; Max-Age=0; path=/`;
+      for (const domain of domains) {
+        document.cookie = `${name}=; Max-Age=0; path=/; domain=${domain}`;
+      }
+    }
+  } catch {
+    // Cookie access is best-effort; analytics remains disabled below.
+  }
+}
+
+function getAnalyticsStorage(): Storage | null {
+  try {
+    return window.localStorage;
+  } catch {
+    return null;
+  }
+}
+
+function readStoredConsent(): AnalyticsConsent | null {
+  const storage = getAnalyticsStorage();
+  return storage ? readAnalyticsConsent(storage) : null;
+}
+
+function writeStoredConsent(consent: AnalyticsConsent): boolean {
+  const storage = getAnalyticsStorage();
+  if (!storage) return false;
+
+  try {
+    writeAnalyticsConsent(storage, consent);
+    return true;
+  } catch {
+    return false;
   }
 }
 
@@ -82,10 +120,8 @@ export function AnalyticsManager({gtmId}: {gtmId?: string}) {
   const [consent, setConsent] = useState<AnalyticsConsent | null | undefined>(undefined);
   const [showBanner, setShowBanner] = useState(false);
   const [shouldLoadGtm, setShouldLoadGtm] = useState(false);
-  const gtmLoaded = useRef(false);
 
-  function allowAnalytics() {
-    writeAnalyticsConsent(window.localStorage, "granted");
+  function activateAnalytics() {
     setConsent("granted");
     setShowBanner(false);
     enqueueConsent("default", "granted");
@@ -94,21 +130,31 @@ export function AnalyticsManager({gtmId}: {gtmId?: string}) {
     setShouldLoadGtm(canLoadAnalytics(window.location.hostname, gtmId, "granted"));
   }
 
+  function allowAnalytics() {
+    if (!writeStoredConsent("granted")) {
+      setConsent(null);
+      setShowBanner(true);
+      return;
+    }
+
+    activateAnalytics();
+  }
+
   function denyAnalytics() {
-    writeAnalyticsConsent(window.localStorage, "denied");
-    setConsent("denied");
-    setShowBanner(false);
-    if (gtmLoaded.current) enqueueConsent("update", "denied");
-    deleteAnalyticsCookies();
+    const stored = writeStoredConsent("denied");
+    if (consent === "granted") enqueueConsent("update", "denied");
+    deleteAnalyticsCookies(window.location.hostname);
     setShouldLoadGtm(false);
+    setConsent(stored ? "denied" : null);
+    setShowBanner(!stored);
   }
 
   useEffect(() => {
     const timeout = window.setTimeout(() => {
-      const storedConsent = readAnalyticsConsent(window.localStorage);
+      const storedConsent = readStoredConsent();
       setConsent(storedConsent);
       setShowBanner(storedConsent === null);
-      if (storedConsent === "granted") allowAnalytics();
+      if (storedConsent === "granted") activateAnalytics();
     }, 0);
 
     return () => window.clearTimeout(timeout);
@@ -128,7 +174,7 @@ export function AnalyticsManager({gtmId}: {gtmId?: string}) {
 
       const bookingCta = target.closest<HTMLElement>("[data-analytics-booking-cta]");
       const ctaLocation = bookingCta?.dataset.analyticsBookingCta;
-      if (ctaLocation && readAnalyticsConsent(window.localStorage) === "granted") {
+      if (ctaLocation && readStoredConsent() === "granted") {
         pushAnalyticsEvent(createBookingClickEvent(ctaLocation));
       }
     }
@@ -143,9 +189,6 @@ export function AnalyticsManager({gtmId}: {gtmId?: string}) {
       {consent === "granted" && shouldLoadGtm && gtmId ? (
         <Script
           id="agatha-gtm"
-          onLoad={() => {
-            gtmLoaded.current = true;
-          }}
           src={`https://www.googletagmanager.com/gtm.js?id=${gtmId}`}
           strategy="afterInteractive"
         />

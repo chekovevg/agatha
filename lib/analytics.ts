@@ -24,8 +24,12 @@ export function createLeadEvent(): AnalyticsEvent {
 }
 
 export function readAnalyticsConsent(storage: Pick<Storage, "getItem">): AnalyticsConsent | null {
-  const consent = storage.getItem(ANALYTICS_CONSENT_KEY);
-  return consent === "granted" || consent === "denied" ? consent : null;
+  try {
+    const consent = storage.getItem(ANALYTICS_CONSENT_KEY);
+    return consent === "granted" || consent === "denied" ? consent : null;
+  } catch {
+    return null;
+  }
 }
 
 export function writeAnalyticsConsent(
@@ -36,18 +40,22 @@ export function writeAnalyticsConsent(
 }
 
 export function pushAnalyticsEvent(event: AnalyticsEvent): boolean {
-  if (
-    typeof window === "undefined" ||
-    !productionHosts.has(window.location.hostname) ||
-    readAnalyticsConsent(window.localStorage) !== "granted"
-  ) {
+  try {
+    if (
+      typeof window === "undefined" ||
+      !productionHosts.has(window.location.hostname) ||
+      readAnalyticsConsent(window.localStorage) !== "granted"
+    ) {
+      return false;
+    }
+
+    const analyticsWindow = window as Window & {dataLayer?: AnalyticsEvent[]};
+    analyticsWindow.dataLayer ??= [];
+    analyticsWindow.dataLayer.push(event);
+    return true;
+  } catch {
     return false;
   }
-
-  const analyticsWindow = window as Window & {dataLayer?: AnalyticsEvent[]};
-  analyticsWindow.dataLayer ??= [];
-  analyticsWindow.dataLayer.push(event);
-  return true;
 }
 
 export function calPathFromUrl(url: string): string | null {
