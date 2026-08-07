@@ -17,11 +17,16 @@ vi.mock("next/image", async () => {
       priority?: boolean;
       src: string | {src: string};
       unoptimized?: boolean;
-    }) =>
-      createElement("img", {
+    }) => {
+      void _fill;
+      void _priority;
+      void _unoptimized;
+
+      return createElement("img", {
         ...props,
         src: typeof src === "string" ? src : src.src,
-      }),
+      });
+    },
     getImageProps: ({src, ...props}: {src: string | {src: string}}) => ({
       props: {
         ...props,

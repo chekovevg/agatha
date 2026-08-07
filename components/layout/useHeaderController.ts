@@ -2,7 +2,10 @@
 
 import {useEffect, useRef, useState} from "react";
 
-import {shouldHideHeader} from "@/components/layout/header-state";
+import {
+  MOBILE_HEADER_MAX_WIDTH,
+  shouldHideHeader,
+} from "@/components/layout/header-state";
 
 type MenuState = "closed" | "opening" | "open" | "closing";
 
@@ -57,7 +60,7 @@ export function useHeaderController() {
     }
 
     function handleResize() {
-      if (window.innerWidth <= 600) {
+      if (window.innerWidth <= MOBILE_HEADER_MAX_WIDTH) {
         setHeaderHidden(false);
       }
     }

@@ -44,6 +44,9 @@ export function ClassesPage({
                 key={lesson.slug}
                 lesson={lesson}
                 bookingLabel={content.cta.primary}
+                audienceLessons={
+                  lesson.slug === "flute" ? content.audienceLessons : undefined
+                }
               />
             ))}
         </div>
@@ -56,9 +59,11 @@ export function ClassesPage({
 function LessonRow({
   lesson,
   bookingLabel,
+  audienceLessons,
 }: {
   lesson: Lesson;
   bookingLabel: string;
+  audienceLessons?: SiteContent["audienceLessons"];
 }) {
   return (
     <article className="grid min-h-[328px] gap-8 rounded-[var(--radius-card)] bg-[var(--background)] px-6 py-10 transition-shadow duration-[150ms] hover:shadow-[var(--shadow-hover)] md:grid-cols-[216px_1fr] md:items-center md:px-12 lg:grid-cols-[216px_1fr_333px] lg:gap-[115px]">
@@ -81,6 +86,16 @@ function LessonRow({
         <ButtonLink href="/book" className="mt-[calc(32_*_var(--unit-fx))]" data-analytics-booking-cta="classes">
           {lesson.ctaLabel}
         </ButtonLink>
+        {audienceLessons ? (
+          <div className="mai-ui mt-6 grid gap-2">
+            <a className="underline" href={audienceLessons.adults.path}>
+              {audienceLessons.adults.navLabel}
+            </a>
+            <a className="underline" href={audienceLessons.children.path}>
+              {audienceLessons.children.navLabel}
+            </a>
+          </div>
+        ) : null}
       </div>
       <p className="mai-body text-[var(--ink)]">
         {lesson.description}

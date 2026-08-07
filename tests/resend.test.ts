@@ -20,6 +20,7 @@ function contactInput() {
     email: "student@example.com",
     studentAge: "",
     preferredLanguage: "English" as const,
+    source: "Google or another search engine" as const,
     subject: "Flute lessons",
     message: "I would like to ask about a first flute lesson.",
     website: "",
@@ -57,6 +58,9 @@ describe("Resend email sender", () => {
         from: "Agatha Music <hello@agathamusic.com>",
         to: "student@example.com",
       }),
+    );
+    expect(sendEmail.mock.calls[0]?.[0].text).toContain(
+      "How they found Agatha: Google or another search engine",
     );
   });
 

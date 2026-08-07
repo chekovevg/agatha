@@ -2,8 +2,9 @@ import type {Metadata} from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Datenschutzerklaerung | Agatha Music",
+  title: "Datenschutzerklaerung",
   description: "Privacy information for Agatha Music.",
+  robots: {index: false, follow: true},
 };
 
 export default function DatenschutzPage() {

@@ -5,6 +5,7 @@ import { EB_Garamond, Geist, Newsreader, Red_Hat_Mono } from "next/font/google";
 import localFont from "next/font/local";
 import {AnalyticsManager} from "@/components/analytics/AnalyticsManager";
 import {env} from "@/lib/env";
+import {serializeJsonLd, siteStructuredData} from "@/lib/seo";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -54,8 +55,27 @@ const azGaramond = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Agatha Music",
-  description: "Flute, recorder and music theory lessons online.",
+  metadataBase: new URL(env.NEXT_PUBLIC_SITE_URL),
+  title: {
+    default: "Online Flute Lessons with Agatha Gurko | Agatha Music",
+    template: "%s | Agatha Music",
+  },
+  description:
+    "Private online flute lessons for adults and children with Agatha Gurko.",
+  icons: {
+    icon: [
+      {
+        url: "/favicon-light.svg",
+        media: "(prefers-color-scheme: light)",
+        type: "image/svg+xml",
+      },
+      {
+        url: "/favicon-dark.svg",
+        media: "(prefers-color-scheme: dark)",
+        type: "image/svg+xml",
+      },
+    ],
+  },
 };
 
 export default function RootLayout({
@@ -69,6 +89,12 @@ export default function RootLayout({
       className={`${geistSans.variable} ${redHatMono.variable} ${ebGaramond.variable} ${newsreader.variable} ${garamondBookNarrow.variable} ${azGaramond.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: serializeJsonLd(siteStructuredData()),
+          }}
+        />
         {children}
         <AnalyticsManager gtmId={env.NEXT_PUBLIC_GTM_ID} />
         <Analytics />

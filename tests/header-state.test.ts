@@ -14,15 +14,18 @@ describe("header visibility state", () => {
     ).toBe(false);
   });
 
-  it("always reveals the header on mobile and while the menu is visible", () => {
+  it("always reveals the header through the 860px mobile breakpoint", () => {
     expect(
       shouldHideHeader({
         currentScrollY: 200,
         lastScrollY: 100,
-        viewportWidth: 600,
+        viewportWidth: 860,
         menuVisible: false,
       }),
     ).toBe(false);
+  });
+
+  it("always reveals the header while the menu is visible", () => {
     expect(
       shouldHideHeader({
         currentScrollY: 200,
@@ -34,6 +37,14 @@ describe("header visibility state", () => {
   });
 
   it("hides on meaningful downward scroll and reveals on upward scroll", () => {
+    expect(
+      shouldHideHeader({
+        currentScrollY: 107,
+        lastScrollY: 100,
+        viewportWidth: 861,
+        menuVisible: false,
+      }),
+    ).toBe(true);
     expect(
       shouldHideHeader({
         currentScrollY: 107,

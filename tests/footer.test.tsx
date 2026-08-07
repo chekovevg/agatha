@@ -60,7 +60,7 @@ describe("footer", () => {
     expect(html).toContain('data-footer-section="legal"');
     expect(html).toContain("Book a lesson");
     expect(html).toContain('data-analytics-booking-cta="footer"');
-    expect(html).not.toContain("Book a trial lesson");
+    expect(html).not.toContain("Book an intro call");
     expect(html.indexOf("Book a lesson")).toBeLessThan(
       html.indexOf("About me"),
     );
@@ -80,6 +80,9 @@ describe("footer", () => {
     expect(html).toContain("Impressum");
     expect(html).toContain("Privacy &amp; Cookies");
     expect(html).toContain(siteContent.home.footerNote);
+    expect(html).not.toContain('href="/online-flute-lessons-for-adults"');
+    expect(html).not.toContain('href="/online-flute-lessons-for-children"');
+    expect(html).toContain("© Agatha Gurko Music 2026");
   });
 
   it("keeps the Microsoft AI footer grid contract on desktop and mobile", () => {

@@ -50,6 +50,8 @@ vi.mock("next/image", async () => {
 
 import sitemap from "@/app/sitemap";
 import {AboutPage} from "@/components/pages/AboutPage";
+import {AudienceLessonPage} from "@/components/pages/AudienceLessonPage";
+import {ClassesPage} from "@/components/pages/ClassesPage";
 import {BookingSection} from "@/components/sections/BookingSection";
 import {siteContent} from "@/content/site";
 import {env} from "@/lib/env";
@@ -65,12 +67,95 @@ describe("editorial site structure", () => {
     expect(siteContent).not.toHaveProperty("ru");
   });
 
+  it("offers only the intro call and music lesson", () => {
+    expect(siteContent.booking.eventTypes).toEqual([
+      {
+        title: "Intro Call",
+        duration: "15 min",
+        description: "A short first conversation about goals and lesson format.",
+      },
+      {
+        title: "Music Lesson",
+        duration: "50 min",
+        description: "Online flute, recorder or music theory lessons.",
+      },
+    ]);
+  });
+
   it("uses the new editorial top-level navigation", () => {
     expect(siteContent.nav).toEqual([
       {label: "About me", href: "/about"},
       {label: "Classes", href: "/classes"},
       {label: "Media", href: "/media"},
     ]);
+  });
+
+  it("keeps distinct adult and child lesson content", () => {
+    expect(siteContent).toHaveProperty(
+      "audienceLessons.adults.path",
+      "/online-flute-lessons-for-adults",
+    );
+    expect(siteContent).toHaveProperty(
+      "audienceLessons.children.path",
+      "/online-flute-lessons-for-children",
+    );
+    expect(siteContent).toHaveProperty(
+      "audienceLessons.adults.title",
+      "Private Online Flute Lessons for Adults",
+    );
+    expect(siteContent).toHaveProperty(
+      "audienceLessons.children.title",
+      "Private Online Flute Lessons for Children",
+    );
+  });
+
+  it("renders distinct audience pages with one H1, four FAQs, and booking CTAs", () => {
+    const adultHtml = renderToStaticMarkup(
+      createElement(AudienceLessonPage, {
+        content: siteContent.audienceLessons.adults,
+        site: siteContent,
+      }),
+    );
+    const childHtml = renderToStaticMarkup(
+      createElement(AudienceLessonPage, {
+        content: siteContent.audienceLessons.children,
+        site: siteContent,
+      }),
+    );
+
+    expect(adultHtml.match(/<h1/g)).toHaveLength(1);
+    expect(childHtml.match(/<h1/g)).toHaveLength(1);
+    expect(adultHtml).toContain("Private Online Flute Lessons for Adults");
+    expect(adultHtml).toContain(
+      "Returning players rebuilding confidence after a break",
+    );
+    expect(childHtml).toContain("Private Online Flute Lessons for Children");
+    expect(childHtml).toContain("Support that fits the child");
+    expect(adultHtml.match(/<details/g)).toHaveLength(4);
+    expect(childHtml.match(/<details/g)).toHaveLength(4);
+    expect(adultHtml).toContain('href="/book"');
+    expect(childHtml).toContain('href="/book"');
+    expect(adultHtml).toContain(
+      'data-analytics-booking-cta="audience-hero"',
+    );
+    expect(adultHtml).toContain(
+      'data-analytics-booking-cta="audience-final"',
+    );
+    expect(adultHtml).toContain('type="application/ld+json"');
+    expect(adultHtml).toContain('"@type":"Service"');
+  });
+
+  it("links both audience pages from the flute class", () => {
+    const html = renderToStaticMarkup(
+      createElement(ClassesPage, {content: siteContent}),
+    );
+
+    expect(
+      html.match(/href="\/online-flute-lessons-for-adults"/g),
+    ).toHaveLength(1);
+    expect(
+      html.match(/href="\/online-flute-lessons-for-children"/g),
+    ).toHaveLength(1);
   });
 
   it("publishes only unprefixed English application URLs", () => {
@@ -82,8 +167,8 @@ describe("editorial site structure", () => {
       "/classes",
       "/about",
       "/media",
-      "/impressum",
-      "/datenschutz",
+      "/online-flute-lessons-for-adults",
+      "/online-flute-lessons-for-children",
     ]);
     expect(sitemap().every((entry) => entry.lastModified == null)).toBe(true);
   });
@@ -97,6 +182,9 @@ describe("editorial site structure", () => {
       "app/classes/page.tsx",
       "app/media/page.tsx",
       "app/book/page.tsx",
+      "app/online-flute-lessons-for-adults/page.tsx",
+      "app/online-flute-lessons-for-children/page.tsx",
+      "components/pages/AudienceLessonPage.tsx",
     ]) {
       expect(existsSync(new URL(path, root))).toBe(true);
     }
@@ -207,20 +295,6 @@ describe("editorial site structure", () => {
     );
   });
 
-  it("does not repeat the vulnerability paragraph as the Kindness value", () => {
-    const vulnerabilityIntro =
-      "Learning music can feel vulnerable, especially at the beginning. I want my lessons to be a kind space where students can ask questions, make mistakes and try again without fear of being judged.";
-    const values = siteContent.home.values;
-    const serializedValues = JSON.stringify(values);
-    const occurrenceCount = serializedValues.split(vulnerabilityIntro).length - 1;
-
-    expect(occurrenceCount).toBe(1);
-    expect(values.itemTexts?.[0]).toBe(
-      "Kindness means a lesson space where questions, mistakes and trying again are treated as normal parts of learning.",
-    );
-    expect(values.itemTexts?.[0]).not.toBe(values.activeText);
-  });
-
   it("renders the about page with the high-quality portrait asset", () => {
     const html = renderToStaticMarkup(
       createElement(AboutPage, {content: siteContent}),
@@ -246,6 +320,24 @@ describe("editorial site structure", () => {
     expect(
       readFileSync(new URL("../next.config.ts", import.meta.url), "utf8"),
     ).toContain("qualities: [75, 95]");
+  });
+
+  it("renders the optional lead-source question with the approved choices", () => {
+    const html = renderToStaticMarkup(
+      createElement(AboutPage, {content: siteContent}),
+    );
+
+    expect(html).toContain("How did you find Agatha? (optional)");
+    for (const option of [
+      "Google or another search engine",
+      "Lessonface",
+      "Recommendation",
+      "Social media",
+      "Another website or profile",
+      "Other",
+    ]) {
+      expect(html).toContain(`<option value="${option}">${option}</option>`);
+    }
   });
 
   it("links booking fallback contact CTA to the unprefixed contact form", () => {

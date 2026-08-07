@@ -109,7 +109,7 @@ export function AnalyticsConsentBanner({
   return (
     <section
       aria-label="Analytics preferences"
-      className="fixed inset-x-4 top-1/2 z-50 mx-auto max-w-xl -translate-y-1/2 rounded-[var(--radius-card)] bg-[var(--ink)] p-5 text-[var(--paper)] shadow-[var(--shadow-elevated)]"
+      className="fixed inset-x-4 bottom-4 z-50 mx-auto max-w-xl rounded-[var(--radius-card)] bg-[var(--ink)] p-5 text-[var(--paper)] shadow-[var(--shadow-elevated)]"
       role="region"
     >
       <p className="mai-ui text-sm">

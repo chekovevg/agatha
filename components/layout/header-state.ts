@@ -1,3 +1,5 @@
+export const MOBILE_HEADER_MAX_WIDTH = 860;
+
 export function shouldHideHeader({
   currentScrollY,
   lastScrollY,
@@ -9,7 +11,11 @@ export function shouldHideHeader({
   viewportWidth: number;
   menuVisible: boolean;
 }) {
-  if (viewportWidth <= 600 || menuVisible || currentScrollY <= 1) {
+  if (
+    viewportWidth <= MOBILE_HEADER_MAX_WIDTH ||
+    menuVisible ||
+    currentScrollY <= 1
+  ) {
     return false;
   }
 

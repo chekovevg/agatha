@@ -9,7 +9,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
     {url: siteUrl("/classes"), changeFrequency: "monthly", priority: 0.7},
     {url: siteUrl("/about"), changeFrequency: "monthly", priority: 0.7},
     {url: siteUrl("/media"), changeFrequency: "monthly", priority: 0.6},
-    {url: siteUrl("/impressum"), changeFrequency: "yearly", priority: 0.4},
-    {url: siteUrl("/datenschutz"), changeFrequency: "yearly", priority: 0.4},
+    {
+      url: siteUrl("/online-flute-lessons-for-adults"),
+      changeFrequency: "monthly",
+      priority: 0.9,
+    },
+    {
+      url: siteUrl("/online-flute-lessons-for-children"),
+      changeFrequency: "monthly",
+      priority: 0.9,
+    },
   ];
 }

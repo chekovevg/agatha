@@ -10,7 +10,7 @@ const baseContent: SiteContent = {
   brand: "Agatha Music",
   nav,
   cta: {
-    primary: "Book a trial lesson",
+    primary: "Intro Call",
     secondary: "Explore Classes",
     contact: "Text me",
   },
@@ -41,40 +41,174 @@ const baseContent: SiteContent = {
       galleryHeading: "Music in progress",
     },
   },
+  audienceLessons: {
+    adults: {
+      path: "/online-flute-lessons-for-adults",
+      navLabel: "For adults",
+      eyebrow: "Private online flute lessons",
+      title: "Private Online Flute Lessons for Adults",
+      intro:
+        "One-to-one online flute lessons for complete beginners, returning players and continuing adult musicians. Build reliable technique and musical confidence through clear, realistic steps.",
+      trustLine:
+        "Moscow-trained flutist and music teacher · Teaching since 2014",
+      cardCopy:
+        "Start from your first note, return after a break, or strengthen the playing you already have.",
+      audienceHeading: "A lesson built around your life and level",
+      audienceCopy:
+        "You do not need to fit a conservatory timetable or arrive with perfect technique. Lessons begin with what you can already do, the music you want to play and the time you can realistically give to practice.",
+      audiencePoints: [
+        "Complete beginners who want a healthy, clear start",
+        "Returning players rebuilding confidence after a break",
+        "Continuing flutists refining sound, technique and expression",
+      ],
+      lessonsHeading: "What happens in lessons",
+      lessonsCopy:
+        "Each lesson has a practical focus and a next step you can use immediately.",
+      lessonFocus: [
+        {
+          title: "Sound and breathing",
+          text: "Develop a supported, flexible tone without unnecessary tension.",
+        },
+        {
+          title: "Relaxed technique",
+          text: "Work on posture, embouchure, articulation and finger coordination step by step.",
+        },
+        {
+          title: "Reading and rhythm",
+          text: "Make notation, pulse and musical structure easier to understand and use.",
+        },
+        {
+          title: "Repertoire and expression",
+          text: "Connect technical work with pieces that are meaningful and motivating to play.",
+        },
+      ],
+      whyHeading: "Why learn with Agatha",
+      whyParagraphs: [
+        "Agatha Gurko is a Moscow-trained flutist and music teacher who has taught since 2014 in music schools, private lessons and online classes.",
+        "Her teaching combines a strong musical foundation with patient explanation, healthy technique and goals shaped around the individual student.",
+      ],
+      faq: [
+        {
+          question: "Do I need previous experience?",
+          answer:
+            "No. Lessons can begin with choosing a comfortable setup, producing the first sound, basic rhythm and reading music.",
+        },
+        {
+          question: "Can I return after a long break?",
+          answer:
+            "Yes. We review the foundations without assuming that everything should already feel familiar.",
+        },
+        {
+          question: "How much should I practise?",
+          answer:
+            "The practice plan is adapted to your schedule. Consistent short sessions are often more useful than an unrealistic target.",
+        },
+        {
+          question: "What do I need for an online lesson?",
+          answer:
+            "A flute, a stable internet connection, a device with a camera and enough space to sit or stand comfortably.",
+        },
+      ],
+      ctaHeading: "Start with an intro call",
+      ctaCopy:
+        "Use the 15-minute call to discuss your level, goals, repertoire and a realistic way forward.",
+      seo: {
+        title: "Online Flute Lessons for Adults",
+        description:
+          "Private online flute lessons for adult beginners, returning players and continuing flutists with Agatha Gurko.",
+      },
+    },
+    children: {
+      path: "/online-flute-lessons-for-children",
+      navLabel: "For children",
+      eyebrow: "Private online flute lessons",
+      title: "Private Online Flute Lessons for Children",
+      intro:
+        "Patient, structured one-to-one flute lessons for children from age six, from first musical steps to more confident playing.",
+      trustLine:
+        "Experienced with young beginners and continuing students · Teaching since 2014",
+      cardCopy:
+        "Clear musical foundations, age-appropriate goals and practical guidance for the time between lessons.",
+      audienceHeading: "Support that fits the child",
+      audienceCopy:
+        "Lessons adapt to the child's age, experience, attention and musical interests while keeping a clear direction for progress.",
+      audiencePoints: [
+        "Young beginners learning their first sounds and rhythms",
+        "Children developing technique, reading and musical confidence",
+        "Students who need patient support alongside their current music studies",
+      ],
+      lessonsHeading: "What happens in lessons",
+      lessonsCopy:
+        "Technique, listening and music-making are introduced in manageable steps, with brief notes for practice afterwards.",
+      lessonFocus: [
+        {
+          title: "Healthy foundations",
+          text: "Build breathing, posture, hand position and sound without forcing the body.",
+        },
+        {
+          title: "Rhythm and reading",
+          text: "Learn notation through playing, listening, singing and simple musical patterns.",
+        },
+        {
+          title: "Age-appropriate repertoire",
+          text: "Use pieces and exercises that match the child's level and keep the work meaningful.",
+        },
+        {
+          title: "Practice guidance",
+          text: "Leave each lesson with a small, clear focus that can be continued at home.",
+        },
+      ],
+      whyHeading: "Why learn with Agatha",
+      whyParagraphs: [
+        "Agatha has taught children in music schools, private lessons and online classes as part of her teaching work since 2014.",
+        "She combines clear musical standards with patience, adaptability and respect for each child's pace of learning.",
+      ],
+      faq: [
+        {
+          question: "What age can a child begin?",
+          answer:
+            "Lessons are available from age six. The intro call helps determine a comfortable instrument setup and starting point.",
+        },
+        {
+          question: "Does a parent need to stay during the lesson?",
+          answer:
+            "A parent may help a younger beginner with the camera, music stand and first practice routine. The right level of involvement depends on the child.",
+        },
+        {
+          question: "Can online lessons work for a beginner?",
+          answer:
+            "Yes, when the camera shows the child's posture and hands clearly and the instrument, music stand and device are prepared before the lesson.",
+        },
+        {
+          question: "What happens between lessons?",
+          answer:
+            "The student receives brief notes and materials with a manageable focus for practice.",
+        },
+      ],
+      ctaHeading: "Book an intro call for your child",
+      ctaCopy:
+        "Use the 15-minute call to discuss age, experience, goals, instrument setup and the parent's practical questions.",
+      seo: {
+        title: "Online Flute Lessons for Children",
+        description:
+          "Private online flute lessons for children from age six with patient, structured teaching by Agatha Gurko.",
+      },
+    },
+  },
   home: {
-    heroTitle: ["Your Musical", "Companion"],
-    heroSubtitle: "Flute, recorder and music theory lessons",
+    heroTitle: "Flute & Music Teacher",
+    heroSubtitle: "For Adults and Children",
     manifesto: {
       heading:
-        "Music becomes possible when it is explained with care, practised with patience, and heard with attention.",
+        "Music becomes possible when it is explained with care and practised with patience.",
       body:
-        "I teach flute, recorder and music theory through small realistic steps - helping students build confidence, sound and musical understanding.",
-    },
-    values: {
-      heading: "Values",
-      items: ["Kindness", "Care", "Patience", "Adaptability", "Structure", "Joy"],
-      activeItem: "Kindness",
-      activeText:
-        "Learning music can feel vulnerable, especially at the beginning. I want my lessons to be a kind space where students can ask questions, make mistakes and try again without fear of being judged.",
-      itemTexts: [
-        "Kindness means a lesson space where questions, mistakes and trying again are treated as normal parts of learning.",
-        "I pay attention not only to the notes, but to the person learning them. Every student has their own pace, confidence, sound and questions - and I shape the lesson around what they need to move forward.",
-        "Music takes time, repetition and trust. I never want students to feel rushed through something difficult. We break things down into small steps until they begin to feel clear, natural and possible.",
-        "Every student learns differently. Some lessons need to be playful, some technical, some structured, some more exploratory. I adapt my teaching to the student's age, level, goals and musical taste - while keeping a clear direction.",
-        "I believe structure makes progress feel less overwhelming. In each lesson, I try to give students a clear focus, practical exercises and a next step they can continue with after class.",
-        "Music should feel alive. I connect technique and theory with real pieces, sounds and ideas that the student actually wants to understand and play - because learning becomes deeper when it feels personal.",
-      ],
+        "Agatha teaches through small realistic steps — helping students build confidence, sound and musical understanding.",
     },
     location: {
       heading: "From the Rhine, online",
       body:
-        "Agatha is based in the Cologne–Düsseldorf area and teaches students online in Russian, English and German. Wherever the lesson begins, the focus stays the same: clear guidance, healthy technique and music that feels personal.",
-      cta: "Get in touch",
-    },
-    quote: {
-      body:
-        "I believe music becomes easier when you feel safe enough to try. In my lessons, I guide students with patience, clear structure and small, realistic steps - so sound, rhythm and theory start becoming part of your own musical voice.",
-      signature: "Agatha Gurko",
+        "Agatha is based in the Cologne–Düsseldorf area and teaches students online in Russian, English and German.",
+      cta: "Get in Touch",
     },
     footerNote: "Flute, recorder and music theory lessons online.",
   },
@@ -261,9 +395,9 @@ const baseContent: SiteContent = {
     ],
   },
   booking: {
-    heading: "Book a trial lesson",
+    heading: "Book an intro call",
     copy:
-      "A trial lesson is the easiest way to understand your level, goals and the kind of music you want to play. After the lesson, you'll receive short notes and a clear suggestion for the next steps.",
+      "A 15-minute intro call is the easiest way to discuss your level, goals and the kind of music you want to play before scheduling a full lesson.",
     steps: [
       {title: "Choose a time", text: "Pick a slot that works for you."},
       {
@@ -272,33 +406,23 @@ const baseContent: SiteContent = {
       },
       {
         title: "Meet online",
-        text: "Join the lesson in Russian, English or German.",
+        text: "Join the call in Russian, English or German.",
       },
       {
-        title: "Get a practice plan",
-        text: "Receive short notes and materials after the class.",
+        title: "Choose the next step",
+        text: "Decide whether a 50-minute music lesson is right for you.",
       },
     ],
     eventTypes: [
       {
-        title: "Trial Lesson",
-        duration: "30 min",
-        description: "A first meeting to understand goals and fit.",
-      },
-      {
-        title: "Regular Lesson",
-        duration: "50 min",
-        description: "Ongoing flute, recorder or theory lessons.",
-      },
-      {
-        title: "Music Theory Consultation",
-        duration: "30 min",
-        description: "Focused support for theory, solfege or exams.",
-      },
-      {
-        title: "Parent Intro Call",
+        title: "Intro Call",
         duration: "15 min",
-        description: "A short conversation before booking a child lesson.",
+        description: "A short first conversation about goals and lesson format.",
+      },
+      {
+        title: "Music Lesson",
+        duration: "50 min",
+        description: "Online flute, recorder or music theory lessons.",
       },
     ],
     fallbackContactCta: "Ask a question before booking",
