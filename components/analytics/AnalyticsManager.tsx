@@ -1,7 +1,7 @@
 "use client";
 
 import Script from "next/script";
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 
 import {
   type AnalyticsConsent,
@@ -19,13 +19,37 @@ const consentSettings = (analyticsStorage: AnalyticsConsent) => ({
   analytics_storage: analyticsStorage,
 });
 
-function enqueueConsent(
+function gtag(
+  ...args: [
+    "consent",
+    "default" | "update",
+    ReturnType<typeof consentSettings>,
+  ]
+): void;
+function gtag() {
+  const analyticsWindow = window as Window & {dataLayer?: unknown[]};
+  analyticsWindow.dataLayer ??= [];
+  // Google's gtag API intentionally queues the function's Arguments object.
+  // eslint-disable-next-line prefer-rest-params
+  analyticsWindow.dataLayer.push(arguments);
+}
+
+export function enqueueConsent(
   command: "default" | "update",
   analyticsStorage: AnalyticsConsent,
 ) {
+  gtag("consent", command, consentSettings(analyticsStorage));
+}
+
+export function initializeGtm(gtmId: string | undefined, initialized: boolean): boolean {
+  enqueueConsent(initialized ? "update" : "default", "granted");
+  if (initialized || !canLoadAnalytics(window.location.hostname, gtmId, "granted")) {
+    return initialized;
+  }
+
   const analyticsWindow = window as Window & {dataLayer?: unknown[]};
-  analyticsWindow.dataLayer ??= [];
-  analyticsWindow.dataLayer.push(["consent", command, consentSettings(analyticsStorage)]);
+  analyticsWindow.dataLayer?.push({event: "gtm.js", "gtm.start": Date.now()});
+  return true;
 }
 
 export function deleteAnalyticsCookies(hostname: string) {
@@ -120,14 +144,13 @@ export function AnalyticsManager({gtmId}: {gtmId?: string}) {
   const [consent, setConsent] = useState<AnalyticsConsent | null | undefined>(undefined);
   const [showBanner, setShowBanner] = useState(false);
   const [shouldLoadGtm, setShouldLoadGtm] = useState(false);
+  const hasInitializedGtm = useRef(false);
 
   function activateAnalytics() {
     setConsent("granted");
     setShowBanner(false);
-    enqueueConsent("default", "granted");
-    const analyticsWindow = window as Window & {dataLayer?: unknown[]};
-    analyticsWindow.dataLayer?.push({event: "gtm.js", "gtm.start": Date.now()});
-    setShouldLoadGtm(canLoadAnalytics(window.location.hostname, gtmId, "granted"));
+    hasInitializedGtm.current = initializeGtm(gtmId, hasInitializedGtm.current);
+    setShouldLoadGtm(hasInitializedGtm.current);
   }
 
   function allowAnalytics() {
@@ -144,7 +167,6 @@ export function AnalyticsManager({gtmId}: {gtmId?: string}) {
     const stored = writeStoredConsent("denied");
     if (consent === "granted") enqueueConsent("update", "denied");
     deleteAnalyticsCookies(window.location.hostname);
-    setShouldLoadGtm(false);
     setConsent(stored ? "denied" : null);
     setShowBanner(!stored);
   }
@@ -186,7 +208,7 @@ export function AnalyticsManager({gtmId}: {gtmId?: string}) {
   return (
     <>
       {showBanner ? <AnalyticsConsentBanner onAllow={allowAnalytics} onDeny={denyAnalytics} /> : null}
-      {consent === "granted" && shouldLoadGtm && gtmId ? (
+      {shouldLoadGtm && gtmId ? (
         <Script
           id="agatha-gtm"
           src={`https://www.googletagmanager.com/gtm.js?id=${gtmId}`}

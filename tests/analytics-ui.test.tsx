@@ -36,6 +36,8 @@ import DatenschutzPage from "@/app/datenschutz/page";
 import {
   AnalyticsConsentBanner,
   deleteAnalyticsCookies,
+  enqueueConsent,
+  initializeGtm,
 } from "@/components/analytics/AnalyticsManager";
 import {Header} from "@/components/layout/Header";
 import {ClassesPage} from "@/components/pages/ClassesPage";
@@ -44,6 +46,70 @@ import {MediaPage} from "@/components/pages/MediaPage";
 import {siteContent} from "@/content/site";
 
 describe("analytics consent UI", () => {
+  it("queues Google consent commands as gtag arguments objects", () => {
+    const originalWindow = globalThis.window;
+    const dataLayer: unknown[] = [];
+    Object.defineProperty(globalThis, "window", {
+      configurable: true,
+      value: {dataLayer},
+    });
+
+    try {
+      enqueueConsent("default", "granted");
+
+      expect(Array.isArray(dataLayer[0])).toBe(false);
+      expect(Object.prototype.toString.call(dataLayer[0])).toBe("[object Arguments]");
+      expect(Array.from(dataLayer[0] as ArrayLike<unknown>)).toEqual([
+        "consent",
+        "default",
+        {
+          ad_personalization: "denied",
+          ad_storage: "denied",
+          ad_user_data: "denied",
+          analytics_storage: "granted",
+        },
+      ]);
+    } finally {
+      Object.defineProperty(globalThis, "window", {configurable: true, value: originalWindow});
+    }
+  });
+
+  it("updates consent without initializing GTM again after deny and re-allow", () => {
+    const originalWindow = globalThis.window;
+    const dataLayer: unknown[] = [];
+    Object.defineProperty(globalThis, "window", {
+      configurable: true,
+      value: {dataLayer, location: {hostname: "agathamusic.com"}},
+    });
+
+    try {
+      const firstInitialization = initializeGtm("GTM-TEST123", false);
+      enqueueConsent("update", "denied");
+      const secondInitialization = initializeGtm("GTM-TEST123", firstInitialization);
+
+      const consentCommands = dataLayer
+        .filter((entry) => Object.prototype.toString.call(entry) === "[object Arguments]")
+        .map((entry) => Array.from(entry as ArrayLike<unknown>));
+      const gtmInitializations = dataLayer.filter(
+        (entry) => !Array.isArray(entry) && (entry as {event?: string}).event === "gtm.js",
+      );
+
+      expect(firstInitialization).toBe(true);
+      expect(secondInitialization).toBe(true);
+      expect(consentCommands.map((command) => command.slice(0, 2))).toEqual([
+        ["consent", "default"],
+        ["consent", "update"],
+        ["consent", "update"],
+      ]);
+      expect((consentCommands[2]?.[2] as {analytics_storage?: string}).analytics_storage).toBe(
+        "granted",
+      );
+      expect(gtmInitializations).toHaveLength(1);
+    } finally {
+      Object.defineProperty(globalThis, "window", {configurable: true, value: originalWindow});
+    }
+  });
+
   it("renders accessible analytics consent choices", () => {
     const html = renderToStaticMarkup(
       createElement(AnalyticsConsentBanner, {

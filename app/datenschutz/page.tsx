@@ -36,7 +36,7 @@ export default function DatenschutzPage() {
         <section>
           <h2 className="mai-h7 text-[var(--ink)]">Google Analytics</h2>
           <p className="mt-3">
-            Google Analytics is consent-based and remains disabled until you allow it. It is used to measure page and source visits and the booking funnel, without sending booking form contents.
+            Google Analytics is consent-based and remains disabled until you allow it. It is used to measure page and source visits and the booking funnel, without sending booking form contents. You can review or withdraw your consent at any time using the button below.
           </p>
           <button
             className="mai-ui mt-3 underline focus-visible:outline-2 focus-visible:outline-offset-4"
