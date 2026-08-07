@@ -2,12 +2,14 @@ import type {AnchorHTMLAttributes, ButtonHTMLAttributes} from "react";
 
 import {cn, isExternalHref} from "@/lib/utils";
 
-type ButtonVariant = "primary" | "secondary" | "plain";
+type ButtonVariant = "primary" | "accent" | "secondary" | "plain";
 type ButtonLinkVariant = ButtonVariant | "split";
 
 const variants: Record<ButtonVariant, string> = {
   primary:
     "border-transparent bg-[var(--paper)] text-[var(--ink)] hover:bg-[var(--ink)] hover:text-[var(--paper)]",
+  accent:
+    "border-transparent bg-[var(--ink)] text-[var(--parchment-white)] hover:bg-[var(--paper)] hover:text-[var(--ink)]",
   secondary:
     "border-[var(--line)] bg-transparent text-[var(--ink)] hover:bg-[var(--paper)]",
   plain:
@@ -15,7 +17,7 @@ const variants: Record<ButtonVariant, string> = {
 };
 
 const base =
-  "mai-ui inline-flex h-[3em] flex-nowrap items-center justify-center rounded-[var(--radius-control)] border px-[3em] py-[1em] transition-[color,background-color] duration-[600ms] ease-[var(--alias-easeOutCubic)] focus-visible:outline-2";
+  "mai-ui inline-flex h-12 flex-nowrap items-center justify-center rounded-[var(--radius-control)] border px-[42px] transition-[color,background-color] duration-[600ms] ease-[var(--alias-easeOutCubic)] focus-visible:outline-2";
 
 export function ButtonLink({
   variant = "primary",

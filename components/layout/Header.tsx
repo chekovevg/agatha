@@ -54,7 +54,7 @@ export function Header({
     <>
     <header
       className={cn(
-        "pointer-events-none fixed inset-x-0 top-0 z-[999] bg-transparent pt-[calc(33*var(--unit-fx))] max-[860px]:pt-5",
+        "pointer-events-none fixed inset-x-0 top-0 z-[999] bg-transparent px-8 pt-[33px] max-[860px]:px-5 max-[860px]:pt-5",
         "min-[861px]:transition-transform min-[861px]:duration-[400ms] min-[861px]:ease-[var(--alias-easeOutCubic)]",
         headerHidden && !menuVisible
           ? "min-[861px]:-translate-y-[calc(100%+12px)]"
@@ -68,34 +68,35 @@ export function Header({
     >
       <div
         className={cn(
-          "pointer-events-none mx-auto w-full px-[calc(15*var(--unit-fx))] drop-shadow-[0_4px_80px_rgba(93,82,75,0.30)] max-[860px]:drop-shadow-none min-[861px]:max-w-[calc(1660*var(--unit-fx))] min-[861px]:px-0",
+          "pointer-events-none mx-auto w-full max-w-[1660px] drop-shadow-[0_3px_100px_rgba(0,0,0,0.08)] max-[860px]:drop-shadow-none",
         )}
       >
         <div
+          data-header-surface
           className={cn(
-            "pointer-events-auto relative grid grid-cols-[1fr_2fr] items-center rounded-[5px] bg-[var(--background)] px-[calc(22*var(--unit-fx))] text-[var(--ink)] min-[861px]:h-[calc(70.6875*var(--unit-fx))] max-[860px]:grid-cols-2 max-[860px]:px-[calc(19*var(--unit-fx))]",
+            "pointer-events-auto relative grid h-[58px] grid-cols-2 items-center rounded-[5px] bg-[var(--background)] px-[22px] text-[var(--ink)] min-[861px]:grid-cols-3 max-[860px]:px-[19px]",
           )}
         >
           <Link
             href="/"
             aria-label="Home Agatha Music link"
-            className="relative z-[2] justify-self-start py-[calc(22*var(--unit-fx))] max-[860px]:col-start-1 max-[860px]:row-start-1"
+            className="relative z-[2] flex h-full items-center justify-self-start max-[860px]:col-start-1 max-[860px]:row-start-1"
             onClick={closeMenu}
           >
             <Image
-              src="/images/logo.svg"
+              src="/images/agatha-gurko-music.svg"
               alt=""
               aria-hidden="true"
-              width={76}
-              height={26}
+              width={156}
+              height={19}
               priority
-              className="block h-[calc(25.06*var(--unit-fx))] w-auto"
+              className="block h-auto w-[156px] max-w-full"
             />
           </Link>
           <nav
             aria-label="Header Menu"
             className={cn(
-              "mai-ui justify-self-center min-[861px]:absolute min-[861px]:left-1/2 min-[861px]:top-0 min-[861px]:h-full min-[861px]:-translate-x-1/2",
+              "mai-ui justify-self-center min-[861px]:h-full min-[861px]:w-full",
               menuVisible
                 ? "max-[860px]:fixed max-[860px]:inset-0 max-[860px]:z-[1] max-[860px]:flex max-[860px]:h-[100dvh] max-[860px]:w-full max-[860px]:flex-col max-[860px]:items-start max-[860px]:justify-between max-[860px]:overflow-x-hidden max-[860px]:overflow-y-auto max-[860px]:bg-[var(--background)] max-[860px]:px-[calc(34*var(--unit-fx))] max-[860px]:pb-[calc(32*var(--unit-fx))] max-[860px]:pt-[calc(100*var(--unit-fx))] max-[860px]:transition-opacity max-[860px]:duration-[700ms] max-[860px]:ease-out"
                 : "max-[860px]:absolute max-[860px]:left-0 max-[860px]:right-0 max-[860px]:top-full max-[860px]:z-50 max-[860px]:hidden max-[860px]:w-full max-[860px]:bg-[var(--background)] max-[860px]:px-[calc(19*var(--unit-fx))] max-[860px]:pb-[calc(28*var(--unit-fx))] max-[860px]:pt-[calc(27*var(--unit-fx))]",
@@ -105,15 +106,15 @@ export function Header({
                   : "max-[860px]:pointer-events-none max-[860px]:opacity-0"),
             )}
           >
-            <ul className="flex items-center justify-end space-x-[10px] max-[860px]:block max-[860px]:space-x-0 max-[860px]:space-y-[calc(16*var(--unit-fx))]">
+            <ul className="flex h-full items-center justify-center gap-4 max-[860px]:block max-[860px]:space-y-4">
             {navItems.map((item) => (
               <li
                 key={item.href}
-                className="relative flex items-center justify-start py-[calc(14*var(--unit-fx))] max-[860px]:block max-[860px]:py-0"
+                className="relative flex h-full items-center justify-center max-[860px]:block max-[860px]:h-auto"
               >
                 <a
                   href={item.href}
-                  className="block rounded-[calc(4*var(--unit-fx))] px-[calc(14*var(--unit-fx))] py-[calc(6*var(--unit-fx))] leading-[1.8] hover:bg-[#FBF0DC] max-[860px]:px-0 max-[860px]:py-0 max-[860px]:text-[16px]"
+                  className="inline-flex h-[38px] items-center rounded-[4px] px-[10px] hover:bg-[var(--hover-paper)] max-[860px]:h-auto max-[860px]:px-0 max-[860px]:leading-[1.8]"
                   onClick={closeMenu}
                 >
                   {item.label}
@@ -125,10 +126,10 @@ export function Header({
               <a
                 href="/book"
                 data-analytics-booking-cta="header"
-                className="font-ui mt-[calc(28*var(--unit-fx))] hidden items-center gap-[calc(10*var(--unit-fx))] hover:underline max-[860px]:mt-auto max-[860px]:flex max-[860px]:text-[16px] max-[860px]:leading-[1.8]"
+                className="mai-ui mt-7 hidden items-center gap-2 hover:underline max-[860px]:mt-auto max-[860px]:flex max-[860px]:leading-[1.8]"
                 onClick={closeMenu}
               >
-                {content.cta.primary}
+                {content.cta.header}
                 <Image
                   src="/icons/arrow-up-right.svg"
                   alt=""
@@ -139,10 +140,10 @@ export function Header({
                 />
               </a>
             ) : null}
-            <div className="mt-[calc(36*var(--unit-fx))] hidden w-full gap-[calc(20*var(--unit-fx))] max-[860px]:flex">
+            <div className="mt-9 hidden w-full gap-5 max-[860px]:flex">
               <nav
                 aria-label="Footer links"
-                className="w-1/2 font-ui text-[12px] leading-[1.8]"
+                className="w-1/2 font-ui text-[14px] leading-[1.8]"
               >
                 {mobileFooterLinks.map((link) => (
                   <a
@@ -158,7 +159,7 @@ export function Header({
               {mobileSocialLinks.length > 0 ? (
                 <nav
                   aria-label="Social links"
-                  className="w-1/2 font-ui text-[12px] leading-[1.8]"
+                  className="w-1/2 font-ui text-[14px] leading-[1.8]"
                 >
                   {mobileSocialLinks.map((link) => (
                     <a
@@ -177,17 +178,17 @@ export function Header({
           </nav>
           <div
             className={cn(
-              "absolute right-[calc(22*var(--unit-fx))] top-1/2 hidden -translate-y-1/2 items-center gap-5 min-[861px]:flex",
+              "hidden h-full w-full items-center justify-end min-[861px]:flex",
             )}
           >
             {showBookingCta ? (
               <a
                 href="/book"
                 data-analytics-booking-cta="header"
-                className="mai-ui inline-flex items-center gap-[calc(10*var(--unit-fx))] leading-none hover:underline max-[860px]:w-full max-[860px]:text-[16px] max-[860px]:leading-[1.8]"
+                className="mai-ui inline-flex items-center gap-2 leading-none hover:underline"
                 onClick={closeMenu}
               >
-                {content.cta.primary}
+                {content.cta.header}
                 <Image
                   src="/icons/arrow-up-right.svg"
                   alt=""
@@ -233,7 +234,7 @@ export function Header({
     {!isHome ? (
       <div
         aria-hidden="true"
-        className="h-[calc(calc(33*var(--unit-fx))+calc(70.6875*var(--unit-fx)))] max-[860px]:h-[calc(20px+calc(70.6875*var(--unit-fx)))]"
+        className="h-[91px] max-[860px]:h-[78px]"
       />
     ) : null}
     </>

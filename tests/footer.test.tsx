@@ -48,7 +48,7 @@ import {Footer} from "@/components/layout/Footer";
 import {siteContent} from "@/content/site";
 
 describe("footer", () => {
-  it("uses the extended logo, three link columns, and footer note", () => {
+  it("uses the Figma link groups and footer note", () => {
     const html = renderToStaticMarkup(
       <Footer content={siteContent} />,
     );
@@ -56,49 +56,31 @@ describe("footer", () => {
     expect(html).toContain('src="/images/agatha-gurko-music.svg"');
     expect(html).toContain('alt="Agatha Gurko Music"');
     expect(html).toContain('data-footer-section="site"');
-    expect(html).toContain('data-footer-section="social"');
     expect(html).toContain('data-footer-section="legal"');
-    expect(html).toContain("Book a lesson");
+    expect(html).toContain('data-footer-section="contact"');
+    expect(html).toContain("Book Intro Call");
     expect(html).toContain('data-analytics-booking-cta="footer"');
-    expect(html).not.toContain("Book an intro call");
-    expect(html.indexOf("Book a lesson")).toBeLessThan(
-      html.indexOf("About me"),
-    );
-    expect(html).toContain("Email");
+    expect(html).not.toContain("Book a lesson");
+    expect(html).toContain("Get In Touch");
     expect(html).toContain('href="mailto:agathagurko@gmail.com"');
-    expect(html).toContain("Telegram");
-    expect(html).toContain('href="https://t.me/youngbabypeach"');
-    expect(html).toContain(
-      'href="https://t.me/youngbabypeach" target="_blank" rel="noreferrer"',
-    );
-    expect(html).toContain("WhatsApp");
-    expect(html).toContain('href="https://wa.me/491636276938"');
-    expect(html).toContain(
-      'href="https://wa.me/491636276938" target="_blank" rel="noreferrer"',
-    );
     expect(html).not.toContain('href="#"');
     expect(html).toContain("Impressum");
-    expect(html).toContain("Privacy &amp; Cookies");
+    expect(html).toContain("Privacy and Cookies");
     expect(html).toContain(siteContent.home.footerNote);
     expect(html).not.toContain('href="/online-flute-lessons-for-adults"');
     expect(html).not.toContain('href="/online-flute-lessons-for-children"');
     expect(html).toContain("© Agatha Gurko Music 2026");
   });
 
-  it("keeps the Microsoft AI footer grid contract on desktop and mobile", () => {
+  it("renders the three responsive footer zones", () => {
     const html = renderToStaticMarkup(
       <Footer content={siteContent} />,
     );
 
-    expect(html).toContain(
-      '<footer class="mx-auto mt-[calc(320*var(--unit-fx))] grid max-w-[calc(1660*var(--unit-fx))] grid-cols-[repeat(24,minmax(0,1fr))] gap-[calc(20*var(--unit-fx))] bg-[var(--background)] pb-[27px] font-ui text-[var(--ink)] max-[600px]:block max-[600px]:w-[calc(100%_-_calc(32*var(--unit-fx)))] max-[600px]:space-y-[calc(40*var(--unit-fx))]"',
-    );
-    expect(html).toContain('class="col-span-4"');
-    expect(html).toContain('class="ag-footer-link-list col-span-3"');
-    expect(html).toContain('class="col-start-17 col-span-8 max-[600px]:w-full"');
-    expect(html).toContain('class="ag-footer-note text-[var(--ink)]"');
-    expect(html).toContain('data-footer-section="bottom-spacer"');
-    expect(html).toContain("ag-footer-bottom-spacer");
+    expect(html).toContain('data-footer-zone="brand"');
+    expect(html).toContain('data-footer-zone="links"');
+    expect(html).toContain('data-footer-zone="meta"');
+    expect(html).not.toContain('data-footer-section="bottom-spacer"');
   });
 
   it("keeps the footer booking arrow on the same line as the label", () => {
@@ -111,7 +93,7 @@ describe("footer", () => {
     );
 
     expect(html).toContain(
-      'class="footer-book-link items-center gap-[calc(10*var(--unit-fx))]"',
+      'class="footer-book-link items-center gap-2"',
     );
     expect(html).toContain('src="/icons/arrow-up-right.svg"');
     expect(css).toContain(".ag-footer-link-list a.footer-book-link");

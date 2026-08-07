@@ -134,6 +134,199 @@ test("desktop header keeps its three links and booking action clear", async ({
   }
 });
 
+test("home header stays centered and keeps mono text readable while resizing", async ({
+  page,
+}) => {
+  for (const width of [861, 1024, 1440]) {
+    await page.setViewportSize({width, height: 900});
+    await page.goto("/");
+
+    const headerSurface = page.locator("[data-header-surface]");
+    const navigation = page.getByRole("navigation", {name: "Header Menu"});
+    const booking = page.locator('header a[href="/book"]:visible');
+    const [surfaceBox, navigationBox] = await Promise.all([
+      headerSurface.boundingBox(),
+      navigation.boundingBox(),
+    ]);
+
+    expect(surfaceBox?.height, `header height at ${width}px`).toBeCloseTo(58, 0);
+    expect(
+      navigationBox!.y + navigationBox!.height / 2,
+      `navigation center at ${width}px`,
+    ).toBeCloseTo(surfaceBox!.y + surfaceBox!.height / 2, 0);
+    expect(
+      await booking.evaluate((element) => {
+        const style = getComputedStyle(element);
+        return {
+          fontSize: style.fontSize,
+          fontWeight: style.fontWeight,
+          letterSpacing: style.letterSpacing,
+        };
+      }),
+    ).toEqual({
+      fontSize: "14px",
+      fontWeight: "400",
+      letterSpacing: "-0.21px",
+    });
+  }
+
+  await expect(page.locator('header img[src="/images/agatha-gurko-music.svg"]')).toBeVisible();
+  await expect(
+    page.locator("header").getByRole("link", {name: "Book Intro Call"}),
+  ).toBeVisible();
+  expect(
+    await page
+      .locator('footer [data-footer-section="site"] a')
+      .first()
+      .evaluate((element) => {
+        const style = getComputedStyle(element);
+        return {
+          fontSize: style.fontSize,
+          fontWeight: style.fontWeight,
+          letterSpacing: style.letterSpacing,
+        };
+      }),
+  ).toEqual({
+    fontSize: "14px",
+    fontWeight: "400",
+    letterSpacing: "-0.21px",
+  });
+});
+
+test("home typography and audience buttons follow the current Figma contract", async ({
+  page,
+}) => {
+  await page.setViewportSize({width: 1440, height: 1000});
+  await page.goto("/");
+
+  const fontSize = async (selector: string) =>
+    Number.parseFloat(
+      await page
+        .locator(selector)
+        .evaluate((element) => getComputedStyle(element).fontSize),
+    );
+
+  expect(await fontSize(".plain-home-title")).toBeCloseTo(120, 1);
+  expect(await fontSize(".plain-home-subtitle")).toBeCloseTo(32, 1);
+  expect(await fontSize("[data-home-manifesto-heading]")).toBeCloseTo(62, 1);
+  expect(await fontSize("[data-home-manifesto-copy]")).toBeCloseTo(28, 1);
+  expect(await fontSize("[data-home-location-heading]")).toBeCloseTo(80, 1);
+  expect(await fontSize("[data-home-location-copy]")).toBeCloseTo(28, 1);
+
+  const fontFaces = await page.evaluate(() =>
+    Array.from(document.styleSheets).flatMap((sheet) =>
+      Array.from(sheet.cssRules)
+        .filter((rule) => rule.type === CSSRule.FONT_FACE_RULE)
+        .map((rule) => rule.cssText),
+    ),
+  );
+  expect(
+    fontFaces.some(
+      (rule) =>
+        rule.includes('font-family: "EB Garamond"') &&
+        rule.includes("font-style: italic"),
+    ),
+  ).toBe(true);
+
+  const copy = page.locator("[data-home-manifesto-copy]");
+  const adults = page.getByRole("link", {name: "For adults"});
+  const children = page.getByRole("link", {name: "For children"});
+  const heroCta = page.getByRole("link", {name: "Get in Touch"}).first();
+
+  await expect(copy).toHaveText(
+    "Agatha teaches through small steps — helping students build confidence, sound and understanding.",
+  );
+  await adults.hover();
+  await expect(copy).toHaveText(
+    "Start from your first note, return after a break, or strengthen the playing you already have.",
+  );
+  await children.hover();
+  await expect(copy).toHaveText(
+    "Clear musical foundations, age-appropriate goals and practical guidance for the time between lessons.",
+  );
+
+  await expect(adults).toHaveCSS("background-color", "rgb(246, 236, 218)");
+  await adults.hover();
+  await expect(adults).toHaveCSS("background-color", "rgb(92, 82, 76)");
+  await expect(heroCta).toHaveCSS("background-color", "rgb(92, 82, 76)");
+  await heroCta.hover();
+  await expect(heroCta).toHaveCSS("background-color", "rgb(246, 236, 218)");
+});
+
+test("footer keeps its link cluster centered and stacks before columns overlap", async ({
+  page,
+}) => {
+  for (const width of [1100, 1440]) {
+    await page.setViewportSize({width, height: 900});
+    await page.goto("/");
+
+    const footer = page.locator("footer");
+    const brand = footer.locator('[data-footer-zone="brand"]');
+    const links = footer.locator('[data-footer-zone="links"]');
+    const meta = footer.locator('[data-footer-zone="meta"]');
+    const copyright = meta.locator(".ag-footer-copyright");
+    const note = meta.locator(".ag-footer-note");
+    await expect(brand).toHaveCount(1);
+    await expect(links).toHaveCount(1);
+    await expect(meta).toHaveCount(1);
+
+    const [
+      brandBox,
+      linksBox,
+      metaBox,
+      copyrightBox,
+      noteBox,
+      footerStyle,
+    ] = await Promise.all([
+      brand.boundingBox(),
+      links.boundingBox(),
+      meta.boundingBox(),
+      copyright.boundingBox(),
+      note.boundingBox(),
+      footer.evaluate((element) => {
+        const style = getComputedStyle(element);
+        return {
+          columnGap: style.columnGap,
+          display: style.display,
+          paddingBottom: Number.parseFloat(style.paddingBottom),
+        };
+      }),
+    ]);
+
+    expect(footerStyle.columnGap).toBe("24px");
+    expect(footerStyle.display).toBe("grid");
+    expect(footerStyle.paddingBottom).toBeGreaterThanOrEqual(100);
+    expect(brandBox!.width).toBeCloseTo(metaBox!.width, 0);
+    expect(linksBox!.x + linksBox!.width / 2).toBeCloseTo(width / 2, 0);
+    expect(copyrightBox!.x).toBeCloseTo(noteBox!.x, 0);
+    expect(rectanglesIntersect(brandBox!, linksBox!)).toBe(false);
+    expect(rectanglesIntersect(linksBox!, metaBox!)).toBe(false);
+  }
+
+  await page.setViewportSize({width: 960, height: 900});
+  await page.goto("/");
+
+  const footer = page.locator("footer");
+  const brand = footer.locator('[data-footer-zone="brand"]');
+  const links = footer.locator('[data-footer-zone="links"]');
+  const meta = footer.locator('[data-footer-zone="meta"]');
+  await expect(footer.locator(".footer-desktop-only")).toBeHidden();
+  const [brandBox, linksBox, metaBox] = await Promise.all([
+    brand.boundingBox(),
+    links.boundingBox(),
+    meta.boundingBox(),
+  ]);
+
+  expect(linksBox!.y).toBeGreaterThan(brandBox!.y + brandBox!.height);
+  expect(metaBox!.y).toBeGreaterThan(linksBox!.y + linksBox!.height);
+  await expect(links).toHaveCSS("flex-direction", "column");
+  expect(
+    await footer.evaluate((element) =>
+      Number.parseFloat(getComputedStyle(element).paddingBottom),
+    ),
+  ).toBeGreaterThan(80);
+});
+
 test("analytics preferences do not cover the home booking action", async ({
   page,
 }) => {

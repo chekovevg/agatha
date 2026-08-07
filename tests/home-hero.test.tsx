@@ -94,6 +94,8 @@ describe("home page", () => {
     );
 
     expect(html).toContain('data-analytics-booking-cta="header"');
-    expect(html).toContain("Intro Call");
+    expect(html).toContain("Book Intro Call");
+    expect(html).toContain('src="/images/agatha-gurko-music.svg"');
+    expect(html).not.toContain('src="/images/logo.svg"');
   });
 });

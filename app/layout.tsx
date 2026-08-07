@@ -20,6 +20,7 @@ const redHatMono = Red_Hat_Mono({
 
 const ebGaramond = EB_Garamond({
   variable: "--font-eb-garamond",
+  style: ["normal", "italic"],
   subsets: ["latin", "cyrillic"],
 });
 

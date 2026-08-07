@@ -11,6 +11,7 @@ const baseContent: SiteContent = {
   nav,
   cta: {
     primary: "Intro Call",
+    header: "Book Intro Call",
     secondary: "Explore Classes",
     contact: "Text me",
   },
@@ -199,15 +200,14 @@ const baseContent: SiteContent = {
     heroTitle: "Flute & Music Teacher",
     heroSubtitle: "For Adults and Children",
     manifesto: {
-      heading:
-        "Music becomes possible when it is explained with care and practised with patience.",
+      heading: "Music becomes possible when it is explained with care.",
       body:
-        "Agatha teaches through small realistic steps — helping students build confidence, sound and musical understanding.",
+        "Agatha teaches through small steps — helping students build confidence, sound and understanding.",
     },
     location: {
       heading: "From the Rhine, online",
       body:
-        "Agatha is based in the Cologne–Düsseldorf area and teaches students online in Russian, English and German.",
+        "Agatha is based in the Cologne–Düsseldorf area and teaches students online in English, Russian and German.",
       cta: "Get in Touch",
     },
     footerNote: "Flute, recorder and music theory lessons online.",

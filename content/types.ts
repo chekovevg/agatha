@@ -3,6 +3,7 @@ export type SiteContent = {
   nav: {label: string; href: string}[];
   cta: {
     primary: string;
+    header: string;
     secondary: string;
     contact: string;
   };

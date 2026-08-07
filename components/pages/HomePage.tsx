@@ -2,6 +2,7 @@ import Image from "next/image";
 
 import {Footer} from "@/components/layout/Footer";
 import {Header} from "@/components/layout/Header";
+import {HomeAudienceSelector} from "@/components/sections/HomeAudienceSelector";
 import {ButtonLink} from "@/components/ui/Button";
 import type {SiteContent} from "@/content/types";
 
@@ -31,6 +32,7 @@ export function HomePage({
             {showActions ? (
               <ButtonLink
                 href="/book"
+                variant="accent"
                 className="plain-home-cta"
                 data-analytics-booking-cta="home-hero"
               >
@@ -40,34 +42,25 @@ export function HomePage({
           </div>
         </section>
 
-        <div className="home-main-stack grid gap-[180px] pb-[120px] pt-[72px] min-[861px]:gap-[270px] min-[861px]:pb-[calc(156*var(--unit-fx))] min-[861px]:pt-[96px]">
-          <section
-            className="editorial-container grid justify-items-center text-center"
-            aria-labelledby="home-manifesto-title"
-          >
-            <div className="grid max-w-[750px] justify-items-center gap-[29px] text-[var(--ink)] min-[861px]:gap-[42px]">
-              <h2 id="home-manifesto-title" className="mai-h3">
-                {home.manifesto.heading}
-              </h2>
-              <p className="mai-text-large-alt">{home.manifesto.body}</p>
-              <div className="mt-2 flex flex-wrap justify-center gap-3">
-                {Object.values(content.audienceLessons).map((lesson) => (
-                  <ButtonLink key={lesson.path} href={lesson.path}>
-                    {lesson.navLabel}
-                  </ButtonLink>
-                ))}
-              </div>
-            </div>
-          </section>
+        <div className="home-main-stack">
+          <HomeAudienceSelector
+            audiences={Object.values(content.audienceLessons)}
+            body={home.manifesto.body}
+            heading={home.manifesto.heading}
+          />
 
           <section
-            className="grid justify-items-center gap-14 text-center text-[var(--ink)]"
+            className="home-location-section"
             aria-labelledby="home-location-title"
           >
-            <h2 id="home-location-title" className="mai-h1 px-5">
+            <h2
+              id="home-location-title"
+              className="home-location-heading"
+              data-home-location-heading
+            >
               {home.location.heading}
             </h2>
-            <div className="grid w-full justify-items-center gap-10 px-5">
+            <div className="home-location-copy-stack">
               <Image
                 src="/images/home/from-the-rhine.webp"
                 alt="Watercolor view of Cologne Cathedral and the Rhine"
@@ -75,7 +68,7 @@ export function HomePage({
                 height={944}
                 style={{height: "auto", maxWidth: "500px", width: "100%"}}
               />
-              <p className="mai-text-regular max-w-[849px]">
+              <p className="home-section-copy" data-home-location-copy>
                 {home.location.body}
               </p>
             </div>
