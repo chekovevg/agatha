@@ -5,8 +5,8 @@ import {
   calPathFromUrl,
   canLoadAnalytics,
   createBookingClickEvent,
+  createBookingCompletedEvent,
   createBookingSuccessTracker,
-  createLeadEvent,
   pushAnalyticsEvent,
   readAnalyticsConsent,
   readCalUtm,
@@ -25,12 +25,16 @@ describe("analytics contracts", () => {
 
   it("creates the two permitted redacted event payloads", () => {
     expect(createBookingClickEvent("header")).toEqual({
-      event: "book_trial_cta_click",
+      event: "booking_cta_click",
       cta_location: "header",
     });
-    expect(createLeadEvent()).toEqual({
-      event: "generate_lead",
-      booking_type: "trial_lesson",
+    expect(createBookingCompletedEvent("intro_call")).toEqual({
+      event: "booking_completed",
+      booking_type: "intro_call",
+    });
+    expect(createBookingCompletedEvent("music_lesson")).toEqual({
+      event: "booking_completed",
+      booking_type: "music_lesson",
     });
   });
 
@@ -66,7 +70,7 @@ describe("analytics contracts", () => {
     });
 
     expect(readAnalyticsConsent(unavailableStorage)).toBeNull();
-    expect(pushAnalyticsEvent(createLeadEvent())).toBe(false);
+    expect(pushAnalyticsEvent(createBookingCompletedEvent("intro_call"))).toBe(false);
 
     Object.defineProperty(globalThis, "window", {configurable: true, value: originalWindow});
   });
@@ -84,12 +88,14 @@ describe("analytics contracts", () => {
     });
     const analyticsWindow = window as unknown as Window & {dataLayer: unknown[]};
 
-    expect(pushAnalyticsEvent(createLeadEvent())).toBe(false);
+    const bookingEvent = createBookingCompletedEvent("intro_call");
+
+    expect(pushAnalyticsEvent(bookingEvent)).toBe(false);
     expect(analyticsWindow.dataLayer).toEqual([]);
 
     storage.set(ANALYTICS_CONSENT_KEY, "granted");
-    expect(pushAnalyticsEvent(createLeadEvent())).toBe(true);
-    expect(analyticsWindow.dataLayer).toEqual([createLeadEvent()]);
+    expect(pushAnalyticsEvent(bookingEvent)).toBe(true);
+    expect(analyticsWindow.dataLayer).toEqual([bookingEvent]);
 
     Object.defineProperty(globalThis, "window", {configurable: true, value: originalWindow});
   });
@@ -109,13 +115,49 @@ describe("analytics contracts", () => {
     expect(readCalUtm("?utm_campaign=&booking_id=123")).toEqual({});
   });
 
-  it("emits one lead event when Cal reports duplicate booking successes", () => {
+  it("maps each supported Cal title to a redacted booking completion", () => {
+    const privateData = {
+      uid: "private-uid",
+      email: "student@example.com",
+      name: "Student Name",
+      time: "12:00",
+      startTime: "2026-08-07T12:00:00Z",
+      status: "ACCEPTED",
+      videoCallUrl: "https://meet.google.com/private",
+    };
+
+    for (const [title, bookingType] of [
+      ["Intro Call", "intro_call"],
+      ["Music Lesson", "music_lesson"],
+    ] as const) {
+      const events: unknown[] = [];
+      const trackBookingSuccess = createBookingSuccessTracker((event) => events.push(event));
+
+      trackBookingSuccess({detail: {data: {title, ...privateData}}});
+
+      expect(events).toEqual([{event: "booking_completed", booking_type: bookingType}]);
+    }
+  });
+
+  it("ignores malformed and unsupported Cal booking titles without consuming the tracker", () => {
     const events: unknown[] = [];
     const trackBookingSuccess = createBookingSuccessTracker((event) => events.push(event));
 
-    trackBookingSuccess();
-    trackBookingSuccess();
+    for (const notification of [
+      undefined,
+      {},
+      {detail: {}},
+      {detail: {data: null}},
+      {detail: {data: {title: 123}}},
+      {detail: {data: {title: "Parent Intro Call"}}},
+      {detail: {data: {title: "Music Theory Consultation"}}},
+    ]) {
+      trackBookingSuccess(notification);
+    }
 
-    expect(events).toEqual([{event: "generate_lead", booking_type: "trial_lesson"}]);
+    trackBookingSuccess({detail: {data: {title: "Intro Call"}}});
+    trackBookingSuccess({detail: {data: {title: "Music Lesson"}}});
+
+    expect(events).toEqual([{event: "booking_completed", booking_type: "intro_call"}]);
   });
 });

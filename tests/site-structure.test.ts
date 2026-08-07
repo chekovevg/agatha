@@ -131,7 +131,7 @@ describe("editorial site structure", () => {
       );
 
       expect(html).toContain('id="agatha-cal-inline"');
-      expect(html).toContain('aria-label="Book a trial lesson with Agatha"');
+      expect(html).toContain('aria-label="Book an intro call with Agatha"');
       expect(html).toContain('href="https://cal.com/agatha/trial"');
       expect(html).not.toContain("<iframe");
     } finally {

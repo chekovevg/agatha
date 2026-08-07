@@ -1,8 +1,9 @@
 export const ANALYTICS_CONSENT_KEY = "agatha.analytics-consent";
 export type AnalyticsConsent = "granted" | "denied";
+export type BookingType = "intro_call" | "music_lesson";
 export type AnalyticsEvent =
-  | {event: "book_trial_cta_click"; cta_location: string}
-  | {event: "generate_lead"; booking_type: "trial_lesson"};
+  | {event: "booking_cta_click"; cta_location: string}
+  | {event: "booking_completed"; booking_type: BookingType};
 
 const productionHosts = new Set(["agathamusic.com", "www.agathamusic.com"]);
 const gtmIdPattern = /^GTM-[A-Z0-9]+$/;
@@ -16,11 +17,11 @@ export function canLoadAnalytics(
 }
 
 export function createBookingClickEvent(ctaLocation: string): AnalyticsEvent {
-  return {event: "book_trial_cta_click", cta_location: ctaLocation};
+  return {event: "booking_cta_click", cta_location: ctaLocation};
 }
 
-export function createLeadEvent(): AnalyticsEvent {
-  return {event: "generate_lead", booking_type: "trial_lesson"};
+export function createBookingCompletedEvent(bookingType: BookingType): AnalyticsEvent {
+  return {event: "booking_completed", booking_type: bookingType};
 }
 
 export function readAnalyticsConsent(storage: Pick<Storage, "getItem">): AnalyticsConsent | null {
@@ -84,12 +85,25 @@ export function readCalUtm(search: string): Record<string, string> {
   return utm;
 }
 
-export function createBookingSuccessTracker(push: (event: AnalyticsEvent) => unknown): () => void {
+export function createBookingSuccessTracker(
+  push: (event: AnalyticsEvent) => unknown,
+): (notification: unknown) => void {
   let tracked = false;
 
-  return () => {
+  return (notification) => {
     if (tracked) return;
+
+    const title = (notification as {detail?: {data?: {title?: unknown}}} | null)?.detail?.data
+      ?.title;
+    const bookingType =
+      title === "Intro Call"
+        ? "intro_call"
+        : title === "Music Lesson"
+          ? "music_lesson"
+          : null;
+    if (!bookingType) return;
+
     tracked = true;
-    push(createLeadEvent());
+    push(createBookingCompletedEvent(bookingType));
   };
 }

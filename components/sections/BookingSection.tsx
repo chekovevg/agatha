@@ -42,7 +42,7 @@ export function BookingSection({
           {calLink ? (
             <CalBookingEmbed
               url={calLink}
-              title="Book a trial lesson with Agatha"
+              title="Book an intro call with Agatha"
             />
           ) : (
             <div className="flex min-h-[420px] flex-col items-start justify-center rounded-[var(--radius-card)] bg-[var(--paper)] p-8">

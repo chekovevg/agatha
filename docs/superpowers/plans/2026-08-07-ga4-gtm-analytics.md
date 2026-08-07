@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Attribute successful Cal.com trial-lesson bookings to their traffic source with a consent-gated GA4/GTM funnel and linked Search Console data.
+**Goal:** Attribute successful Cal.com bookings to their traffic source with a consent-gated GA4/GTM funnel and linked Search Console data.
 
 **Architecture:** A single client analytics manager owns consent, production-host gating, GTM loading, and booking-link click capture. A focused Cal.com client embed forwards only a redacted success signal into the same data layer. GA4, GTM, and Search Console are configured in the user's signed-in Chrome session.
 
@@ -15,7 +15,7 @@
 - GTM/GA4 must not load before consent.
 - GTM/GA4 must not load on localhost or any `*.vercel.app` hostname.
 - Send no Cal.com payload fields or PII to GTM/GA4.
-- Track only `book_trial_cta_click` with `cta_location` and `generate_lead` with `booking_type: trial_lesson`.
+- Track only `booking_cta_click` with `cta_location` and `booking_completed` with `booking_type: intro_call | music_lesson`.
 - Preserve booking behavior when analytics, GTM, or Cal embed scripts fail.
 - Do not edit unrelated user changes in `app/globals.css` or `tests/home-hero.test.tsx`.
 - Do not commit, deploy, change DNS, or publish the GTM container without explicit authorization.
@@ -47,7 +47,7 @@
 - Modify: `.env.example`
 
 **Interfaces:**
-- Produces: `AnalyticsConsent = "granted" | "denied"`, `canLoadAnalytics(hostname: string, gtmId: string | undefined, consent: AnalyticsConsent | null): boolean`, `createBookingClickEvent(ctaLocation: string): AnalyticsEvent`, `createLeadEvent(): AnalyticsEvent`, `readAnalyticsConsent(storage: Pick<Storage, "getItem">): AnalyticsConsent | null`, `writeAnalyticsConsent(storage: Pick<Storage, "setItem">, consent: AnalyticsConsent): void`, `pushAnalyticsEvent(event: AnalyticsEvent): boolean`, `calPathFromUrl(url: string): string | null`, `readCalUtm(search: string): Record<string, string>`, and `createBookingSuccessTracker(push: (event: AnalyticsEvent) => unknown): () => void`.
+- Produces: `AnalyticsConsent = "granted" | "denied"`, `BookingType = "intro_call" | "music_lesson"`, `canLoadAnalytics(hostname: string, gtmId: string | undefined, consent: AnalyticsConsent | null): boolean`, `createBookingClickEvent(ctaLocation: string): AnalyticsEvent`, `createBookingCompletedEvent(bookingType: BookingType): AnalyticsEvent`, `readAnalyticsConsent(storage: Pick<Storage, "getItem">): AnalyticsConsent | null`, `writeAnalyticsConsent(storage: Pick<Storage, "setItem">, consent: AnalyticsConsent): void`, `pushAnalyticsEvent(event: AnalyticsEvent): boolean`, `calPathFromUrl(url: string): string | null`, `readCalUtm(search: string): Record<string, string>`, and `createBookingSuccessTracker(push: (event: AnalyticsEvent) => unknown): (notification: unknown) => void`.
 - Consumes: no earlier task interfaces.
 
 - [ ] **Step 1: Write failing tests for the privacy and event contracts**
@@ -59,12 +59,12 @@ expect(canLoadAnalytics("agatha-pied.vercel.app", "GTM-ABC123", "granted")).toBe
 expect(canLoadAnalytics("localhost", "GTM-ABC123", "granted")).toBe(false);
 expect(canLoadAnalytics("agathamusic.com", "GTM-ABC123", "denied")).toBe(false);
 expect(createBookingClickEvent("header")).toEqual({
-  event: "book_trial_cta_click",
+  event: "booking_cta_click",
   cta_location: "header",
 });
-expect(createLeadEvent()).toEqual({
-  event: "generate_lead",
-  booking_type: "trial_lesson",
+expect(createBookingCompletedEvent("intro_call")).toEqual({
+  event: "booking_completed",
+  booking_type: "intro_call",
 });
 expect(readCalUtm("?utm_source=telegram&utm_medium=social&email=nope@example.com")).toEqual({
   utm_source: "telegram",
@@ -72,9 +72,9 @@ expect(readCalUtm("?utm_source=telegram&utm_medium=social&email=nope@example.com
 });
 ```
 
-Add a second test that invokes the function returned by
-`createBookingSuccessTracker(push)` twice and expects exactly one call with
-`createLeadEvent()`.
+Add tests that pass the two exact supported Cal titles to the function returned
+by `createBookingSuccessTracker(push)`, reject malformed or unexpected titles,
+and suppress duplicate valid notifications.
 
 - [ ] **Step 2: Run the focused test and observe the expected failure**
 
@@ -89,9 +89,10 @@ Use these fixed values and shapes:
 ```ts
 export const ANALYTICS_CONSENT_KEY = "agatha.analytics-consent";
 export type AnalyticsConsent = "granted" | "denied";
+export type BookingType = "intro_call" | "music_lesson";
 export type AnalyticsEvent =
-  | {event: "book_trial_cta_click"; cta_location: string}
-  | {event: "generate_lead"; booking_type: "trial_lesson"};
+  | {event: "booking_cta_click"; cta_location: string}
+  | {event: "booking_completed"; booking_type: BookingType};
 
 const productionHosts = new Set(["agathamusic.com", "www.agathamusic.com"]);
 const gtmIdPattern = /^GTM-[A-Z0-9]+$/;
@@ -262,7 +263,7 @@ Expected: PASS.
 
 ---
 
-### Task 4: Official Cal.com embed and redacted lead event
+### Task 4: Official Cal.com embed and redacted completion event
 
 **Files:**
 - Create: `components/analytics/CalBookingEmbed.tsx`
@@ -316,7 +317,7 @@ script fails, leave a normal link to `url` visible so booking still works.
 In `BookingSection`, replace the existing iframe with:
 
 ```tsx
-<CalBookingEmbed url={calLink} title="Book a trial lesson with Agatha" />
+<CalBookingEmbed url={calLink} title="Book an intro call with Agatha" />
 ```
 
 Keep the existing missing-link fallback and event-type cards unchanged.
@@ -362,9 +363,9 @@ country already associated with the account. Record the public `GTM-...` ID.
 Create:
 
 1. Google Tag using the GA4 `G-...` ID, firing on Initialization / All Pages.
-2. Custom Event trigger `book_trial_cta_click` and GA4 Event tag of the same
+2. Custom Event trigger `booking_cta_click` and GA4 Event tag of the same
    name with `cta_location = {{DLV - cta_location}}`.
-3. Custom Event trigger `generate_lead` and GA4 Event tag of the same name with
+3. Custom Event trigger `booking_completed` and GA4 Event tag of the same name with
    `booking_type = {{DLV - booking_type}}`.
 
 Add only the two required Data Layer Variables. Keep the workspace unpublished
@@ -372,7 +373,7 @@ until deployment/publish authorization is explicit.
 
 - [ ] **Step 5: Configure GA4 reporting**
 
-Create `generate_lead` as a key event. Do not enable Google Signals, ads
+Create `booking_completed` as a key event. Do not enable Google Signals, ads
 personalization, audiences, or Google Ads linking.
 
 - [ ] **Step 6: Connect Search Console**
@@ -420,7 +421,7 @@ Cal fallback behavior, and no layout regression.
 Confirm no requests to `googletagmanager.com`, `google-analytics.com`, or
 `analytics.google.com` before consent, after denial, on localhost, or on a
 Vercel preview hostname. With an allowed-host test harness and granted consent,
-confirm exact data-layer payloads and one-shot lead de-duplication.
+confirm exact data-layer payloads and one-shot completion de-duplication.
 
 - [ ] **Step 4: Inspect the complete diff**
 
@@ -432,5 +433,5 @@ unrelated SEO spec remain untouched.
 
 If not already explicit, ask before production deployment, GTM publication, or
 DNS verification. After those actions are authorized and completed, use GTM
-Preview and GA4 DebugView to verify one `book_trial_cta_click` and one redacted
-`generate_lead` from a test booking, then confirm Search Console is linked.
+Preview and GA4 DebugView to verify one `booking_cta_click` and one redacted
+`booking_completed` from a test booking, then confirm Search Console is linked.
