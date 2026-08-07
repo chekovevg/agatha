@@ -115,7 +115,7 @@ describe("analytics consent UI", () => {
     }
   });
 
-  it("renders accessible analytics consent choices", () => {
+  it("renders the Figma analytics banner with accessible consent choices", () => {
     const html = renderToStaticMarkup(
       createElement(AnalyticsConsentBanner, {
         onAllow: () => {},
@@ -125,8 +125,9 @@ describe("analytics consent UI", () => {
 
     expect(html).toContain('role="region"');
     expect(html).toContain('aria-label="Analytics preferences"');
-    expect(html).toContain("Allow analytics");
-    expect(html).toContain("Continue without analytics");
+    expect(html).toContain("We use analytics to understand page visits.");
+    expect(html).toContain(">Allow</button>");
+    expect(html).toContain(">No, thanks</button>");
     expect(html).toContain('href="/datenschutz"');
   });
 

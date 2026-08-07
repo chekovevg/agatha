@@ -3,6 +3,7 @@
 import Script from "next/script";
 import {useEffect, useRef, useState} from "react";
 
+import {Button} from "@/components/ui/Button";
 import {
   type AnalyticsConsent,
   canLoadAnalytics,
@@ -109,32 +110,43 @@ export function AnalyticsConsentBanner({
   return (
     <section
       aria-label="Analytics preferences"
-      className="fixed bottom-4 left-4 z-50 w-[320px] rounded-[var(--radius-card)] bg-[var(--ink)] p-5 text-[var(--paper)] shadow-[var(--shadow-elevated)] max-[860px]:right-4 max-[860px]:w-auto"
+      className="fixed bottom-4 left-4 z-50 flex w-[305px] flex-col items-start gap-[30px] rounded-[5px] bg-[var(--ink)] p-6 text-[var(--paper)] max-[337px]:right-4 max-[337px]:w-auto"
       role="region"
     >
-      <p className="mai-ui text-sm">
-        We use optional analytics to understand page visits and the booking journey.
-      </p>
-      <p className="mt-2 text-sm text-[var(--paper)]/80">
-        <a className="underline focus-visible:outline-2 focus-visible:outline-offset-4" href="/datenschutz">
-          Read our privacy information
-        </a>
-      </p>
-      <div className="mt-4 flex flex-wrap gap-3">
-        <button
-          className="rounded-full bg-[var(--paper)] px-4 py-2 text-sm font-semibold text-[var(--ink)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--paper)]"
-          onClick={onAllow}
-          type="button"
+      <div className="flex w-full flex-col items-start gap-4">
+        <p className="mai-ui w-full">We use analytics to understand page visits.</p>
+        <a
+          className="mai-ui flex h-[18px] items-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--paper)]"
+          href="/datenschutz"
         >
-          Allow analytics
-        </button>
-        <button
-          className="rounded-full border border-[var(--paper)] px-4 py-2 text-sm font-semibold text-[var(--paper)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--paper)]"
+          Read our privacy information
+          <svg
+            aria-hidden="true"
+            className="size-[18px] shrink-0"
+            fill="none"
+            viewBox="0 0 18 18"
+          >
+            <path
+              d="M4.5 13.5 13.5 4.5M13.5 10.5v-6h-6"
+              stroke="currentColor"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </a>
+      </div>
+      <div className="flex w-full flex-col items-start gap-2">
+        <Button className="w-full" onClick={onAllow} type="button">
+          Allow
+        </Button>
+        <Button
+          className="w-full border-[1.5px] border-[var(--paper)] bg-transparent text-[var(--paper)] focus-visible:outline-[var(--paper)]"
           onClick={onDeny}
           type="button"
+          variant="accent"
         >
-          Continue without analytics
-        </button>
+          No, thanks
+        </Button>
       </div>
     </section>
   );
