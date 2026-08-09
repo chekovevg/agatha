@@ -398,6 +398,11 @@ test("desktop Classes menu previews lessons with Figma card typography", async (
   await expect(
     menu.getByRole("link", {name: "Flute", exact: true}),
   ).toHaveCSS("font-size", "16px");
+  expect(
+    await menu
+      .getByRole("link", {name: "Flute", exact: true})
+      .evaluate((element) => getComputedStyle(element).fontFamily),
+  ).toContain("Geist Mono");
   await expect(menu.getByText("What I teach", {exact: true})).toHaveCSS(
     "font-size",
     "16px",
@@ -407,7 +412,8 @@ test("desktop Classes menu previews lessons with Figma card typography", async (
     {exact: true},
   );
   await expect(menuDescription).toHaveCSS("font-size", "14px");
-  await expect(menuDescription).toHaveCSS("line-height", "22.4px");
+  await expect(menuDescription).toHaveCSS("line-height", "19.6px");
+  await expect(menuDescription.locator("..")).toHaveCSS("row-gap", "20px");
   expect(
     await menuDescription.evaluate(
       (element) => element.scrollWidth <= element.clientWidth,
@@ -429,7 +435,11 @@ test("desktop Classes menu previews lessons with Figma card typography", async (
     {exact: true},
   );
   await expect(previewDescription).toHaveCSS("font-size", "14px");
-  await expect(previewDescription).toHaveCSS("line-height", "22.4px");
+  await expect(previewDescription).toHaveCSS("line-height", "19.6px");
+  await expect(previewDescription.locator("..")).toHaveCSS(
+    "row-gap",
+    "20px",
+  );
 
   await menu.getByRole("link", {name: "Solfege", exact: true}).hover();
   await expect(menu.getByTestId("classes-menu-preview-title")).toHaveText(

@@ -80,11 +80,11 @@ export function ClassesMenu({
           className="classes-menu-panel grid h-[488px] w-[698px] grid-cols-[306.657px_333px] gap-[10px] rounded-[4px] bg-[var(--background)] p-6 text-[var(--ink)] shadow-[0_3px_50px_rgba(0,0,0,0.12)]"
         >
           <div className="flex h-[440px] min-w-0 flex-col">
-            <div className="flex w-full flex-col gap-4">
-              <p className="w-full font-ui text-[16px] leading-none tracking-[-0.21px] [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">
+            <div className="flex w-full flex-col gap-5">
+              <p className="w-full font-mono text-[16px] font-normal leading-none tracking-[-0.21px] [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">
                 What I teach
               </p>
-              <p className="w-full font-ui text-[14px] leading-[1.6] tracking-[-0.21px] [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">
+              <p className="w-full font-mono text-[14px] font-normal leading-[1.4] tracking-[-0.21px] [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">
                 {intro}
               </p>
             </div>
@@ -95,7 +95,7 @@ export function ClassesMenu({
                   <a
                     key={lesson.slug}
                     href={lessonBookingHref(lesson.title)}
-                    className="group flex h-[50px] items-center gap-4 bg-[var(--hover-paper)] pl-[10px] pr-3 font-ui text-[16px] leading-none tracking-[-0.21px] transition-colors duration-[600ms] ease-[var(--alias-easeOut)] focus-visible:outline-2"
+                    className="group flex h-[50px] items-center gap-4 bg-[var(--hover-paper)] pl-[10px] pr-3 font-mono text-[16px] font-normal leading-none tracking-[-0.21px] transition-colors duration-[600ms] ease-[var(--alias-easeOut)] focus-visible:outline-2"
                     onMouseEnter={() => setActiveLesson(lesson)}
                     onFocus={() => setActiveLesson(lesson)}
                     onClick={onNavigate}
@@ -122,7 +122,7 @@ export function ClassesMenu({
 
             <a
               href="/classes"
-              className="mt-auto w-fit font-ui text-[16px] leading-none tracking-[-0.21px] underline-offset-4 hover:underline focus-visible:outline-2"
+              className="mt-auto w-fit font-mono text-[16px] font-normal leading-none tracking-[-0.21px] underline-offset-4 hover:underline focus-visible:outline-2"
               onClick={onNavigate}
             >
               All Classes
@@ -145,11 +145,11 @@ export function ClassesMenu({
                 className="object-contain"
               />
             </span>
-            <span className="flex min-w-0 w-full flex-col items-start gap-4">
+            <span className="flex min-w-0 w-full flex-col items-start gap-5">
               <span className="relative flex w-full items-center">
                 <span
                   data-testid="classes-menu-preview-title"
-                  className="min-w-0 flex-1 pr-[30px] font-ui text-[16px] leading-none tracking-[-0.21px] underline-offset-4 transition-[text-decoration-color] duration-[600ms] [text-box-edge:cap_alphabetic] [text-box-trim:trim-both] group-hover:underline group-focus-visible:underline"
+                  className="min-w-0 flex-1 pr-[30px] font-mono text-[16px] font-normal leading-none tracking-[-0.21px] underline-offset-4 transition-[text-decoration-color] duration-[600ms] [text-box-edge:cap_alphabetic] [text-box-trim:trim-both] group-hover:underline group-focus-visible:underline"
                 >
                   {activeLesson.title}
                 </span>
@@ -159,7 +159,7 @@ export function ClassesMenu({
                   strokeWidth={1.5}
                 />
               </span>
-              <span className="min-w-full font-ui text-[14px] leading-[1.6] tracking-[-0.21px] [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">
+              <span className="min-w-full font-mono text-[14px] font-normal leading-[1.4] tracking-[-0.21px] [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">
                 {activeLesson.description}
               </span>
             </span>

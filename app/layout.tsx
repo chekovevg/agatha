@@ -1,7 +1,13 @@
 import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { EB_Garamond, Geist, Newsreader, Red_Hat_Mono } from "next/font/google";
+import {
+  EB_Garamond,
+  Geist,
+  Geist_Mono,
+  Newsreader,
+  Red_Hat_Mono,
+} from "next/font/google";
 import localFont from "next/font/local";
 import {AnalyticsManager} from "@/components/analytics/AnalyticsManager";
 import {env} from "@/lib/env";
@@ -10,6 +16,11 @@ import "./globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
   subsets: ["latin"],
 });
 
@@ -87,7 +98,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${redHatMono.variable} ${ebGaramond.variable} ${newsreader.variable} ${garamondBookNarrow.variable} ${azGaramond.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${redHatMono.variable} ${ebGaramond.variable} ${newsreader.variable} ${garamondBookNarrow.variable} ${azGaramond.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <script
