@@ -77,7 +77,7 @@ export function ClassesMenu({
       >
         <div
           data-state={open ? "open" : "closed"}
-          className="classes-menu-panel grid h-[488px] w-[698px] grid-cols-[306.657px_333px] gap-[10px] rounded-[4px] bg-[var(--background)] p-6 text-[var(--ink)] shadow-[0_3px_50px_rgba(0,0,0,0.12)]"
+          className="classes-menu-panel grid h-[488px] w-[698px] grid-cols-[306.657px_333px] gap-[10px] rounded-[4px] bg-[var(--background)] p-6 text-[var(--ink)] shadow-[var(--shadow-navigation-surface)]"
         >
           <div className="flex h-[440px] min-w-0 flex-col">
             <div className="flex w-full flex-col gap-5">

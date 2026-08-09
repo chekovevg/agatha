@@ -240,8 +240,12 @@ describe("editorial site structure", () => {
       );
 
       expect(html).toContain('id="agatha-cal-inline"');
+      expect(html).toContain(">Book a Call</h1>");
+      expect(html).toContain('aria-label="Booking type"');
+      expect(html).toContain('aria-current="page"');
       expect(html).toContain('aria-label="Book an intro call with Agatha"');
       expect(html).toContain('href="https://cal.com/agatha/trial"');
+      expect(html).not.toContain("Choose the next step");
       expect(html).not.toContain("<iframe");
     } finally {
       env.NEXT_PUBLIC_CAL_LINK = previousCalLink;
@@ -264,7 +268,7 @@ describe("editorial site structure", () => {
         }),
       );
 
-      expect(html).toContain("Book a music lesson");
+      expect(html).toContain(">Book a Call</h1>");
       expect(html).toContain("Flute");
       expect(html).toContain('aria-label="Book a music lesson with Agatha"');
       expect(html).toContain(
@@ -272,6 +276,7 @@ describe("editorial site structure", () => {
       );
       expect(html).toContain('href="/book?type=intro"');
       expect(html).toContain('aria-current="page"');
+      expect(html).not.toContain("Keep progressing");
       expect(html).not.toContain('href="https://cal.com/agatha/intro-call"');
     } finally {
       env.NEXT_PUBLIC_CAL_LINK = previousCalLink;

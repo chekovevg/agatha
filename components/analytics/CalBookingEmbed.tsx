@@ -89,6 +89,11 @@ export function CalBookingEmbed({
         ...(notes ? {notes} : {}),
       },
     });
+    Cal("ui", {
+      hideEventTypeDetails: true,
+      showTimezoneWhenEventDetailsHidden: true,
+      styles: {body: {background: "transparent"}},
+    });
     Cal("on", {
       action: "bookingSuccessfulV2",
       callback: trackBookingSuccess,

@@ -74,7 +74,7 @@ export function Header({
         <div
           data-header-surface
           className={cn(
-            "pointer-events-auto relative grid h-[58px] grid-cols-2 items-center rounded-[5px] bg-[var(--background)] px-[22px] text-[var(--ink)] min-[861px]:grid-cols-3 min-[861px]:shadow-[0_3px_100px_8px_rgba(0,0,0,0.12)] max-[860px]:px-[19px]",
+            "pointer-events-auto relative grid h-[58px] grid-cols-2 items-center rounded-[5px] bg-[var(--background)] px-[22px] text-[var(--ink)] min-[861px]:grid-cols-3 min-[861px]:shadow-[var(--shadow-navigation-surface)] max-[860px]:px-[19px]",
           )}
         >
           <Link

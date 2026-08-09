@@ -193,16 +193,26 @@ test("home header stays centered and keeps mono text readable while resizing", a
   });
 });
 
-test("header uses the designed desktop shadow without adding it on mobile", async ({
+test("header and Classes menu share the designed desktop shadow", async ({
   page,
 }) => {
   const headerSurface = page.locator("[data-header-surface]");
 
   await page.setViewportSize({width: 1440, height: 900});
   await page.goto("/");
-  expect(
-    await headerSurface.evaluate((element) => getComputedStyle(element).boxShadow),
-  ).toContain("rgba(0, 0, 0, 0.12) 0px 3px 100px 8px");
+  await page
+    .getByRole("navigation", {name: "Header Menu"})
+    .getByRole("link", {name: "Classes", exact: true})
+    .hover();
+
+  const menuPanel = page.locator(".classes-menu-panel");
+  await expect(menuPanel).toBeVisible();
+  const [headerShadow, menuShadow] = await Promise.all([
+    headerSurface.evaluate((element) => getComputedStyle(element).boxShadow),
+    menuPanel.evaluate((element) => getComputedStyle(element).boxShadow),
+  ]);
+  expect(headerShadow).toContain("rgba(0, 0, 0, 0.12) 0px 3px 100px 8px");
+  expect(menuShadow).toBe(headerShadow);
 
   await page.setViewportSize({width: 390, height: 844});
   await expect(headerSurface).toHaveCSS("box-shadow", "none");
@@ -402,7 +412,7 @@ test("desktop Classes menu previews lessons with Figma card typography", async (
     await menu
       .getByRole("link", {name: "Flute", exact: true})
       .evaluate((element) => getComputedStyle(element).fontFamily),
-  ).toContain("Geist Mono");
+  ).toContain("Red Hat Mono");
   await expect(menu.getByText("What I teach", {exact: true})).toHaveCSS(
     "font-size",
     "16px",
@@ -465,19 +475,32 @@ test("booking route selects the relevant event and remains switchable", async ({
   await page.route("https://app.cal.com/**", (route) => route.abort());
   await page.goto("/book?type=intro");
   await expect(
-    page.getByRole("heading", {name: "Book an intro call"}),
+    page.getByRole("heading", {name: "Book a Call", exact: true}),
   ).toBeVisible();
   const bookingType = page.getByRole("navigation", {name: "Booking type"});
+  await expect(bookingType).toHaveCSS("width", "366px");
+  await expect(bookingType).toHaveCSS("padding", "12px");
   await expect(
     bookingType.getByRole("link", {name: "Intro Call", exact: true}),
   ).toHaveAttribute("aria-current", "page");
+  await expect(
+    bookingType.getByRole("link", {name: "Intro Call", exact: true}),
+  ).toHaveCSS("height", "38px");
+  expect(
+    await bookingType
+      .getByRole("link", {name: "Intro Call", exact: true})
+      .evaluate((element) => getComputedStyle(element).fontFamily),
+  ).toContain("Red Hat Mono");
+  await expect(page.getByText("Choose the next step", {exact: true})).toHaveCount(
+    0,
+  );
   await expect(
     page.locator('a[href*="cal.com/agafiia-gurko/intro-call"]'),
   ).toBeVisible();
 
   await page.goto("/book?type=lesson&subject=Piccolo");
   await expect(
-    page.getByRole("heading", {name: "Book a music lesson"}),
+    page.getByRole("heading", {name: "Book a Call", exact: true}),
   ).toBeVisible();
   await expect(page.getByTestId("selected-class")).toHaveText(
     "Selected class: Piccolo",
@@ -492,12 +515,12 @@ test("booking route selects the relevant event and remains switchable", async ({
   await bookingType.getByRole("link", {name: "Intro Call", exact: true}).click();
   await expect(page).toHaveURL(/\/book\?type=intro$/);
   await expect(
-    page.getByRole("heading", {name: "Book an intro call"}),
+    page.getByRole("heading", {name: "Book a Call", exact: true}),
   ).toBeVisible();
 
   await page.goto("/book?type=unknown&subject=Flute");
   await expect(
-    page.getByRole("heading", {name: "Book an intro call"}),
+    page.getByRole("heading", {name: "Book a Call", exact: true}),
   ).toBeVisible();
 });
 
