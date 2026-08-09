@@ -395,23 +395,41 @@ test("desktop Classes menu previews lessons with Figma card typography", async (
   await expect(
     menu.getByRole("link", {name: "Flute", exact: true}),
   ).toHaveAttribute("href", "/book?type=lesson&subject=Flute");
+  await expect(
+    menu.getByRole("link", {name: "Flute", exact: true}),
+  ).toHaveCSS("font-size", "16px");
+  await expect(menu.getByText("What I teach", {exact: true})).toHaveCSS(
+    "font-size",
+    "16px",
+  );
+  const menuDescription = menu.getByText(
+    "Discover and choose what you want to learn",
+    {exact: true},
+  );
+  await expect(menuDescription).toHaveCSS("font-size", "14px");
+  await expect(menuDescription).toHaveCSS("line-height", "22.4px");
+  expect(
+    await menuDescription.evaluate(
+      (element) => element.scrollWidth <= element.clientWidth,
+    ),
+  ).toBe(true);
   await expect(menu.getByTestId("classes-menu-preview-title")).toHaveText(
     "Flute",
   );
   await expect(menu.getByTestId("classes-menu-preview-title")).toHaveCSS(
     "font-size",
-    "15px",
+    "16px",
   );
   await expect(menu.getByTestId("classes-menu-preview-title")).toHaveCSS(
     "line-height",
-    "15px",
+    "16px",
   );
   const previewDescription = menu.getByText(
     "Build a clear tone, healthy breathing and relaxed posture from the very beginning. We work with sound, technique, hands, embouchure and musical expression step by step.",
     {exact: true},
   );
-  await expect(previewDescription).toHaveCSS("font-size", "12px");
-  await expect(previewDescription).toHaveCSS("line-height", "19.2px");
+  await expect(previewDescription).toHaveCSS("font-size", "14px");
+  await expect(previewDescription).toHaveCSS("line-height", "22.4px");
 
   await menu.getByRole("link", {name: "Solfege", exact: true}).hover();
   await expect(menu.getByTestId("classes-menu-preview-title")).toHaveText(
