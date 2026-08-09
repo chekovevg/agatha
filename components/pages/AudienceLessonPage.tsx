@@ -23,7 +23,7 @@ export function AudienceLessonPage({
       <Header content={site} />
       <main className="text-[var(--ink)]">
         <section className="editorial-container grid justify-items-center gap-8 py-20 text-center min-[861px]:py-[calc(160*var(--unit-fx))]">
-          <p className="mai-ui">{content.eyebrow}</p>
+          <p className="mai-eyebrow">{content.eyebrow}</p>
           <h1 className="mai-h3 max-w-[980px]">{content.title}</h1>
           <p className="mai-text-large-alt max-w-[780px]">{content.intro}</p>
           <p className="mai-ui">{content.trustLine}</p>

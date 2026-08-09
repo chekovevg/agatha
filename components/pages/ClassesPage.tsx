@@ -46,7 +46,7 @@ function LessonRow({
         />
       </div>
       <div>
-        <p className="mai-ui tracking-[1.5px] text-[var(--ink)] max-sm:tracking-[1.2px]">
+        <p className="mai-eyebrow text-[var(--ink)]">
           Music lesson
         </p>
         <h2 className="mai-h4 mt-[calc(24_*_var(--unit-fx))]">

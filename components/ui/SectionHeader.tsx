@@ -10,7 +10,7 @@ export function SectionHeader({
   return (
     <div className="max-w-3xl">
       {label ? (
-        <p className="mai-ui mb-4 tracking-[1.5px] text-[var(--muted)] max-sm:tracking-[1.2px]">
+        <p className="mai-eyebrow mb-4 text-[var(--muted)]">
           {label}
         </p>
       ) : null}

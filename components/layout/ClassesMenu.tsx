@@ -82,10 +82,10 @@ export function ClassesMenu({
           <div className="classes-menu-content grid h-full w-full grid-cols-[306.657px_333px] gap-[10px] rounded-[4px] bg-[var(--background)] p-6">
             <div className="flex h-[440px] min-w-0 flex-col">
               <div className="flex w-full flex-col gap-5">
-                <p className="w-full font-mono text-[16px] font-normal leading-none tracking-[-0.21px] [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">
+                <p className="mai-metanav-title w-full [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">
                   What I teach
                 </p>
-                <p className="w-full font-mono text-[14px] font-normal leading-[1.4] tracking-[-0.21px] [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">
+                <p className="mai-metanav-description w-full [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">
                   {intro}
                 </p>
               </div>
@@ -96,7 +96,7 @@ export function ClassesMenu({
                     <a
                       key={lesson.slug}
                       href={lessonBookingHref(lesson.title)}
-                      className="group flex h-[50px] items-center gap-4 bg-[var(--hover-paper)] pl-[10px] pr-3 font-mono text-[16px] font-normal leading-none tracking-[-0.21px] transition-colors duration-[600ms] ease-[var(--alias-easeOut)] focus-visible:outline-2"
+                      className="mai-ui group flex h-[50px] items-center gap-4 bg-[var(--hover-paper)] pl-[10px] pr-3 transition-colors duration-[600ms] ease-[var(--alias-easeOut)] focus-visible:outline-2"
                       onMouseEnter={() => setActiveLesson(lesson)}
                       onFocus={() => setActiveLesson(lesson)}
                       onClick={onNavigate}
@@ -123,7 +123,7 @@ export function ClassesMenu({
 
               <a
                 href="/classes"
-                className="mt-auto w-fit font-mono text-[16px] font-normal leading-none tracking-[-0.21px] underline-offset-4 hover:underline focus-visible:outline-2"
+                className="mai-ui mt-auto w-fit underline-offset-4 hover:underline focus-visible:outline-2"
                 onClick={onNavigate}
               >
                 All Classes
@@ -150,7 +150,7 @@ export function ClassesMenu({
                 <span className="relative flex w-full items-center">
                   <span
                     data-testid="classes-menu-preview-title"
-                    className="min-w-0 flex-1 pr-[30px] font-mono text-[16px] font-normal leading-none tracking-[-0.21px] underline-offset-4 transition-[text-decoration-color] duration-[600ms] [text-box-edge:cap_alphabetic] [text-box-trim:trim-both] group-hover:underline group-focus-visible:underline"
+                    className="mai-metanav-title min-w-0 flex-1 pr-[30px] underline-offset-4 transition-[text-decoration-color] duration-[600ms] [text-box-edge:cap_alphabetic] [text-box-trim:trim-both] group-hover:underline group-focus-visible:underline"
                   >
                     {activeLesson.title}
                   </span>
@@ -160,7 +160,7 @@ export function ClassesMenu({
                     strokeWidth={1.5}
                   />
                 </span>
-                <span className="min-w-full font-mono text-[14px] font-normal leading-[1.4] tracking-[-0.21px] [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">
+                <span className="mai-metanav-description min-w-full [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">
                   {activeLesson.description}
                 </span>
               </span>

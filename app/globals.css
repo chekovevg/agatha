@@ -140,7 +140,14 @@
   --mai-text-regular-size: var(--mai-body-size);
   --mai-text-regular-line: var(--mai-body-line);
   --mai-text-regular-tracking: var(--mai-body-tracking);
-  --mai-ui-size: 14px;
+  --mai-ui-size: max(10px, calc(16 * var(--unit-fx-type)));
+  --mai-ui-tracking: -0.24px;
+  --mai-metanav-title-size: max(12px, calc(15 * var(--unit-fx-type)));
+  --mai-metanav-description-size: max(10px, calc(13 * var(--unit-fx-type)));
+  --mai-eyebrow-tracking: 1.5px;
+  --mai-footer-size: max(10px, calc(15 * var(--unit-fx-type)));
+  --mai-footer-tracking: 1.5px;
+  --mai-footer-note-size: calc(12 * var(--unit-fx-type));
   --mai-meta-size: max(10px, calc(18 * var(--unit-fx-type)));
   --mai-caption-size: max(10px, calc(16 * var(--unit-fx-type)));
 }
@@ -230,7 +237,10 @@
     --mai-text-large-alt-size: var(--mai-body-size);
     --mai-text-large-alt-line: var(--mai-body-line);
     --mai-text-large-alt-tracking: var(--mai-body-tracking);
-    --mai-ui-size: 14px;
+    --mai-ui-size: 12px;
+    --mai-eyebrow-tracking: 1.2px;
+    --mai-footer-size: 12px;
+    --mai-footer-tracking: 0px;
     --mai-meta-size: 12px;
     --mai-caption-size: 12px;
   }
@@ -454,9 +464,56 @@ select {
   .mai-ui {
     font-family: var(--font-ui);
     font-size: var(--mai-ui-size);
-    font-weight: 400;
-    letter-spacing: -0.21px;
+    font-weight: 500;
+    letter-spacing: var(--mai-ui-tracking);
     line-height: 1;
+  }
+
+  .mai-header-nav {
+    font-family: var(--font-ui);
+    font-size: var(--mai-ui-size);
+    font-weight: 500;
+    letter-spacing: var(--mai-ui-tracking);
+    line-height: 1;
+  }
+
+  .mai-metanav-title {
+    font-family: var(--font-ui);
+    font-size: var(--mai-metanav-title-size);
+    font-weight: 500;
+    letter-spacing: var(--mai-ui-tracking);
+    line-height: 1;
+  }
+
+  .mai-metanav-description {
+    font-family: var(--font-ui);
+    font-size: var(--mai-metanav-description-size);
+    font-weight: 500;
+    letter-spacing: var(--mai-ui-tracking);
+    line-height: 1.6;
+  }
+
+  .mai-eyebrow {
+    font-family: var(--font-ui);
+    font-size: var(--mai-ui-size);
+    font-weight: 500;
+    letter-spacing: var(--mai-eyebrow-tracking);
+    line-height: 1;
+  }
+
+  .mai-footer {
+    font-family: var(--font-ui);
+    font-size: var(--mai-footer-size);
+    font-weight: 400;
+    letter-spacing: var(--mai-footer-tracking);
+    line-height: 1.6;
+  }
+
+  @media (width <= 600px) {
+    .mai-header-nav {
+      font-size: 16px;
+      line-height: 1.8;
+    }
   }
 
   .mai-caption {
@@ -471,16 +528,16 @@ select {
     display: flex;
     flex-direction: column;
     font-family: var(--font-ui);
-    font-size: 14px;
+    font-size: var(--mai-footer-size);
     font-weight: 400;
     gap: 16px;
-    letter-spacing: -0.21px;
-    line-height: 1;
+    letter-spacing: var(--mai-footer-tracking);
+    line-height: 1.6;
   }
 
   .ag-footer-link-list a {
     display: block;
-    line-height: 1;
+    line-height: inherit;
   }
 
   .ag-footer-link-list a.footer-book-link {
@@ -496,18 +553,18 @@ select {
 
   .ag-footer-copyright {
     font-family: var(--font-ui);
-    font-size: 14px;
+    font-size: var(--mai-footer-size);
     font-weight: 400;
-    letter-spacing: -0.21px;
-    line-height: 1;
+    letter-spacing: var(--mai-footer-tracking);
+    line-height: 1.6;
   }
 
   .ag-footer-note {
     font-family: var(--font-ui);
-    font-size: 14px;
+    font-size: var(--mai-footer-note-size);
     font-weight: 400;
-    letter-spacing: -0.21px;
-    line-height: 1;
+    letter-spacing: -0.24px;
+    line-height: 1.25;
     max-width: 36em;
   }
 
@@ -516,22 +573,6 @@ select {
       display: none;
     }
 
-    .ag-footer-link-list,
-    .ag-footer-copyright {
-      font-size: 14px;
-      letter-spacing: -0.21px;
-      line-height: 1;
-    }
-
-    .ag-footer-link-list a {
-      line-height: 1;
-    }
-
-    .ag-footer-note {
-      font-size: 14px;
-      letter-spacing: -0.21px;
-      line-height: 1;
-    }
   }
 
   .mai-shadow-hover {

@@ -1,4 +1,4 @@
-import {expect, test, type Page} from "playwright/test";
+import {expect, test, type Locator, type Page} from "playwright/test";
 
 async function expectHealthyPage(page: Page) {
   await expect(page.locator("body")).not.toHaveText("");
@@ -15,6 +15,98 @@ function rectanglesIntersect(
     first.y + first.height <= second.y ||
     second.y + second.height <= first.y
   );
+}
+
+const monoTypographyCases = [
+  {
+    width: 390,
+    ui: 12,
+    headerNav: 16,
+    metaTitle: 14.55,
+    metaDescription: 12.61,
+    footer: 12,
+    footerNote: 11.64,
+  },
+  {
+    width: 768,
+    ui: 12.7,
+    headerNav: 12.7,
+    metaTitle: 12,
+    metaDescription: 10.32,
+    footer: 11.91,
+    footerNote: 9.52,
+  },
+  {
+    width: 1280,
+    ui: 14.22,
+    headerNav: 14.22,
+    metaTitle: 13.33,
+    metaDescription: 11.56,
+    footer: 13.33,
+    footerNote: 10.67,
+  },
+  {
+    width: 1440,
+    ui: 14.22,
+    headerNav: 14.22,
+    metaTitle: 13.33,
+    metaDescription: 11.56,
+    footer: 13.33,
+    footerNote: 10.67,
+  },
+  {
+    width: 1536,
+    ui: 14.22,
+    headerNav: 14.22,
+    metaTitle: 13.33,
+    metaDescription: 11.56,
+    footer: 13.33,
+    footerNote: 10.67,
+  },
+  {
+    width: 1600,
+    ui: 14.81,
+    headerNav: 14.81,
+    metaTitle: 13.89,
+    metaDescription: 12.04,
+    footer: 13.89,
+    footerNote: 11.11,
+  },
+  {
+    width: 1728,
+    ui: 16,
+    headerNav: 16,
+    metaTitle: 15,
+    metaDescription: 13,
+    footer: 15,
+    footerNote: 12,
+  },
+  {
+    width: 1920,
+    ui: 16,
+    headerNav: 16,
+    metaTitle: 15,
+    metaDescription: 13,
+    footer: 15,
+    footerNote: 12,
+  },
+] as const;
+
+async function readTypography(locator: Locator) {
+  return locator.evaluate((element) => {
+    const style = getComputedStyle(element);
+
+    return {
+      fontFamily: style.fontFamily,
+      fontSize: Number.parseFloat(style.fontSize),
+      fontWeight: style.fontWeight,
+      letterSpacing:
+        style.letterSpacing === "normal"
+          ? 0
+          : Number.parseFloat(style.letterSpacing),
+      lineHeight: Number.parseFloat(style.lineHeight),
+    };
+  });
 }
 
 test("primary English routes render successfully with security headers", async ({
@@ -154,20 +246,9 @@ test("home header stays centered and keeps mono text readable while resizing", a
       navigationBox!.y + navigationBox!.height / 2,
       `navigation center at ${width}px`,
     ).toBeCloseTo(surfaceBox!.y + surfaceBox!.height / 2, 0);
-    expect(
-      await booking.evaluate((element) => {
-        const style = getComputedStyle(element);
-        return {
-          fontSize: style.fontSize,
-          fontWeight: style.fontWeight,
-          letterSpacing: style.letterSpacing,
-        };
-      }),
-    ).toEqual({
-      fontSize: "14px",
-      fontWeight: "400",
-      letterSpacing: "-0.21px",
-    });
+    const bookingTypography = await readTypography(booking);
+    expect(bookingTypography.fontFamily).toContain("Red Hat Mono");
+    expect(bookingTypography.fontSize).toBeGreaterThanOrEqual(10);
   }
 
   await expect(page.locator('header img[src="/images/agatha-gurko-music.svg"]')).toBeVisible();
@@ -175,22 +256,122 @@ test("home header stays centered and keeps mono text readable while resizing", a
     page.locator("header").getByRole("link", {name: "Book a Call"}),
   ).toBeVisible();
   expect(
-    await page
-      .locator('footer [data-footer-section="site"] a')
-      .first()
-      .evaluate((element) => {
-        const style = getComputedStyle(element);
-        return {
-          fontSize: style.fontSize,
-          fontWeight: style.fontWeight,
-          letterSpacing: style.letterSpacing,
-        };
-      }),
-  ).toEqual({
-    fontSize: "14px",
-    fontWeight: "400",
-    letterSpacing: "-0.21px",
-  });
+    (await readTypography(
+      page.locator('footer [data-footer-section="site"] a').first(),
+    )).fontFamily,
+  ).toContain("Red Hat Mono");
+});
+
+test("Red Hat Mono roles follow the reference responsive matrix", async ({
+  page,
+}) => {
+  for (const typographyCase of monoTypographyCases) {
+    await page.setViewportSize({width: typographyCase.width, height: 1000});
+    await page.goto("/classes");
+
+    const headerNavigation = page.getByRole("navigation", {
+      name: "Header Menu",
+    });
+    if (typographyCase.width <= 860) {
+      await page.getByRole("button", {name: "Open Menu"}).click();
+    }
+
+    const headerNav = await readTypography(
+      headerNavigation.getByRole("link", {name: "Classes", exact: true}),
+    );
+    expect(headerNav.fontFamily).toContain("Red Hat Mono");
+    expect(headerNav.fontSize).toBeCloseTo(typographyCase.headerNav, 1);
+    expect(headerNav.fontWeight).toBe("500");
+    expect(headerNav.letterSpacing).toBeCloseTo(-0.24, 2);
+    expect(headerNav.lineHeight / headerNav.fontSize).toBeCloseTo(
+      typographyCase.width <= 860 ? 1.8 : 1,
+      1,
+    );
+
+    const ui = await readTypography(
+      page.locator('main a[data-analytics-booking-cta="classes"]').first(),
+    );
+    expect(ui.fontFamily).toContain("Red Hat Mono");
+    expect(ui.fontSize).toBeCloseTo(typographyCase.ui, 1);
+    expect(ui.fontWeight).toBe("500");
+    expect(ui.letterSpacing).toBeCloseTo(-0.24, 2);
+    expect(ui.lineHeight / ui.fontSize).toBeCloseTo(1, 1);
+
+    const eyebrow = await readTypography(
+      page.getByText("Music lesson", {exact: true}).first(),
+    );
+    expect(eyebrow.fontSize).toBeCloseTo(typographyCase.ui, 1);
+    expect(eyebrow.fontWeight).toBe("500");
+    expect(eyebrow.letterSpacing).toBeCloseTo(
+      typographyCase.width <= 600 ? 1.2 : 1.5,
+      2,
+    );
+    expect(eyebrow.lineHeight / eyebrow.fontSize).toBeCloseTo(1, 1);
+
+    const footer = await readTypography(
+      page.locator('footer [data-footer-section="site"] a').first(),
+    );
+    expect(footer.fontFamily).toContain("Red Hat Mono");
+    expect(footer.fontSize).toBeCloseTo(typographyCase.footer, 1);
+    expect(footer.fontWeight).toBe("400");
+    expect(footer.letterSpacing).toBeCloseTo(
+      typographyCase.width <= 600 ? 0 : 1.5,
+      2,
+    );
+    expect(footer.lineHeight / footer.fontSize).toBeCloseTo(1.6, 1);
+
+    const footerNote = await readTypography(
+      page.locator(".ag-footer-note"),
+    );
+    expect(footerNote.fontSize).toBeCloseTo(typographyCase.footerNote, 1);
+    expect(footerNote.fontWeight).toBe("400");
+    expect(footerNote.letterSpacing).toBeCloseTo(-0.24, 2);
+    expect(footerNote.lineHeight / footerNote.fontSize).toBeCloseTo(1.25, 1);
+
+    if (typographyCase.width > 860) {
+      await headerNavigation
+        .getByRole("link", {name: "Classes", exact: true})
+        .hover();
+      const menu = page.getByRole("navigation", {name: "Classes submenu"});
+      await expect(menu).toBeVisible();
+
+      const metaTitle = await readTypography(
+        menu.getByText("What I teach", {exact: true}),
+      );
+      expect(metaTitle.fontSize).toBeCloseTo(typographyCase.metaTitle, 1);
+      expect(metaTitle.fontWeight).toBe("500");
+      expect(metaTitle.letterSpacing).toBeCloseTo(-0.24, 2);
+      expect(metaTitle.lineHeight / metaTitle.fontSize).toBeCloseTo(1, 1);
+
+      const metaDescription = await readTypography(
+        menu.getByText("Discover and choose what you want to learn", {
+          exact: true,
+        }),
+      );
+      expect(metaDescription.fontSize).toBeCloseTo(
+        typographyCase.metaDescription,
+        1,
+      );
+      expect(metaDescription.fontWeight).toBe("500");
+      expect(metaDescription.letterSpacing).toBeCloseTo(-0.24, 2);
+      expect(
+        metaDescription.lineHeight / metaDescription.fontSize,
+      ).toBeCloseTo(1.6, 1);
+    }
+  }
+
+  await page.setViewportSize({width: 1728, height: 1000});
+  await page.goto("/online-flute-lessons-for-adults");
+  const audienceEyebrow = await readTypography(
+    page.getByText("Private online flute lessons", {exact: true}),
+  );
+  expect(audienceEyebrow.fontSize).toBeCloseTo(16, 1);
+  expect(audienceEyebrow.fontWeight).toBe("500");
+  expect(audienceEyebrow.letterSpacing).toBeCloseTo(1.5, 2);
+  expect(audienceEyebrow.lineHeight / audienceEyebrow.fontSize).toBeCloseTo(
+    1,
+    1,
+  );
 });
 
 test("header and Classes menu use their designed desktop shadows", async ({
@@ -391,7 +572,7 @@ test("desktop Classes menu remains open while the pointer crosses the header gap
   await expect(menu).toBeVisible();
 });
 
-test("desktop Classes menu previews lessons with Figma card typography", async ({
+test("desktop Classes menu previews lessons and booking targets", async ({
   page,
 }) => {
   await page.setViewportSize({width: 1440, height: 1000});
@@ -411,24 +592,15 @@ test("desktop Classes menu previews lessons with Figma card typography", async (
   await expect(
     menu.getByRole("link", {name: "Flute", exact: true}),
   ).toHaveAttribute("href", "/book?type=lesson&subject=Flute");
-  await expect(
-    menu.getByRole("link", {name: "Flute", exact: true}),
-  ).toHaveCSS("font-size", "16px");
   expect(
     await menu
       .getByRole("link", {name: "Flute", exact: true})
       .evaluate((element) => getComputedStyle(element).fontFamily),
   ).toContain("Red Hat Mono");
-  await expect(menu.getByText("What I teach", {exact: true})).toHaveCSS(
-    "font-size",
-    "16px",
-  );
   const menuDescription = menu.getByText(
     "Discover and choose what you want to learn",
     {exact: true},
   );
-  await expect(menuDescription).toHaveCSS("font-size", "14px");
-  await expect(menuDescription).toHaveCSS("line-height", "19.6px");
   await expect(menuDescription.locator("..")).toHaveCSS("row-gap", "20px");
   expect(
     await menuDescription.evaluate(
@@ -438,20 +610,10 @@ test("desktop Classes menu previews lessons with Figma card typography", async (
   await expect(menu.getByTestId("classes-menu-preview-title")).toHaveText(
     "Flute",
   );
-  await expect(menu.getByTestId("classes-menu-preview-title")).toHaveCSS(
-    "font-size",
-    "16px",
-  );
-  await expect(menu.getByTestId("classes-menu-preview-title")).toHaveCSS(
-    "line-height",
-    "16px",
-  );
   const previewDescription = menu.getByText(
     "Build a clear tone, healthy breathing and relaxed posture from the very beginning. We work with sound, technique, hands, embouchure and musical expression step by step.",
     {exact: true},
   );
-  await expect(previewDescription).toHaveCSS("font-size", "14px");
-  await expect(previewDescription).toHaveCSS("line-height", "19.6px");
   await expect(previewDescription.locator("..")).toHaveCSS(
     "row-gap",
     "20px",
@@ -479,6 +641,7 @@ test("booking route selects the relevant event and remains switchable", async ({
   page,
 }) => {
   await page.route("https://app.cal.com/**", (route) => route.abort());
+  await page.setViewportSize({width: 1440, height: 1000});
   await page.goto("/book?type=intro");
   await expect(
     page.getByRole("heading", {name: "Book a Call", exact: true}),
@@ -500,6 +663,11 @@ test("booking route selects the relevant event and remains switchable", async ({
     name: "Music Lesson",
     exact: true,
   });
+  const tabTypography = await readTypography(introTab);
+  expect(tabTypography.fontSize).toBeCloseTo(14.22, 1);
+  expect(tabTypography.fontWeight).toBe("500");
+  expect(tabTypography.letterSpacing).toBeCloseTo(-0.24, 2);
+  expect(tabTypography.lineHeight / tabTypography.fontSize).toBeCloseTo(1, 1);
   await expect(bookingType).toHaveCSS("height", "62px");
   await expect(bookingType).toHaveCSS("padding", "12px");
   await expect(introTab).toHaveCSS("padding-left", "30px");
@@ -593,7 +761,6 @@ test("about FAQ and contact content share the profile text axis", async ({
   expect(contactBox!.y).toBeLessThan(formBox!.y);
 
   await page.setViewportSize({width: 390, height: 844});
-  await page.goto("/about");
   const mobileFormBox = await page.locator("#contact form").boundingBox();
   expect(mobileFormBox!.width).toBeLessThanOrEqual(346);
   expect(
@@ -702,6 +869,17 @@ test.describe("mobile navigation", () => {
         name: "Media",
       }),
     ).toBeVisible();
+
+    const [logoBox, firstLinkBox] = await Promise.all([
+      page.getByRole("link", {name: "Home Agatha Music link"}).boundingBox(),
+      page
+        .getByRole("navigation", {name: "Header Menu"})
+        .getByRole("link", {name: "About me"})
+        .boundingBox(),
+    ]);
+    expect(firstLinkBox!.y).toBeGreaterThanOrEqual(
+      logoBox!.y + logoBox!.height,
+    );
   });
 });
 

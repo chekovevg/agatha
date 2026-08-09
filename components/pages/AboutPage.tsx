@@ -57,7 +57,7 @@ export function AboutPage({
             <dl className="grid gap-9">
               {content.about.facts.map((fact) => (
                 <div key={fact.label} className="grid gap-5">
-                  <dt className="mai-ui tracking-[-0.21px] text-[var(--ink)]">
+                  <dt className="mai-ui text-[var(--ink)]">
                     {fact.label}
                   </dt>
                   <dd>

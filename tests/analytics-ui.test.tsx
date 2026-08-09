@@ -130,7 +130,8 @@ describe("analytics consent UI", () => {
     expect(html).toContain("w-[297px]");
     expect(html).toContain("h-[150px]");
     expect(html).toContain("h-[50px]");
-    expect(html.match(/text-\[15px\]/g)).toHaveLength(2);
+    expect(html.match(/mai-ui/g)).toHaveLength(2);
+    expect(html).not.toContain("text-[15px]");
     expect(html).toContain("hover:bg-[var(--paper)]");
     expect(html).toContain("hover:text-[var(--ink)]");
     expect(html).not.toContain("<a");

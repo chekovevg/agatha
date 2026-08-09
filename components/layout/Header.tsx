@@ -96,9 +96,9 @@ export function Header({
           <nav
             aria-label="Header Menu"
             className={cn(
-              "mai-ui justify-self-center min-[861px]:h-full min-[861px]:w-full",
+              "mai-header-nav justify-self-center min-[861px]:h-full min-[861px]:w-full",
               menuVisible
-                ? "max-[860px]:fixed max-[860px]:inset-0 max-[860px]:z-[1] max-[860px]:flex max-[860px]:h-[100dvh] max-[860px]:w-full max-[860px]:flex-col max-[860px]:items-start max-[860px]:justify-between max-[860px]:overflow-x-hidden max-[860px]:overflow-y-auto max-[860px]:bg-[var(--background)] max-[860px]:px-[calc(34*var(--unit-fx))] max-[860px]:pb-[calc(32*var(--unit-fx))] max-[860px]:pt-[calc(100*var(--unit-fx))] max-[860px]:transition-opacity max-[860px]:duration-[700ms] max-[860px]:ease-out"
+                ? "max-[860px]:fixed max-[860px]:inset-0 max-[860px]:z-[1] max-[860px]:flex max-[860px]:h-[100dvh] max-[860px]:w-full max-[860px]:flex-col max-[860px]:items-start max-[860px]:justify-between max-[860px]:overflow-x-hidden max-[860px]:overflow-y-auto max-[860px]:bg-[var(--background)] max-[860px]:px-[calc(34*var(--unit-fx-type))] max-[860px]:pb-[calc(32*var(--unit-fx-type))] max-[860px]:pt-[calc(100*var(--unit-fx-type))] max-[860px]:transition-opacity max-[860px]:duration-[700ms] max-[860px]:ease-out"
                 : "max-[860px]:absolute max-[860px]:left-0 max-[860px]:right-0 max-[860px]:top-full max-[860px]:z-50 max-[860px]:hidden max-[860px]:w-full max-[860px]:bg-[var(--background)] max-[860px]:px-[calc(19*var(--unit-fx))] max-[860px]:pb-[calc(28*var(--unit-fx))] max-[860px]:pt-[calc(27*var(--unit-fx))]",
               menuVisible &&
                 (menuExpanded
@@ -152,7 +152,7 @@ export function Header({
             <div className="mt-9 hidden w-full gap-5 max-[860px]:flex">
               <nav
                 aria-label="Footer links"
-                className="w-1/2 font-ui text-[14px] leading-[1.8]"
+                className="mai-footer w-1/2"
               >
                 {mobileFooterLinks.map((link) => (
                   <a
@@ -168,7 +168,7 @@ export function Header({
               {mobileSocialLinks.length > 0 ? (
                 <nav
                   aria-label="Social links"
-                  className="w-1/2 font-ui text-[14px] leading-[1.8]"
+                  className="mai-footer w-1/2"
                 >
                   {mobileSocialLinks.map((link) => (
                     <a
