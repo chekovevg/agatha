@@ -425,6 +425,9 @@ test("analytics preferences do not cover the home booking action", async ({
 
   expect(bannerBox).not.toBeNull();
   expect(bookingBox).not.toBeNull();
+  expect(bannerBox!.width).toBe(297);
+  expect(bannerBox!.height).toBe(150);
+  await expect(banner.getByRole("button", {name: "Okay"})).toBeVisible();
   expect(rectanglesIntersect(bannerBox!, bookingBox!)).toBe(false);
 });
 

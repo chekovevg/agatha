@@ -102,64 +102,33 @@ function writeStoredConsent(consent: AnalyticsConsent): boolean {
 
 export function AnalyticsConsentBanner({
   onAllow,
-  onDeny,
 }: {
   onAllow: () => void;
-  onDeny: () => void;
 }) {
   return (
     <section
       aria-label="Analytics preferences"
-      className="fixed bottom-4 left-4 z-50 flex w-[305px] flex-col items-start gap-[30px] rounded-[5px] bg-[var(--ink)] p-6 text-[var(--paper)] max-[337px]:right-4 max-[337px]:w-auto"
+      className="fixed bottom-4 left-4 z-50 flex h-[150px] w-[297px] flex-col items-start gap-[30px] rounded-[5px] bg-[var(--ink)] p-5 text-[var(--paper)] max-[329px]:right-4 max-[329px]:w-auto"
       role="region"
     >
-      <div className="flex w-full flex-col items-start gap-4">
-        <p className="mai-ui w-full">We use analytics to understand page visits.</p>
-        <a
-          className="mai-ui flex h-[18px] items-center gap-2 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--paper)]"
-          href="/datenschutz"
-        >
-          Read our privacy information
-          <svg
-            aria-hidden="true"
-            className="size-[18px] shrink-0"
-            fill="none"
-            viewBox="0 0 18 18"
-          >
-            <path
-              d="M4.5 13.5 13.5 4.5M13.5 10.5v-6h-6"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </a>
-      </div>
-      <div className="flex w-full flex-col items-start gap-2">
-        <Button className="w-full" onClick={onAllow} type="button">
-          Allow
-        </Button>
-        <Button
-          className="w-full border-[1.5px] border-[var(--paper)] bg-transparent text-[var(--paper)] focus-visible:outline-[var(--paper)]"
-          onClick={onDeny}
-          type="button"
-          variant="accent"
-        >
-          No, thanks
-        </Button>
-      </div>
+      <p className="mai-ui w-full text-[15px]">We use analytics to understand page visits.</p>
+      <Button
+        className="h-[50px] w-full text-[15px] hover:bg-[var(--paper)] hover:text-[var(--ink)]"
+        onClick={onAllow}
+        type="button"
+      >
+        Okay
+      </Button>
     </section>
   );
 }
 
 export function AnalyticsManager({gtmId}: {gtmId?: string}) {
-  const [consent, setConsent] = useState<AnalyticsConsent | null | undefined>(undefined);
   const [showBanner, setShowBanner] = useState(false);
   const [shouldLoadGtm, setShouldLoadGtm] = useState(false);
   const hasInitializedGtm = useRef(false);
 
   function activateAnalytics() {
-    setConsent("granted");
     setShowBanner(false);
     hasInitializedGtm.current = initializeGtm(gtmId, hasInitializedGtm.current);
     setShouldLoadGtm(hasInitializedGtm.current);
@@ -167,7 +136,6 @@ export function AnalyticsManager({gtmId}: {gtmId?: string}) {
 
   function allowAnalytics() {
     if (!writeStoredConsent("granted")) {
-      setConsent(null);
       setShowBanner(true);
       return;
     }
@@ -175,18 +143,9 @@ export function AnalyticsManager({gtmId}: {gtmId?: string}) {
     activateAnalytics();
   }
 
-  function denyAnalytics() {
-    const stored = writeStoredConsent("denied");
-    if (consent === "granted") enqueueConsent("update", "denied");
-    deleteAnalyticsCookies(window.location.hostname);
-    setConsent(stored ? "denied" : null);
-    setShowBanner(!stored);
-  }
-
   useEffect(() => {
     const timeout = window.setTimeout(() => {
       const storedConsent = readStoredConsent();
-      setConsent(storedConsent);
       setShowBanner(storedConsent === null);
       if (storedConsent === "granted") activateAnalytics();
     }, 0);
@@ -219,7 +178,7 @@ export function AnalyticsManager({gtmId}: {gtmId?: string}) {
 
   return (
     <>
-      {showBanner ? <AnalyticsConsentBanner onAllow={allowAnalytics} onDeny={denyAnalytics} /> : null}
+      {showBanner ? <AnalyticsConsentBanner onAllow={allowAnalytics} /> : null}
       {shouldLoadGtm && gtmId ? (
         <Script
           id="agatha-gtm"

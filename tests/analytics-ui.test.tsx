@@ -115,20 +115,25 @@ describe("analytics consent UI", () => {
     }
   });
 
-  it("renders the Figma analytics banner with accessible consent choices", () => {
+  it("renders the simplified banner with a stable acknowledgement button", () => {
     const html = renderToStaticMarkup(
       createElement(AnalyticsConsentBanner, {
         onAllow: () => {},
-        onDeny: () => {},
       }),
     );
 
     expect(html).toContain('role="region"');
     expect(html).toContain('aria-label="Analytics preferences"');
     expect(html).toContain("We use analytics to understand page visits.");
-    expect(html).toContain(">Allow</button>");
-    expect(html).toContain(">No, thanks</button>");
-    expect(html).toContain('href="/datenschutz"');
+    expect(html.match(/<button/g)).toHaveLength(1);
+    expect(html).toContain(">Okay</button>");
+    expect(html).toContain("w-[297px]");
+    expect(html).toContain("h-[150px]");
+    expect(html).toContain("h-[50px]");
+    expect(html.match(/text-\[15px\]/g)).toHaveLength(2);
+    expect(html).toContain("hover:bg-[var(--paper)]");
+    expect(html).toContain("hover:text-[var(--ink)]");
+    expect(html).not.toContain("<a");
   });
 
   it("discloses the consent-based Google Analytics controls", () => {
