@@ -193,6 +193,21 @@ test("home header stays centered and keeps mono text readable while resizing", a
   });
 });
 
+test("header uses the designed desktop shadow without adding it on mobile", async ({
+  page,
+}) => {
+  const headerSurface = page.locator("[data-header-surface]");
+
+  await page.setViewportSize({width: 1440, height: 900});
+  await page.goto("/");
+  expect(
+    await headerSurface.evaluate((element) => getComputedStyle(element).boxShadow),
+  ).toContain("rgba(0, 0, 0, 0.12) 0px 3px 100px 8px");
+
+  await page.setViewportSize({width: 390, height: 844});
+  await expect(headerSurface).toHaveCSS("box-shadow", "none");
+});
+
 test("home typography and audience buttons follow the current Figma contract", async ({
   page,
 }) => {

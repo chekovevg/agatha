@@ -69,14 +69,12 @@ export function Header({
       data-variant={variant}
     >
       <div
-        className={cn(
-          "pointer-events-none mx-auto w-full max-w-[1660px] drop-shadow-[0_3px_100px_rgba(0,0,0,0.08)] max-[860px]:drop-shadow-none",
-        )}
+        className="pointer-events-none mx-auto w-full max-w-[1660px]"
       >
         <div
           data-header-surface
           className={cn(
-            "pointer-events-auto relative grid h-[58px] grid-cols-2 items-center rounded-[5px] bg-[var(--background)] px-[22px] text-[var(--ink)] min-[861px]:grid-cols-3 max-[860px]:px-[19px]",
+            "pointer-events-auto relative grid h-[58px] grid-cols-2 items-center rounded-[5px] bg-[var(--background)] px-[22px] text-[var(--ink)] min-[861px]:grid-cols-3 min-[861px]:shadow-[0_3px_100px_8px_rgba(0,0,0,0.12)] max-[860px]:px-[19px]",
           )}
         >
           <Link
