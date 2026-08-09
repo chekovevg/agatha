@@ -327,7 +327,40 @@ test("footer keeps its link cluster centered and stacks before columns overlap",
   ).toBeGreaterThan(80);
 });
 
-test("desktop Classes menu previews lessons and keeps direct booking links", async ({
+test("desktop Classes menu remains open while the pointer crosses the header gap", async ({
+  page,
+}) => {
+  await page.setViewportSize({width: 1440, height: 1000});
+  await page.goto("/");
+
+  const classesLink = page
+    .getByRole("navigation", {name: "Header Menu"})
+    .getByRole("link", {name: "Classes", exact: true});
+  await classesLink.hover();
+
+  const menu = page.getByRole("navigation", {name: "Classes submenu"});
+  await expect(menu).toBeVisible();
+
+  const [classesItemBox, menuBox] = await Promise.all([
+    classesLink.locator("xpath=..").boundingBox(),
+    menu.boundingBox(),
+  ]);
+  expect(classesItemBox).not.toBeNull();
+  expect(menuBox).not.toBeNull();
+  await page.mouse.move(
+    menuBox!.x + menuBox!.width / 2,
+    classesItemBox!.y + classesItemBox!.height + 4,
+    {steps: 8},
+  );
+  await page.waitForTimeout(100);
+  await expect(menu).toBeVisible();
+
+  await menu.getByRole("link", {name: "Flute", exact: true}).hover();
+  await page.waitForTimeout(100);
+  await expect(menu).toBeVisible();
+});
+
+test("desktop Classes menu previews lessons with Figma card typography", async ({
   page,
 }) => {
   await page.setViewportSize({width: 1440, height: 1000});
@@ -350,6 +383,20 @@ test("desktop Classes menu previews lessons and keeps direct booking links", asy
   await expect(menu.getByTestId("classes-menu-preview-title")).toHaveText(
     "Flute",
   );
+  await expect(menu.getByTestId("classes-menu-preview-title")).toHaveCSS(
+    "font-size",
+    "15px",
+  );
+  await expect(menu.getByTestId("classes-menu-preview-title")).toHaveCSS(
+    "line-height",
+    "15px",
+  );
+  const previewDescription = menu.getByText(
+    "Build a clear tone, healthy breathing and relaxed posture from the very beginning. We work with sound, technique, hands, embouchure and musical expression step by step.",
+    {exact: true},
+  );
+  await expect(previewDescription).toHaveCSS("font-size", "12px");
+  await expect(previewDescription).toHaveCSS("line-height", "19.2px");
 
   await menu.getByRole("link", {name: "Solfege", exact: true}).hover();
   await expect(menu.getByTestId("classes-menu-preview-title")).toHaveText(
