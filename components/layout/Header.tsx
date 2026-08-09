@@ -3,12 +3,14 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import {ClassesMenu} from "@/components/layout/ClassesMenu";
 import {useHeaderController} from "@/components/layout/useHeaderController";
 import type {SiteContent} from "@/content/types";
+import {introBookingHref} from "@/lib/booking";
 import {cn, getExternalLinkProps} from "@/lib/utils";
 
 const mobileFooterLinks = [
-  {label: "Contact", href: "/book"},
+  {label: "Contact", href: introBookingHref},
   {label: "Privacy & Cookies", href: "/datenschutz"},
   {label: "Impressum", href: "/impressum"},
 ];
@@ -107,7 +109,15 @@ export function Header({
             )}
           >
             <ul className="flex h-full items-center justify-center gap-4 max-[860px]:block max-[860px]:space-y-4">
-            {navItems.map((item) => (
+            {navItems.map((item) =>
+              item.href === "/classes" ? (
+                <ClassesMenu
+                  key={item.href}
+                  lessons={content.lessons}
+                  intro={content.pages.classes.heading}
+                  onNavigate={closeMenu}
+                />
+              ) : (
               <li
                 key={item.href}
                 className="relative flex h-full items-center justify-center max-[860px]:block max-[860px]:h-auto"
@@ -120,11 +130,12 @@ export function Header({
                   {item.label}
                 </a>
               </li>
-            ))}
+              ),
+            )}
             </ul>
             {showBookingCta ? (
               <a
-                href="/book"
+                href={introBookingHref}
                 data-analytics-booking-cta="header"
                 className="mai-ui mt-7 hidden items-center gap-2 hover:underline max-[860px]:mt-auto max-[860px]:flex max-[860px]:leading-[1.8]"
                 onClick={closeMenu}
@@ -183,7 +194,7 @@ export function Header({
           >
             {showBookingCta ? (
               <a
-                href="/book"
+                href={introBookingHref}
                 data-analytics-booking-cta="header"
                 className="mai-ui inline-flex items-center gap-2 leading-none hover:underline"
                 onClick={closeMenu}

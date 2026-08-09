@@ -757,6 +757,32 @@ select {
     padding-inline: 32px;
   }
 
+  .classes-menu-panel {
+    clip-path: inset(0 50% 100% 50% round 5px);
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      opacity 800ms var(--alias-easeOut),
+      clip-path 800ms var(--alias-easeOut),
+      visibility 0s linear 800ms;
+    visibility: hidden;
+  }
+
+  .classes-menu-panel[data-state="open"] {
+    clip-path: inset(0 0 0 0 round 5px);
+    opacity: 1;
+    pointer-events: auto;
+    transition-delay: 0s;
+    visibility: visible;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .classes-menu-panel {
+      transition-duration: 0s;
+      transition-delay: 0s;
+    }
+  }
+
 
   @media (max-width: 640px) {
     .editorial-container {

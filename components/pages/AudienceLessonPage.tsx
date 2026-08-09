@@ -2,6 +2,7 @@ import {Footer} from "@/components/layout/Footer";
 import {Header} from "@/components/layout/Header";
 import {ButtonLink} from "@/components/ui/Button";
 import type {AudienceLessonContent, SiteContent} from "@/content/types";
+import {introBookingHref} from "@/lib/booking";
 import {serializeJsonLd, serviceStructuredData} from "@/lib/seo";
 
 export function AudienceLessonPage({
@@ -27,7 +28,7 @@ export function AudienceLessonPage({
           <p className="mai-text-large-alt max-w-[780px]">{content.intro}</p>
           <p className="mai-ui">{content.trustLine}</p>
           <ButtonLink
-            href="/book"
+            href={introBookingHref}
             data-analytics-booking-cta="audience-hero"
           >
             {site.cta.primary}
@@ -99,7 +100,7 @@ export function AudienceLessonPage({
           <h2 className="mai-h4">{content.ctaHeading}</h2>
           <p className="mai-body max-w-[680px]">{content.ctaCopy}</p>
           <ButtonLink
-            href="/book"
+            href={introBookingHref}
             data-analytics-booking-cta="audience-final"
           >
             {site.cta.primary}

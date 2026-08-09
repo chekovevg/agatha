@@ -101,7 +101,7 @@ test("home and audience pages expose their approved H1 and booking paths", async
     );
     await expect(
       page.getByRole("link", {name: "Intro Call"}).first(),
-    ).toHaveAttribute("href", "/book");
+    ).toHaveAttribute("href", "/book?type=intro");
   }
 });
 
@@ -115,7 +115,7 @@ test("desktop header keeps its three links and booking action clear", async ({
     const header = page.locator("header");
     const logo = header.getByRole("link", {name: "Home Agatha Music link"});
     const navigation = header.getByRole("navigation", {name: "Header Menu"});
-    const booking = header.locator('a[href="/book"]:visible');
+    const booking = header.locator('a[href="/book?type=intro"]:visible');
 
     await expect(navigation.getByRole("link", {name: "About me"})).toBeVisible();
     await expect(navigation.getByRole("link", {name: "Classes"})).toBeVisible();
@@ -143,7 +143,7 @@ test("home header stays centered and keeps mono text readable while resizing", a
 
     const headerSurface = page.locator("[data-header-surface]");
     const navigation = page.getByRole("navigation", {name: "Header Menu"});
-    const booking = page.locator('header a[href="/book"]:visible');
+    const booking = page.locator('header a[href="/book?type=intro"]:visible');
     const [surfaceBox, navigationBox] = await Promise.all([
       headerSurface.boundingBox(),
       navigation.boundingBox(),
@@ -325,6 +325,90 @@ test("footer keeps its link cluster centered and stacks before columns overlap",
       Number.parseFloat(getComputedStyle(element).paddingBottom),
     ),
   ).toBeGreaterThan(80);
+});
+
+test("desktop Classes menu previews lessons and keeps direct booking links", async ({
+  page,
+}) => {
+  await page.setViewportSize({width: 1440, height: 1000});
+  await page.goto("/");
+
+  const classesLink = page
+    .getByRole("navigation", {name: "Header Menu"})
+    .getByRole("link", {name: "Classes", exact: true});
+  await classesLink.hover();
+
+  const menu = page.getByRole("navigation", {name: "Classes submenu"});
+  await expect(menu).toBeVisible();
+  await expect(menu.getByRole("link", {name: "All classes"})).toHaveAttribute(
+    "href",
+    "/classes",
+  );
+  await expect(
+    menu.getByRole("link", {name: "Flute", exact: true}),
+  ).toHaveAttribute("href", "/book?type=lesson&subject=Flute");
+  await expect(menu.getByTestId("classes-menu-preview-title")).toHaveText(
+    "Flute",
+  );
+
+  await menu.getByRole("link", {name: "Solfege", exact: true}).hover();
+  await expect(menu.getByTestId("classes-menu-preview-title")).toHaveText(
+    "Solfege",
+  );
+  await expect(menu.getByTestId("classes-menu-preview-image")).toHaveAttribute(
+    "src",
+    /ear-training/,
+  );
+  await expect(
+    menu.getByRole("link", {name: "Solfege", exact: true}),
+  ).toHaveAttribute("href", "/book?type=lesson&subject=Solfege");
+
+  await menu.getByRole("link", {name: "Solfege", exact: true}).focus();
+  await page.keyboard.press("Escape");
+  await expect(menu).toBeHidden();
+  await expect(classesLink).toBeFocused();
+});
+
+test("booking route selects the relevant event and remains switchable", async ({
+  page,
+}) => {
+  await page.route("https://app.cal.com/**", (route) => route.abort());
+  await page.goto("/book?type=intro");
+  await expect(
+    page.getByRole("heading", {name: "Book an intro call"}),
+  ).toBeVisible();
+  const bookingType = page.getByRole("navigation", {name: "Booking type"});
+  await expect(
+    bookingType.getByRole("link", {name: "Intro Call", exact: true}),
+  ).toHaveAttribute("aria-current", "page");
+  await expect(
+    page.locator('a[href*="cal.com/agafiia-gurko/intro-call"]'),
+  ).toBeVisible();
+
+  await page.goto("/book?type=lesson&subject=Piccolo");
+  await expect(
+    page.getByRole("heading", {name: "Book a music lesson"}),
+  ).toBeVisible();
+  await expect(page.getByTestId("selected-class")).toHaveText(
+    "Selected class: Piccolo",
+  );
+  await expect(
+    bookingType.getByRole("link", {name: "Music Lesson", exact: true}),
+  ).toHaveAttribute("aria-current", "page");
+  await expect(
+    page.locator('a[href*="cal.com/agafiia-gurko/music-lesson"]'),
+  ).toBeVisible();
+
+  await bookingType.getByRole("link", {name: "Intro Call", exact: true}).click();
+  await expect(page).toHaveURL(/\/book\?type=intro$/);
+  await expect(
+    page.getByRole("heading", {name: "Book an intro call"}),
+  ).toBeVisible();
+
+  await page.goto("/book?type=unknown&subject=Flute");
+  await expect(
+    page.getByRole("heading", {name: "Book an intro call"}),
+  ).toBeVisible();
 });
 
 test("analytics preferences do not cover the home booking action", async ({

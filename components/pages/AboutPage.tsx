@@ -6,6 +6,7 @@ import {ButtonLink} from "@/components/ui/Button";
 import {ContactForm} from "@/components/ui/ContactForm";
 import type {SiteContent} from "@/content/types";
 import {env} from "@/lib/env";
+import {introBookingHref} from "@/lib/booking";
 
 export function AboutPage({
   content,
@@ -15,7 +16,7 @@ export function AboutPage({
   const contactHref =
     content.social.email != null
       ? `mailto:${content.social.email}`
-      : env.NEXT_PUBLIC_WHATSAPP_URL ?? "/book";
+      : env.NEXT_PUBLIC_WHATSAPP_URL ?? introBookingHref;
   const isExternalContact = contactHref.startsWith("http");
 
   return (

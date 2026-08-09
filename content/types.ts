@@ -115,7 +115,7 @@ export type AudienceLessonContent = {
 export type Lesson = {
   title: string;
   description: string;
-  ctaLabel: string;
+  image: string;
   slug: string;
 };
 
@@ -146,6 +146,18 @@ export type BookingContent = {
   heading: string;
   copy: string;
   steps: {title: string; text: string}[];
-  eventTypes: {title: string; duration: string; description: string}[];
+  lesson: {
+    heading: string;
+    copy: string;
+    steps: {title: string; text: string}[];
+  };
+  eventTypes: {
+    mode: BookingMode;
+    title: string;
+    duration: string;
+    description: string;
+  }[];
   fallbackContactCta: string;
 };
+
+export type BookingMode = "intro" | "lesson";

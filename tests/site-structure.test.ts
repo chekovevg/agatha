@@ -70,15 +70,30 @@ describe("editorial site structure", () => {
   it("offers only the intro call and music lesson", () => {
     expect(siteContent.booking.eventTypes).toEqual([
       {
+        mode: "intro",
         title: "Intro Call",
         duration: "15 min",
         description: "A short first conversation about goals and lesson format.",
       },
       {
+        mode: "lesson",
         title: "Music Lesson",
         duration: "50 min",
-        description: "Online flute, recorder or music theory lessons.",
+        description:
+          "Online lessons in flute, recorder, piccolo, music theory or solfege.",
       },
+    ]);
+  });
+
+  it("offers the approved five-class catalog in display order", () => {
+    expect(
+      siteContent.lessons.map(({slug, title}) => ({slug, title})),
+    ).toEqual([
+      {slug: "flute", title: "Flute"},
+      {slug: "recorder", title: "Recorder"},
+      {slug: "piccolo", title: "Piccolo"},
+      {slug: "music-theory", title: "Music Theory"},
+      {slug: "solfege", title: "Solfege"},
     ]);
   });
 
@@ -133,8 +148,8 @@ describe("editorial site structure", () => {
     expect(childHtml).toContain("Support that fits the child");
     expect(adultHtml.match(/<details/g)).toHaveLength(4);
     expect(childHtml.match(/<details/g)).toHaveLength(4);
-    expect(adultHtml).toContain('href="/book"');
-    expect(childHtml).toContain('href="/book"');
+    expect(adultHtml).toContain('href="/book?type=intro"');
+    expect(childHtml).toContain('href="/book?type=intro"');
     expect(adultHtml).toContain(
       'data-analytics-booking-cta="audience-hero"',
     );
@@ -145,17 +160,22 @@ describe("editorial site structure", () => {
     expect(adultHtml).toContain('"@type":"Service"');
   });
 
-  it("links both audience pages from the flute class", () => {
+  it("renders one consistent booking action for each approved class", () => {
     const html = renderToStaticMarkup(
       createElement(ClassesPage, {content: siteContent}),
     );
 
-    expect(
-      html.match(/href="\/online-flute-lessons-for-adults"/g),
-    ).toHaveLength(1);
-    expect(
-      html.match(/href="\/online-flute-lessons-for-children"/g),
-    ).toHaveLength(1);
+    expect(html.match(/>Music lesson</g)).toHaveLength(5);
+    expect(html.match(/>Book a lesson</g)).toHaveLength(5);
+    expect(html).toContain(
+      'href="/book?type=lesson&amp;subject=Flute"',
+    );
+    expect(html).toContain(
+      'href="/book?type=lesson&amp;subject=Solfege"',
+    );
+    expect(html).not.toContain("Music History");
+    expect(html).not.toContain("For adults");
+    expect(html).not.toContain("For children");
   });
 
   it("publishes only unprefixed English application URLs", () => {
@@ -215,6 +235,7 @@ describe("editorial site structure", () => {
         createElement(BookingSection, {
           content: siteContent,
           expanded: true,
+          mode: "intro",
         }),
       );
 
@@ -224,6 +245,37 @@ describe("editorial site structure", () => {
       expect(html).not.toContain("<iframe");
     } finally {
       env.NEXT_PUBLIC_CAL_LINK = previousCalLink;
+    }
+  });
+
+  it("switches booking copy, subject, URL, and Cal event for a music lesson", () => {
+    const previousCalLink = env.NEXT_PUBLIC_CAL_LINK;
+    const previousLessonLink = env.NEXT_PUBLIC_CAL_LESSON_LINK;
+    env.NEXT_PUBLIC_CAL_LINK = "https://cal.com/agatha/intro-call";
+    env.NEXT_PUBLIC_CAL_LESSON_LINK = "https://cal.com/agatha/music-lesson";
+
+    try {
+      const html = renderToStaticMarkup(
+        createElement(BookingSection, {
+          content: siteContent,
+          expanded: true,
+          mode: "lesson",
+          subject: "Flute",
+        }),
+      );
+
+      expect(html).toContain("Book a music lesson");
+      expect(html).toContain("Flute");
+      expect(html).toContain('aria-label="Book a music lesson with Agatha"');
+      expect(html).toContain(
+        'href="https://cal.com/agatha/music-lesson?notes=Class%3A+Flute"',
+      );
+      expect(html).toContain('href="/book?type=intro"');
+      expect(html).toContain('aria-current="page"');
+      expect(html).not.toContain('href="https://cal.com/agatha/intro-call"');
+    } finally {
+      env.NEXT_PUBLIC_CAL_LINK = previousCalLink;
+      env.NEXT_PUBLIC_CAL_LESSON_LINK = previousLessonLink;
     }
   });
 
@@ -342,13 +394,14 @@ describe("editorial site structure", () => {
 
   it("links booking fallback contact CTA to the unprefixed contact form", () => {
     const previousCalLink = env.NEXT_PUBLIC_CAL_LINK;
-    env.NEXT_PUBLIC_CAL_LINK = undefined;
+    Object.assign(env, {NEXT_PUBLIC_CAL_LINK: undefined});
 
     try {
       const html = renderToStaticMarkup(
         createElement(BookingSection, {
           content: siteContent,
           expanded: true,
+          mode: "intro",
         }),
       );
 
@@ -357,7 +410,7 @@ describe("editorial site structure", () => {
       expect(html).not.toMatch(/href="\/(en|de|ru)\//);
       expect(html).not.toContain('href="#contact"');
     } finally {
-      env.NEXT_PUBLIC_CAL_LINK = previousCalLink;
+      Object.assign(env, {NEXT_PUBLIC_CAL_LINK: previousCalLink});
     }
   });
 });

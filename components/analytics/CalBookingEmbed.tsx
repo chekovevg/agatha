@@ -66,7 +66,15 @@ function loadCal(): CalApi {
   return calWindow.Cal!;
 }
 
-export function CalBookingEmbed({url, title}: {url: string; title: string}) {
+export function CalBookingEmbed({
+  url,
+  title,
+  notes,
+}: {
+  url: string;
+  title: string;
+  notes?: string;
+}) {
   useEffect(() => {
     const calLink = calPathFromUrl(url);
     if (!calLink) return;
@@ -76,13 +84,16 @@ export function CalBookingEmbed({url, title}: {url: string; title: string}) {
     Cal("inline", {
       elementOrSelector: "#agatha-cal-inline",
       calLink,
-      config: readCalUtm(window.location.search),
+      config: {
+        ...readCalUtm(window.location.search),
+        ...(notes ? {notes} : {}),
+      },
     });
     Cal("on", {
       action: "bookingSuccessfulV2",
       callback: trackBookingSuccess,
     });
-  }, [url]);
+  }, [notes, url]);
 
   return (
     <div>

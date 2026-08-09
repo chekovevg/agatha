@@ -78,7 +78,7 @@ export function classesMetadata(): Metadata {
     path: "/classes",
     title: "Online Music Classes",
     description:
-      "Choose flute, recorder, piccolo, music theory, ear training and music history lessons with Agatha Gurko.",
+      "Choose flute, recorder, piccolo, music theory and solfege lessons with Agatha Gurko.",
   });
 }
 

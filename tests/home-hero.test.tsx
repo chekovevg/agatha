@@ -9,15 +9,18 @@ vi.mock("next/link", () => ({
 vi.mock("next/image", () => ({
   default: ({
     alt = "",
+    fill: _fill,
     priority: _priority,
     src,
     ...props
   }: {
     alt?: string;
+    fill?: boolean;
     priority?: boolean;
     src: string | {src: string};
   }) => {
     void _priority;
+    void _fill;
 
     return createElement("img", {
       ...props,
@@ -59,7 +62,7 @@ describe("home page", () => {
     expect(html).toContain("<h1");
     expect(html).toContain("Flute &amp; Music Teacher");
     expect(html).toContain("For Adults and Children");
-    expect(html).toContain('href="/book"');
+    expect(html).toContain('href="/book?type=intro"');
     expect(html).toContain('data-analytics-booking-cta="home-hero"');
     expect(html).toContain("Get in Touch");
     expect(html).not.toContain("<canvas");

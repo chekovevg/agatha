@@ -5,6 +5,7 @@ import {Header} from "@/components/layout/Header";
 import {HomeAudienceSelector} from "@/components/sections/HomeAudienceSelector";
 import {ButtonLink} from "@/components/ui/Button";
 import type {SiteContent} from "@/content/types";
+import {introBookingHref} from "@/lib/booking";
 
 export function HomePage({
   content,
@@ -31,7 +32,7 @@ export function HomePage({
             <p className="plain-home-subtitle">{home.heroSubtitle}</p>
             {showActions ? (
               <ButtonLink
-                href="/book"
+                href={introBookingHref}
                 variant="accent"
                 className="plain-home-cta"
                 data-analytics-booking-cta="home-hero"
@@ -74,7 +75,7 @@ export function HomePage({
             </div>
             {showActions ? (
               <ButtonLink
-                href="/book"
+                href={introBookingHref}
                 variant="split"
                 data-analytics-booking-cta="home"
               >

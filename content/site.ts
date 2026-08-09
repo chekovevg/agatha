@@ -234,44 +234,37 @@ const baseContent: SiteContent = {
     {
       slug: "flute",
       title: "Flute",
+      image: "/images/classes/flute.png",
       description:
         "Build a clear tone, healthy breathing and relaxed posture from the very beginning. We work with sound, technique, hands, embouchure and musical expression step by step.",
-      ctaLabel: "Learn flute with Agatha",
     },
     {
       slug: "recorder",
       title: "Recorder",
+      image: "/images/classes/recorder.png",
       description:
         "Recorder lessons for beginners and continuing students, with attention to beautiful sound, confident playing and the joy of making music.",
-      ctaLabel: "Start recorder lessons",
-    },
-    {
-      slug: "music-theory",
-      title: "Music Theory",
-      description:
-        "Understand intervals, keys, harmony, form and musical structure through clear explanations and practical examples.",
-      ctaLabel: "Learn music theory",
-    },
-    {
-      slug: "ear-training",
-      title: "Ear Training & Solfege",
-      description:
-        "Train your ear, recognise intervals and chords, sing and write melodic lines, and connect theory with real musical listening.",
-      ctaLabel: "Train your ear",
-    },
-    {
-      slug: "music-history",
-      title: "Music History",
-      description:
-        "Explore composers, styles and musical eras in context - useful for exams, deeper listening and a richer understanding of music.",
-      ctaLabel: "Study music history",
     },
     {
       slug: "piccolo",
       title: "Piccolo",
+      image: "/images/classes/piccolo.png",
       description:
         "Support for flutists moving to piccolo: specific technique, repertoire, sound control and a smoother transition from flute.",
-      ctaLabel: "Learn piccolo",
+    },
+    {
+      slug: "music-theory",
+      title: "Music Theory",
+      image: "/images/classes/music-theory.png",
+      description:
+        "Understand intervals, keys, harmony, form and musical structure through clear explanations and practical examples.",
+    },
+    {
+      slug: "solfege",
+      title: "Solfege",
+      image: "/images/classes/ear-training.png",
+      description:
+        "Train your ear, recognise intervals and chords, sing and write melodic lines, and connect theory with real musical listening.",
     },
   ],
   about: {
@@ -413,16 +406,39 @@ const baseContent: SiteContent = {
         text: "Decide whether a 50-minute music lesson is right for you.",
       },
     ],
+    lesson: {
+      heading: "Book a music lesson",
+      copy:
+        "Choose a 50-minute online lesson tailored to your level, goals and the music you want to learn.",
+      steps: [
+        {title: "Choose a time", text: "Pick a slot that works for you."},
+        {
+          title: "Share your focus",
+          text: "Tell Agatha about your level and what you want to work on.",
+        },
+        {
+          title: "Meet online",
+          text: "Join the lesson in Russian, English or German.",
+        },
+        {
+          title: "Keep progressing",
+          text: "Leave with clear notes and a practical next step.",
+        },
+      ],
+    },
     eventTypes: [
       {
+        mode: "intro",
         title: "Intro Call",
         duration: "15 min",
         description: "A short first conversation about goals and lesson format.",
       },
       {
+        mode: "lesson",
         title: "Music Lesson",
         duration: "50 min",
-        description: "Online flute, recorder or music theory lessons.",
+        description:
+          "Online lessons in flute, recorder, piccolo, music theory or solfege.",
       },
     ],
     fallbackContactCta: "Ask a question before booking",
@@ -451,7 +467,7 @@ const baseContent: SiteContent = {
     {
       question: "What instruments do you teach?",
       answer:
-        "Agatha teaches flute, recorder and piccolo. She also teaches music theory, solfege, ear training and music history.",
+        "Agatha teaches flute, recorder and piccolo. She also teaches music theory and solfege.",
       category: "lessons",
       order: 4,
     },

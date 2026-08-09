@@ -1,6 +1,7 @@
 import type {SiteContent} from "@/content/types";
 import Link from "next/link";
 import Image from "next/image";
+import {introBookingHref} from "@/lib/booking";
 
 export function Footer({
   content,
@@ -62,7 +63,7 @@ export function Footer({
           <a href={directContactHref}>Get In Touch</a>
           <Link
             className="footer-book-link items-center gap-2"
-            href="/book"
+            href={introBookingHref}
             data-analytics-booking-cta="footer"
           >
             {content.cta.header}
