@@ -1,14 +1,15 @@
 import {z} from "zod";
 
-import {contactSourceOptions} from "@/content/contact-form";
+import {
+  contactStudentAgeOptions,
+  contactSubjectOptions,
+} from "@/content/contact-form";
 
 export const contactSchema = z.object({
   name: z.string().trim().min(2).max(120),
   email: z.string().trim().email().max(180),
-  studentAge: z.string().trim().max(40).optional().or(z.literal("")),
-  subject: z.string().trim().min(2).max(160),
-  preferredLanguage: z.enum(["English", "German", "Russian", "Not sure"]).optional(),
-  source: z.enum(contactSourceOptions).optional().or(z.literal("")),
+  studentAge: z.enum(contactStudentAgeOptions),
+  subject: z.enum(contactSubjectOptions),
   message: z.string().trim().min(10).max(3000),
   website: z.string().max(500).optional().or(z.literal("")),
 });

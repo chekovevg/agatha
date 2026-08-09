@@ -100,7 +100,7 @@ test("home and audience pages expose their approved H1 and booking paths", async
       true,
     );
     await expect(
-      page.getByRole("link", {name: "Intro Call"}).first(),
+      page.getByRole("link", {name: "Book a Call"}).first(),
     ).toHaveAttribute("href", "/book?type=intro");
   }
 });
@@ -172,7 +172,7 @@ test("home header stays centered and keeps mono text readable while resizing", a
 
   await expect(page.locator('header img[src="/images/agatha-gurko-music.svg"]')).toBeVisible();
   await expect(
-    page.locator("header").getByRole("link", {name: "Book Intro Call"}),
+    page.locator("header").getByRole("link", {name: "Book a Call"}),
   ).toBeVisible();
   expect(
     await page
@@ -193,7 +193,7 @@ test("home header stays centered and keeps mono text readable while resizing", a
   });
 });
 
-test("header and Classes menu share the designed desktop shadow", async ({
+test("header and Classes menu use their designed desktop shadows", async ({
   page,
 }) => {
   const headerSurface = page.locator("[data-header-surface]");
@@ -212,7 +212,13 @@ test("header and Classes menu share the designed desktop shadow", async ({
     menuPanel.evaluate((element) => getComputedStyle(element).boxShadow),
   ]);
   expect(headerShadow).toContain("rgba(0, 0, 0, 0.12) 0px 3px 100px 8px");
-  expect(menuShadow).toBe(headerShadow);
+  expect(menuShadow).toContain("rgba(0, 0, 0, 0.12) 0px 3px 50px");
+  await expect(menuPanel).toHaveCSS("clip-path", "none");
+  expect(
+    await menuPanel
+      .locator(".classes-menu-content")
+      .evaluate((element) => getComputedStyle(element).clipPath),
+  ).not.toBe("none");
 
   await page.setViewportSize({width: 390, height: 844});
   await expect(headerSurface).toHaveCSS("box-shadow", "none");
@@ -476,7 +482,7 @@ test("booking route selects the relevant event and remains switchable", async ({
   await page.goto("/book?type=intro");
   await expect(
     page.getByRole("heading", {name: "Book a Call", exact: true}),
-  ).toBeVisible();
+  ).toHaveClass(/sr-only/);
   const bookingType = page.getByRole("navigation", {name: "Booking type"});
   await expect(bookingType).toHaveCSS("width", "366px");
   await expect(bookingType).toHaveCSS("padding", "12px");
@@ -486,22 +492,45 @@ test("booking route selects the relevant event and remains switchable", async ({
   await expect(
     bookingType.getByRole("link", {name: "Intro Call", exact: true}),
   ).toHaveCSS("height", "38px");
+  const introTab = bookingType.getByRole("link", {
+    name: "Intro Call",
+    exact: true,
+  });
+  const lessonTab = bookingType.getByRole("link", {
+    name: "Music Lesson",
+    exact: true,
+  });
+  await expect(bookingType).toHaveCSS("height", "62px");
+  await expect(bookingType).toHaveCSS("padding", "12px");
+  await expect(introTab).toHaveCSS("padding-left", "30px");
+  await expect(introTab).toHaveCSS("padding-right", "30px");
+  await expect(lessonTab).toHaveCSS("padding-left", "30px");
+  await expect(lessonTab).toHaveCSS("padding-right", "30px");
+  await lessonTab.hover();
+  await expect(lessonTab).toHaveCSS("background-color", "rgb(254, 249, 238)");
   expect(
     await bookingType
       .getByRole("link", {name: "Intro Call", exact: true})
       .evaluate((element) => getComputedStyle(element).fontFamily),
   ).toContain("Red Hat Mono");
+  const bookingDescription = page.getByTestId("booking-description");
+  await expect(bookingDescription).toHaveCSS("font-size", "28px");
+  expect(
+    await bookingDescription.evaluate(
+      (element) => getComputedStyle(element).fontFamily,
+    ),
+  ).toContain("Newsreader");
   await expect(page.getByText("Choose the next step", {exact: true})).toHaveCount(
     0,
   );
   await expect(
     page.locator('a[href*="cal.com/agafiia-gurko/intro-call"]'),
-  ).toBeVisible();
+  ).toHaveCount(0);
 
   await page.goto("/book?type=lesson&subject=Piccolo");
   await expect(
     page.getByRole("heading", {name: "Book a Call", exact: true}),
-  ).toBeVisible();
+  ).toHaveClass(/sr-only/);
   await expect(page.getByTestId("selected-class")).toHaveText(
     "Selected class: Piccolo",
   );
@@ -510,18 +539,68 @@ test("booking route selects the relevant event and remains switchable", async ({
   ).toHaveAttribute("aria-current", "page");
   await expect(
     page.locator('a[href*="cal.com/agafiia-gurko/music-lesson"]'),
-  ).toBeVisible();
+  ).toHaveCount(0);
 
   await bookingType.getByRole("link", {name: "Intro Call", exact: true}).click();
   await expect(page).toHaveURL(/\/book\?type=intro$/);
   await expect(
     page.getByRole("heading", {name: "Book a Call", exact: true}),
-  ).toBeVisible();
+  ).toHaveClass(/sr-only/);
 
   await page.goto("/book?type=unknown&subject=Flute");
   await expect(
     page.getByRole("heading", {name: "Book a Call", exact: true}),
-  ).toBeVisible();
+  ).toHaveClass(/sr-only/);
+
+  await page.setViewportSize({width: 390, height: 844});
+  await page.goto("/book?type=intro");
+  await expect(page.getByTestId("booking-description")).toHaveCSS(
+    "font-size",
+    "18px",
+  );
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth - window.innerWidth,
+    ),
+  ).toBeLessThanOrEqual(0);
+});
+
+test("about FAQ and contact content share the profile text axis", async ({
+  page,
+}) => {
+  await page.setViewportSize({width: 1440, height: 1000});
+  await page.goto("/about");
+
+  const profileHeading = page.getByRole("heading", {name: "Agatha Gurko"});
+  const faqHeading = page.getByRole("heading", {
+    name: "Questions before the first lesson",
+  });
+  const contactHeading = page.getByRole("heading", {name: "Get in touch"});
+  const contactForm = page.locator("#contact form");
+  const [profileBox, faqBox, contactBox, formBox] = await Promise.all([
+    profileHeading.boundingBox(),
+    faqHeading.boundingBox(),
+    contactHeading.boundingBox(),
+    contactForm.boundingBox(),
+  ]);
+
+  expect(faqBox!.x).toBeCloseTo(profileBox!.x, 0);
+  expect(contactBox!.x).toBeCloseTo(profileBox!.x, 0);
+  expect(formBox!.x).toBeCloseTo(profileBox!.x, 0);
+  expect(faqBox!.y).toBeLessThan(
+    (await page.getByText("Do you teach complete beginners?").boundingBox())!.y,
+  );
+  expect(contactBox!.y).toBeLessThan(formBox!.y);
+
+  await page.setViewportSize({width: 390, height: 844});
+  await page.goto("/about");
+  const mobileFormBox = await page.locator("#contact form").boundingBox();
+  expect(mobileFormBox!.width).toBeLessThanOrEqual(346);
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth - window.innerWidth,
+    ),
+  ).toBeLessThanOrEqual(0);
 });
 
 test("analytics preferences do not cover the home booking action", async ({
@@ -642,10 +721,8 @@ test("contact network failure is announced and remains retryable", async ({
   await page.goto("/about");
   await page.getByLabel("Name").fill("Test Student");
   await page.getByLabel("Email").fill("student@example.com");
-  await page.getByLabel("Subject").fill("Flute lessons");
-  await page
-    .getByLabel("How did you find Agatha? (optional)")
-    .selectOption("Google or another search engine");
+  await page.getByLabel("Student age").selectOption("Adult");
+  await page.getByLabel("Subject").selectOption("Flute");
   await page
     .getByLabel("Message")
     .fill("I would like to ask about a first flute lesson.");

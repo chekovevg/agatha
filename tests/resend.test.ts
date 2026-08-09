@@ -18,10 +18,8 @@ function contactInput() {
   return {
     name: "Test Student",
     email: "student@example.com",
-    studentAge: "",
-    preferredLanguage: "English" as const,
-    source: "Google or another search engine" as const,
-    subject: "Flute lessons",
+    studentAge: "Adult" as const,
+    subject: "Flute" as const,
     message: "I would like to ask about a first flute lesson.",
     website: "",
   };
@@ -59,8 +57,12 @@ describe("Resend email sender", () => {
         to: "student@example.com",
       }),
     );
-    expect(sendEmail.mock.calls[0]?.[0].text).toContain(
-      "How they found Agatha: Google or another search engine",
+    expect(sendEmail.mock.calls[0]?.[0].text).toContain("Student age: Adult");
+    expect(sendEmail.mock.calls[0]?.[0].text).not.toContain(
+      "Preferred language",
+    );
+    expect(sendEmail.mock.calls[0]?.[0].text).not.toContain(
+      "How they found Agatha",
     );
   });
 

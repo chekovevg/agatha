@@ -226,7 +226,7 @@ describe("editorial site structure", () => {
     expect(existsSync(new URL("messages", root))).toBe(false);
   });
 
-  it("renders the Cal inline embed and a normal booking-link fallback when configured", () => {
+  it("renders the Cal inline embed without a duplicate booking link", () => {
     const previousCalLink = env.NEXT_PUBLIC_CAL_LINK;
     env.NEXT_PUBLIC_CAL_LINK = "https://cal.com/agatha/trial";
 
@@ -240,11 +240,11 @@ describe("editorial site structure", () => {
       );
 
       expect(html).toContain('id="agatha-cal-inline"');
-      expect(html).toContain(">Book a Call</h1>");
+      expect(html).toContain('<h1 class="sr-only">Book a Call</h1>');
       expect(html).toContain('aria-label="Booking type"');
       expect(html).toContain('aria-current="page"');
       expect(html).toContain('aria-label="Book an intro call with Agatha"');
-      expect(html).toContain('href="https://cal.com/agatha/trial"');
+      expect(html).not.toContain('href="https://cal.com/agatha/trial"');
       expect(html).not.toContain("Choose the next step");
       expect(html).not.toContain("<iframe");
     } finally {
@@ -268,10 +268,10 @@ describe("editorial site structure", () => {
         }),
       );
 
-      expect(html).toContain(">Book a Call</h1>");
+      expect(html).toContain('<h1 class="sr-only">Book a Call</h1>');
       expect(html).toContain("Flute");
       expect(html).toContain('aria-label="Book a music lesson with Agatha"');
-      expect(html).toContain(
+      expect(html).not.toContain(
         'href="https://cal.com/agatha/music-lesson?notes=Class%3A+Flute"',
       );
       expect(html).toContain('href="/book?type=intro"');
@@ -331,7 +331,7 @@ describe("editorial site structure", () => {
 
   it("uses the about profile title and contact label from the approved design", () => {
     expect(siteContent.about.heading).toBe("Agatha Gurko");
-    expect(siteContent.cta.contact).toBe("Text me");
+    expect(siteContent.cta.contact).toBe("Book a Call");
   });
 
   it("uses German diacritics in visible education and location copy", () => {
@@ -379,22 +379,24 @@ describe("editorial site structure", () => {
     ).toContain("qualities: [75, 95]");
   });
 
-  it("renders the optional lead-source question with the approved choices", () => {
+  it("renders only the approved age and class pickers in the contact form", () => {
     const html = renderToStaticMarkup(
       createElement(AboutPage, {content: siteContent}),
     );
 
-    expect(html).toContain("How did you find Agatha? (optional)");
     for (const option of [
-      "Google or another search engine",
-      "Lessonface",
-      "Recommendation",
-      "Social media",
-      "Another website or profile",
-      "Other",
+      "Adult",
+      "Child (7–14)",
+      "Flute",
+      "Recorder",
+      "Piccolo",
+      "Music Theory",
+      "Solfege",
     ]) {
       expect(html).toContain(`<option value="${option}">${option}</option>`);
     }
+    expect(html).not.toContain("Preferred language");
+    expect(html).not.toContain("How did you find Agatha?");
   });
 
   it("links booking fallback contact CTA to the unprefixed contact form", () => {

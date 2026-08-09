@@ -10,10 +10,10 @@ const baseContent: SiteContent = {
   brand: "Agatha Music",
   nav,
   cta: {
-    primary: "Intro Call",
-    header: "Book Intro Call",
+    primary: "Book a Call",
+    header: "Book a Call",
     secondary: "Explore Classes",
-    contact: "Text me",
+    contact: "Book a Call",
   },
   social: {
     email: "agathagurko@gmail.com",

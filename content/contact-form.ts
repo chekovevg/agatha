@@ -1,21 +1,20 @@
-export const contactSourceOptions = [
-  "Google or another search engine",
-  "Lessonface",
-  "Recommendation",
-  "Social media",
-  "Another website or profile",
-  "Other",
+export const contactStudentAgeOptions = ["Adult", "Child (7–14)"] as const;
+
+export const contactSubjectOptions = [
+  "Flute",
+  "Recorder",
+  "Piccolo",
+  "Music Theory",
+  "Solfege",
 ] as const;
 
 export const contactFormContent = {
   name: "Name",
   email: "Email",
   studentAge: "Student age",
+  studentAgePlaceholder: "Select age group",
   subject: "Subject",
-  preferredLanguage: "Preferred language",
-  preferredLanguageOptions: ["English", "German", "Russian", "Not sure"],
-  source: "How did you find Agatha? (optional)",
-  sourceNotProvided: "Not provided",
+  subjectPlaceholder: "Select a class",
   message: "Message",
   submit: "Send message",
   sending: "Sending...",

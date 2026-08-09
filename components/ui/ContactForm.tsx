@@ -5,7 +5,8 @@ import {useEffect, useRef, useState} from "react";
 import {Button} from "@/components/ui/Button";
 import {
   contactFormContent as copy,
-  contactSourceOptions,
+  contactStudentAgeOptions,
+  contactSubjectOptions,
 } from "@/content/contact-form";
 import {submitContact} from "@/lib/contact-client";
 
@@ -62,36 +63,18 @@ export function ContactForm() {
           className="mai-body rounded px-4 py-3 shadow-[var(--shadow-inset)]"
         />
       </label>
-      <div className="grid gap-4 md:grid-cols-2">
-        <label className="mai-ui grid gap-2">
-          {copy.studentAge}
-          <input
-            name="studentAge"
-            className="mai-body rounded px-4 py-3 shadow-[var(--shadow-inset)]"
-          />
-        </label>
-        <label className="mai-ui grid gap-2">
-          {copy.preferredLanguage}
-          <select
-            name="preferredLanguage"
-            className="mai-body rounded px-4 py-3 shadow-[var(--shadow-inset)]"
-            defaultValue="Not sure"
-          >
-            {copy.preferredLanguageOptions.map((option) => (
-              <option key={option}>{option}</option>
-            ))}
-          </select>
-        </label>
-      </div>
       <label className="mai-ui grid gap-2">
-        {copy.source}
+        {copy.studentAge}
         <select
-          name="source"
+          name="studentAge"
+          required
           className="mai-body rounded px-4 py-3 shadow-[var(--shadow-inset)]"
           defaultValue=""
         >
-          <option value="">{copy.sourceNotProvided}</option>
-          {contactSourceOptions.map((option) => (
+          <option value="" disabled>
+            {copy.studentAgePlaceholder}
+          </option>
+          {contactStudentAgeOptions.map((option) => (
             <option key={option} value={option}>
               {option}
             </option>
@@ -100,11 +83,21 @@ export function ContactForm() {
       </label>
       <label className="mai-ui grid gap-2">
         {copy.subject}
-        <input
+        <select
           name="subject"
           required
           className="mai-body rounded px-4 py-3 shadow-[var(--shadow-inset)]"
-        />
+          defaultValue=""
+        >
+          <option value="" disabled>
+            {copy.subjectPlaceholder}
+          </option>
+          {contactSubjectOptions.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
       </label>
       <label className="mai-ui grid gap-2">
         {copy.message}

@@ -3,7 +3,6 @@
 
 import {useEffect} from "react";
 
-import {ButtonLink} from "@/components/ui/Button";
 import {
   calPathFromUrl,
   createBookingSuccessTracker,
@@ -101,16 +100,11 @@ export function CalBookingEmbed({
   }, [notes, url]);
 
   return (
-    <div>
-      <div
-        id="agatha-cal-inline"
-        role="region"
-        aria-label={title}
-        className="min-h-[620px] w-full rounded-[var(--radius-card)]"
-      />
-      <ButtonLink href={url} variant="plain" className="mt-3">
-        {title}
-      </ButtonLink>
-    </div>
+    <div
+      id="agatha-cal-inline"
+      role="region"
+      aria-label={title}
+      className="min-h-[620px] w-full rounded-[var(--radius-card)]"
+    />
   );
 }

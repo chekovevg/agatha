@@ -10,10 +10,8 @@ function validPayload(overrides: Record<string, unknown> = {}) {
   return {
     name: "Test Student",
     email: "student@example.com",
-    studentAge: "24",
-    preferredLanguage: "English",
-    source: "Google or another search engine",
-    subject: "Flute lessons",
+    studentAge: "Adult",
+    subject: "Flute",
     message: "I would like to ask about a first flute lesson.",
     website: "",
     formStartedAt: String(Date.now() - 5_000),
@@ -61,27 +59,21 @@ describe("POST /api/contact", () => {
     expect(sendContactEmails).not.toHaveBeenCalled();
   });
 
-  it("rejects an unknown lead source", async () => {
+  it("rejects an unknown student age group", async () => {
     const {POST} = await import("@/app/api/contact/route");
-    const response = await POST(request(validPayload({source: "Unknown"})));
+    const response = await POST(request(validPayload({studentAge: "24"})));
 
     expect(response.status).toBe(400);
     expect(sendContactEmails).not.toHaveBeenCalled();
   });
 
-  it.each([undefined, ""])(
-    "accepts an optional lead source value of %s",
-    async (source) => {
-      const {POST} = await import("@/app/api/contact/route");
-      const payload = validPayload({source});
-      const response = await POST(request(payload));
+  it("rejects a subject outside the current class list", async () => {
+    const {POST} = await import("@/app/api/contact/route");
+    const response = await POST(request(validPayload({subject: "Piano"})));
 
-      expect(response.status).toBe(200);
-      expect(sendContactEmails).toHaveBeenCalledWith(
-        expectedContactPayload(payload),
-      );
-    },
-  );
+    expect(response.status).toBe(400);
+    expect(sendContactEmails).not.toHaveBeenCalled();
+  });
 
   it("ignores honeypot spam submissions", async () => {
     const {POST} = await import("@/app/api/contact/route");
@@ -112,7 +104,7 @@ describe("POST /api/contact", () => {
     const response = await POST(
       request(
         validPayload({
-          subject: "Please Disregard",
+          subject: "Flute",
           message:
             "Bonjour Agathe, nous pouvons optimiser votre site web pour attirer plus d'eleves.",
         }),
@@ -167,6 +159,26 @@ describe("POST /api/contact", () => {
 
     expect(response.status).toBe(200);
     expect(sendContactEmails).toHaveBeenCalledWith(expectedContactPayload(payload));
+  });
+
+  it("drops the removed language and acquisition fields", async () => {
+    const {POST} = await import("@/app/api/contact/route");
+    const response = await POST(
+      request(
+        validPayload({
+          preferredLanguage: "English",
+          source: "Google or another search engine",
+        }),
+      ),
+    );
+
+    expect(response.status).toBe(200);
+    expect(sendContactEmails).toHaveBeenCalledWith(
+      expect.not.objectContaining({
+        preferredLanguage: expect.anything(),
+        source: expect.anything(),
+      }),
+    );
   });
 
   it("reports unavailable email delivery instead of a false success", async () => {

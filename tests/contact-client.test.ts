@@ -3,7 +3,11 @@ import {renderToStaticMarkup} from "react-dom/server";
 import {afterEach, describe, expect, it, vi} from "vitest";
 
 import {ContactForm} from "@/components/ui/ContactForm";
-import {contactFormContent} from "@/content/contact-form";
+import {
+  contactFormContent,
+  contactStudentAgeOptions,
+  contactSubjectOptions,
+} from "@/content/contact-form";
 import {submitContact} from "@/lib/contact-client";
 
 describe("contact client", () => {
@@ -43,6 +47,15 @@ describe("contact client", () => {
     expect(html).toContain('role="status"');
     expect(html).toContain('aria-live="polite"');
     expect(html).toContain(">Send message<");
-    expect(html).toContain(">Preferred language<");
+    expect(html).toContain('name="studentAge"');
+    expect(html).toContain('name="subject"');
+    for (const option of [
+      ...contactStudentAgeOptions,
+      ...contactSubjectOptions,
+    ]) {
+      expect(html).toContain(`<option value="${option}">${option}</option>`);
+    }
+    expect(html).not.toContain("Preferred language");
+    expect(html).not.toContain("How did you find Agatha?");
   });
 });

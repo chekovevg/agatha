@@ -5,7 +5,6 @@ import {Header} from "@/components/layout/Header";
 import {ButtonLink} from "@/components/ui/Button";
 import {ContactForm} from "@/components/ui/ContactForm";
 import type {SiteContent} from "@/content/types";
-import {env} from "@/lib/env";
 import {introBookingHref} from "@/lib/booking";
 
 export function AboutPage({
@@ -13,12 +12,6 @@ export function AboutPage({
 }: {
   content: SiteContent;
 }) {
-  const contactHref =
-    content.social.email != null
-      ? `mailto:${content.social.email}`
-      : env.NEXT_PUBLIC_WHATSAPP_URL ?? introBookingHref;
-  const isExternalContact = contactHref.startsWith("http");
-
   return (
     <div className="editorial-shell min-h-screen">
       <Header content={content} />
@@ -40,9 +33,7 @@ export function AboutPage({
               />
             </div>
             <ButtonLink
-              href={contactHref}
-              target={isExternalContact ? "_blank" : undefined}
-              rel={isExternalContact ? "noreferrer" : undefined}
+              href={introBookingHref}
               className="h-[48px] w-full px-0 py-0"
             >
               {content.cta.contact}
@@ -84,44 +75,48 @@ export function AboutPage({
 
         <section
           aria-labelledby="about-faq-title"
-          className="grid gap-8 lg:grid-cols-[0.75fr_1.25fr]"
+          className="grid min-[861px]:grid-cols-[repeat(24,minmax(0,1fr))] min-[861px]:gap-x-[calc(20*var(--unit-fx))]"
         >
-          <h2 id="about-faq-title" className="mai-h4">
-            {content.pages.about.faqHeading}
-          </h2>
-          <div className="divide-y divide-[var(--line)] border-y border-[var(--line)]">
-            {[...content.faq]
-              .sort((a, b) => a.order - b.order)
-              .map((item) => (
-                <details key={item.question} className="group py-5">
-                  <summary className="mai-body flex cursor-pointer list-none items-center justify-between gap-6 text-[var(--ink)]">
-                    <span>{item.question}</span>
-                    <span aria-hidden="true" className="mai-ui">
-                      +
-                    </span>
-                  </summary>
-                  <p className="mai-body mt-4 max-w-[780px] text-[var(--muted)]">
-                    {item.answer}
-                  </p>
-                </details>
-              ))}
+          <div className="grid max-w-[643px] gap-8 min-[861px]:col-start-8 min-[861px]:col-span-11">
+            <h2 id="about-faq-title" className="mai-h4">
+              {content.pages.about.faqHeading}
+            </h2>
+            <div className="divide-y divide-[var(--line)] border-y border-[var(--line)]">
+              {[...content.faq]
+                .sort((a, b) => a.order - b.order)
+                .map((item) => (
+                  <details key={item.question} className="group py-5">
+                    <summary className="mai-body flex cursor-pointer list-none items-center justify-between gap-6 text-[var(--ink)]">
+                      <span>{item.question}</span>
+                      <span aria-hidden="true" className="mai-ui">
+                        +
+                      </span>
+                    </summary>
+                    <p className="mai-body mt-4 max-w-[780px] text-[var(--muted)]">
+                      {item.answer}
+                    </p>
+                  </details>
+                ))}
+            </div>
           </div>
         </section>
 
         <section
           id="contact"
           aria-labelledby="about-contact-title"
-          className="grid gap-10 lg:grid-cols-[0.75fr_1.25fr] lg:items-start"
+          className="grid min-[861px]:grid-cols-[repeat(24,minmax(0,1fr))] min-[861px]:gap-x-[calc(20*var(--unit-fx))]"
         >
-          <div>
-            <h2 id="about-contact-title" className="mai-h4">
-              {content.contact.heading}
-            </h2>
-            <p className="mai-body mt-6 text-[var(--muted)]">
-              {content.contact.copy}
-            </p>
+          <div className="grid max-w-[643px] gap-10 min-[861px]:col-start-8 min-[861px]:col-span-11">
+            <div>
+              <h2 id="about-contact-title" className="mai-h4">
+                {content.contact.heading}
+              </h2>
+              <p className="mai-body mt-6 text-[var(--muted)]">
+                {content.contact.copy}
+              </p>
+            </div>
+            <ContactForm />
           </div>
-          <ContactForm />
         </section>
       </main>
       <Footer content={content} />

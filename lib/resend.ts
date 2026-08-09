@@ -59,9 +59,7 @@ export async function sendContactEmails(input: ContactInput) {
     `Name: ${input.name}`,
     `Email: ${input.email}`,
     `Subject: ${input.subject}`,
-    `Student age: ${input.studentAge || "Not provided"}`,
-    `Preferred language: ${input.preferredLanguage || "Not provided"}`,
-    `How they found Agatha: ${input.source || "Not provided"}`,
+    `Student age: ${input.studentAge}`,
     "",
     input.message,
   ].join("\n");

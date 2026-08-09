@@ -35,8 +35,8 @@ export function BookingSection({
     <section id="booking" className="bg-[var(--background)]">
       <div className="mx-auto max-w-[1200px] px-5 py-16 sm:px-8 lg:py-24">
         <div className="mx-auto flex max-w-[760px] flex-col items-center text-center">
-          <h1 className="mai-h4 text-[var(--ink)]">Book a Call</h1>
-          <div className="mt-10">
+          <h1 className="sr-only">Book a Call</h1>
+          <div>
             <TabMenu
               ariaLabel="Booking type"
               items={content.booking.eventTypes.map((event) => ({
@@ -49,7 +49,10 @@ export function BookingSection({
               }))}
             />
           </div>
-          <p className="mai-body mt-8 max-w-[720px] text-[var(--muted)]">
+          <p
+            className="mai-text-28 mt-10 max-w-[720px] text-[var(--muted)]"
+            data-testid="booking-description"
+          >
             {booking.copy}
           </p>
           {mode === "lesson" && subject ? (

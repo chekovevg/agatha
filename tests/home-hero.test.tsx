@@ -91,13 +91,13 @@ describe("home page", () => {
     expect(html).not.toContain("I believe music should never feel");
   });
 
-  it("shows Intro Call as the header booking action", () => {
+  it("shows Book a Call as the header booking action", () => {
     const html = renderToStaticMarkup(
       createElement(HomePage, {content: siteContent}),
     );
 
     expect(html).toContain('data-analytics-booking-cta="header"');
-    expect(html).toContain("Book Intro Call");
+    expect(html).toContain("Book a Call");
     expect(html).toContain('src="/images/agatha-gurko-music.svg"');
     expect(html).not.toContain('src="/images/logo.svg"');
   });
