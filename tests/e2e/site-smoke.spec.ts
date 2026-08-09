@@ -109,6 +109,21 @@ async function readTypography(locator: Locator) {
   });
 }
 
+test("assigns the requested artwork to each color scheme", async ({page}) => {
+  await page.goto("/");
+
+  await expect(
+    page.locator(
+      'link[rel="icon"][media="(prefers-color-scheme: light)"]',
+    ),
+  ).toHaveAttribute("href", "/favicon-dark.svg");
+  await expect(
+    page.locator(
+      'link[rel="icon"][media="(prefers-color-scheme: dark)"]',
+    ),
+  ).toHaveAttribute("href", "/favicon-light.svg");
+});
+
 test("primary English routes render successfully with security headers", async ({
   page,
 }) => {

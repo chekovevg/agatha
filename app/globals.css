@@ -565,7 +565,7 @@ select {
     font-weight: 400;
     letter-spacing: -0.24px;
     line-height: 1.25;
-    max-width: 36em;
+    max-width: min(36em, 100%);
   }
 
   @media (width <= 1080px) {
