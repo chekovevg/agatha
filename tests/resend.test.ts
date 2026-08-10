@@ -16,10 +16,7 @@ vi.mock("resend", () => ({
 
 function contactInput() {
   return {
-    name: "Test Student",
     email: "student@example.com",
-    studentAge: "Adult" as const,
-    subject: "Flute" as const,
     message: "I would like to ask about a first flute lesson.",
     website: "",
   };
@@ -48,6 +45,7 @@ describe("Resend email sender", () => {
         from: "Agatha Music <hello@agathamusic.com>",
         to: ["agathagurko@gmail.com", "agatha@example.com"],
         replyTo: "student@example.com",
+        subject: "New website question",
       }),
     );
     expect(sendEmail).toHaveBeenNthCalledWith(
@@ -57,12 +55,8 @@ describe("Resend email sender", () => {
         to: "student@example.com",
       }),
     );
-    expect(sendEmail.mock.calls[0]?.[0].text).toContain("Student age: Adult");
-    expect(sendEmail.mock.calls[0]?.[0].text).not.toContain(
-      "Preferred language",
-    );
-    expect(sendEmail.mock.calls[0]?.[0].text).not.toContain(
-      "How they found Agatha",
+    expect(sendEmail.mock.calls[0]?.[0].text).toBe(
+      "Email: student@example.com\n\nI would like to ask about a first flute lesson.",
     );
   });
 

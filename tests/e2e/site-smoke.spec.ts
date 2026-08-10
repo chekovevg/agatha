@@ -809,41 +809,79 @@ test("booking route selects the relevant event and remains switchable", async ({
   ).toBeLessThanOrEqual(0);
 });
 
-test("about FAQ and contact content share the profile text axis", async ({
+test("home FAQ is the centered third block with readable disclosure text", async ({
   page,
 }) => {
-  await page.setViewportSize({width: 1440, height: 1000});
+  for (const width of [390, 1440]) {
+    await page.setViewportSize({width, height: 1000});
+    await page.goto("/");
+
+    const faq = page.locator("[data-home-faq]");
+    const content = faq.locator(":scope > div");
+    const heading = faq.getByRole("heading", {
+      name: "Questions before the first lesson",
+    });
+    const firstQuestion = faq.getByText("Do you teach complete beginners?");
+    await expect(faq).toBeVisible();
+    await expect(
+      faq.getByText("What instruments do you teach?", {exact: true}),
+    ).toHaveCount(0);
+
+    const [faqBox, contentBox, headingAlign, questionAlign, followsLocation] =
+      await Promise.all([
+        faq.boundingBox(),
+        content.boundingBox(),
+        heading.evaluate((element) => getComputedStyle(element).textAlign),
+        firstQuestion.evaluate((element) => getComputedStyle(element).textAlign),
+        faq.evaluate((element) =>
+          element.previousElementSibling?.classList.contains(
+            "home-location-section",
+          ),
+        ),
+      ]);
+
+    expect(followsLocation).toBe(true);
+    expect(faqBox!.x + faqBox!.width / 2).toBeCloseTo(width / 2, 0);
+    expect(contentBox!.x + contentBox!.width / 2).toBeCloseTo(width / 2, 0);
+    expect(headingAlign).toBe("center");
+    expect(questionAlign).toBe("left");
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth - window.innerWidth,
+      ),
+    ).toBeLessThanOrEqual(0.5);
+  }
+
   await page.goto("/about");
+  await expect(
+    page.getByRole("heading", {name: "Questions before the first lesson"}),
+  ).toHaveCount(0);
+});
 
-  const profileHeading = page.getByRole("heading", {name: "Agatha Gurko"});
-  const faqHeading = page.getByRole("heading", {
-    name: "Questions before the first lesson",
-  });
-  const contactHeading = page.getByRole("heading", {name: "Get in touch"});
-  const contactForm = page.locator("#contact form");
-  const [profileBox, faqBox, contactBox, formBox] = await Promise.all([
-    profileHeading.boundingBox(),
-    faqHeading.boundingBox(),
-    contactHeading.boundingBox(),
-    contactForm.boundingBox(),
-  ]);
+test("about contact keeps only the two-field question form", async ({page}) => {
+  for (const width of [390, 1440]) {
+    await page.setViewportSize({width, height: 1000});
+    await page.goto("/about");
 
-  expect(faqBox!.x).toBeCloseTo(profileBox!.x, 0);
-  expect(contactBox!.x).toBeCloseTo(profileBox!.x, 0);
-  expect(formBox!.x).toBeCloseTo(profileBox!.x, 0);
-  expect(faqBox!.y).toBeLessThan(
-    (await page.getByText("Do you teach complete beginners?").boundingBox())!.y,
-  );
-  expect(contactBox!.y).toBeLessThan(formBox!.y);
-
-  await page.setViewportSize({width: 390, height: 844});
-  const mobileFormBox = await page.locator("#contact form").boundingBox();
-  expect(mobileFormBox!.width).toBeLessThanOrEqual(346);
-  expect(
-    await page.evaluate(
-      () => document.documentElement.scrollWidth - window.innerWidth,
-    ),
-  ).toBeLessThanOrEqual(0);
+    const section = page.locator("#contact");
+    const heading = section.getByRole("heading", {name: "Have a question"});
+    const form = section.locator("form");
+    await expect(heading).toBeVisible();
+    await expect(form.locator("label")).toHaveCount(2);
+    await expect(form.getByLabel("Email")).toBeVisible();
+    await expect(form.getByLabel("Message")).toBeVisible();
+    await expect(form.getByLabel("Name")).toHaveCount(0);
+    await expect(form.getByLabel("Student age")).toHaveCount(0);
+    await expect(form.getByLabel("Subject")).toHaveCount(0);
+    await expect(
+      section.getByText("Have a question before booking?", {exact: false}),
+    ).toHaveCount(0);
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth - window.innerWidth,
+      ),
+    ).toBeLessThanOrEqual(0.5);
+  }
 });
 
 test("analytics preferences do not cover the home booking action", async ({
@@ -1090,10 +1128,7 @@ test("contact network failure is announced and remains retryable", async ({
 }) => {
   await page.route("**/api/contact", (route) => route.abort("failed"));
   await page.goto("/about");
-  await page.getByLabel("Name").fill("Test Student");
   await page.getByLabel("Email").fill("student@example.com");
-  await page.getByLabel("Student age").selectOption("Adult");
-  await page.getByLabel("Subject").selectOption("Flute");
   await page
     .getByLabel("Message")
     .fill("I would like to ask about a first flute lesson.");

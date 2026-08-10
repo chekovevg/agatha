@@ -76,7 +76,6 @@ export type SiteContent = {
   faq: FAQItem[];
   contact: {
     heading: string;
-    copy: string;
   };
   legal: {
     impressumTitle: string;

@@ -305,44 +305,22 @@ const baseContent: SiteContent = {
       order: 1,
     },
     {
-      question: "Do you work with adults?",
-      answer:
-        "Yes. Adult beginners and returning musicians are welcome. Lessons move at a comfortable pace and focus on clear progress.",
-      category: "lessons",
-      order: 2,
-    },
-    {
-      question: "What languages are available?",
-      answer: "Lessons are available in Russian, English and German.",
-      category: "format",
-      order: 3,
-    },
-    {
-      question: "What instruments do you teach?",
-      answer:
-        "Agatha teaches flute, recorder and piccolo. She also teaches music theory and solfege.",
-      category: "lessons",
-      order: 4,
-    },
-    {
       question: "Can you help with music theory exams?",
       answer:
         "Yes. Lessons can focus on harmony, intervals, keys, form, ear training, solfege and exam preparation.",
       category: "theory",
-      order: 5,
+      order: 2,
     },
     {
       question: "What happens after a lesson?",
       answer:
         "Students receive brief notes and practice materials to continue working independently.",
       category: "format",
-      order: 6,
+      order: 3,
     },
   ],
   contact: {
-    heading: "Get in touch",
-    copy:
-      "Have a question before booking? Send a message and Agatha will help you choose the right format.",
+    heading: "Have a question",
   },
   legal: {
     impressumTitle: "Impressum",

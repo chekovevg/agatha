@@ -8,10 +8,7 @@ vi.mock("@/lib/resend", () => ({
 
 function validPayload(overrides: Record<string, unknown> = {}) {
   return {
-    name: "Test Student",
     email: "student@example.com",
-    studentAge: "Adult",
-    subject: "Flute",
     message: "I would like to ask about a first flute lesson.",
     website: "",
     formStartedAt: String(Date.now() - 5_000),
@@ -59,22 +56,6 @@ describe("POST /api/contact", () => {
     expect(sendContactEmails).not.toHaveBeenCalled();
   });
 
-  it("rejects an unknown student age group", async () => {
-    const {POST} = await import("@/app/api/contact/route");
-    const response = await POST(request(validPayload({studentAge: "24"})));
-
-    expect(response.status).toBe(400);
-    expect(sendContactEmails).not.toHaveBeenCalled();
-  });
-
-  it("rejects a subject outside the current class list", async () => {
-    const {POST} = await import("@/app/api/contact/route");
-    const response = await POST(request(validPayload({subject: "Piano"})));
-
-    expect(response.status).toBe(400);
-    expect(sendContactEmails).not.toHaveBeenCalled();
-  });
-
   it("ignores honeypot spam submissions", async () => {
     const {POST} = await import("@/app/api/contact/route");
     const response = await POST(
@@ -104,7 +85,6 @@ describe("POST /api/contact", () => {
     const response = await POST(
       request(
         validPayload({
-          subject: "Flute",
           message:
             "Bonjour Agathe, nous pouvons optimiser votre site web pour attirer plus d'eleves.",
         }),
@@ -161,11 +141,14 @@ describe("POST /api/contact", () => {
     expect(sendContactEmails).toHaveBeenCalledWith(expectedContactPayload(payload));
   });
 
-  it("drops the removed language and acquisition fields", async () => {
+  it("drops fields removed from the simplified form", async () => {
     const {POST} = await import("@/app/api/contact/route");
     const response = await POST(
       request(
         validPayload({
+          name: "Test Student",
+          studentAge: "Adult",
+          subject: "Flute",
           preferredLanguage: "English",
           source: "Google or another search engine",
         }),
@@ -175,6 +158,9 @@ describe("POST /api/contact", () => {
     expect(response.status).toBe(200);
     expect(sendContactEmails).toHaveBeenCalledWith(
       expect.not.objectContaining({
+        name: expect.anything(),
+        studentAge: expect.anything(),
+        subject: expect.anything(),
         preferredLanguage: expect.anything(),
         source: expect.anything(),
       }),

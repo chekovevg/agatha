@@ -52,6 +52,7 @@ import sitemap from "@/app/sitemap";
 import {ClassesMenu} from "@/components/layout/ClassesMenu";
 import {AboutPage} from "@/components/pages/AboutPage";
 import {ClassesPage} from "@/components/pages/ClassesPage";
+import {HomePage} from "@/components/pages/HomePage";
 import {BookingSection} from "@/components/sections/BookingSection";
 import {siteContent} from "@/content/site";
 import {env} from "@/lib/env";
@@ -373,24 +374,38 @@ describe("editorial site structure", () => {
     ).toContain("qualities: [75, 95]");
   });
 
-  it("renders only the approved age and class pickers in the contact form", () => {
+  it("renders the reduced FAQ on Home instead of About", () => {
+    const homeHtml = renderToStaticMarkup(
+      createElement(HomePage, {content: siteContent}),
+    );
+    const aboutHtml = renderToStaticMarkup(
+      createElement(AboutPage, {content: siteContent}),
+    );
+
+    expect(homeHtml).toContain('data-home-faq="true"');
+    expect(homeHtml).toContain("Questions before the first lesson");
+    expect(homeHtml).toContain("Do you teach complete beginners?");
+    expect(homeHtml).toContain("Can you help with music theory exams?");
+    expect(homeHtml).toContain("What happens after a lesson?");
+    expect(homeHtml).not.toContain("Do you work with adults?");
+    expect(homeHtml).not.toContain("What languages are available?");
+    expect(homeHtml).not.toContain("What instruments do you teach?");
+    expect(aboutHtml).not.toContain("Questions before the first lesson");
+  });
+
+  it("renders the simplified question form on About", () => {
     const html = renderToStaticMarkup(
       createElement(AboutPage, {content: siteContent}),
     );
 
-    for (const option of [
-      "Adult",
-      "Child (7–14)",
-      "Flute",
-      "Recorder",
-      "Piccolo",
-      "Music Theory",
-      "Solfege",
-    ]) {
-      expect(html).toContain(`<option value="${option}">${option}</option>`);
-    }
-    expect(html).not.toContain("Preferred language");
-    expect(html).not.toContain("How did you find Agatha?");
+    expect(html).toContain("Have a question");
+    expect(html).not.toContain("Have a question before booking?");
+    expect(html).toContain('name="email"');
+    expect(html).toContain('name="message"');
+    expect(html).not.toContain('name="name"');
+    expect(html).not.toContain('name="studentAge"');
+    expect(html).not.toContain('name="subject"');
+    expect(html).toContain(">Send message<");
   });
 
   it("links booking fallback contact CTA to the unprefixed contact form", () => {

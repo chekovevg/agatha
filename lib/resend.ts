@@ -55,20 +55,13 @@ export async function sendContactEmails(input: ContactInput) {
     return {skipped: true};
   }
 
-  const details = [
-    `Name: ${input.name}`,
-    `Email: ${input.email}`,
-    `Subject: ${input.subject}`,
-    `Student age: ${input.studentAge}`,
-    "",
-    input.message,
-  ].join("\n");
+  const details = [`Email: ${input.email}`, "", input.message].join("\n");
 
   await resend.emails.send({
     from,
     to: recipients,
     replyTo: input.email,
-    subject: `New lesson inquiry: ${input.subject}`,
+    subject: "New website question",
     text: details,
   });
 

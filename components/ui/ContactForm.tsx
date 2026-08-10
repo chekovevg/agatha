@@ -3,11 +3,7 @@
 import {useEffect, useRef, useState} from "react";
 
 import {Button} from "@/components/ui/Button";
-import {
-  contactFormContent as copy,
-  contactStudentAgeOptions,
-  contactSubjectOptions,
-} from "@/content/contact-form";
+import {contactFormContent as copy} from "@/content/contact-form";
 import {submitContact} from "@/lib/contact-client";
 
 type FormState = "idle" | "submitting" | "success" | "error";
@@ -47,14 +43,6 @@ export function ContactForm() {
     >
       <input name="website" className="hidden" tabIndex={-1} autoComplete="off" />
       <label className="mai-ui grid gap-2">
-        {copy.name}
-        <input
-          name="name"
-          required
-          className="mai-body rounded px-4 py-3 shadow-[var(--shadow-inset)]"
-        />
-      </label>
-      <label className="mai-ui grid gap-2">
         {copy.email}
         <input
           name="email"
@@ -62,42 +50,6 @@ export function ContactForm() {
           type="email"
           className="mai-body rounded px-4 py-3 shadow-[var(--shadow-inset)]"
         />
-      </label>
-      <label className="mai-ui grid gap-2">
-        {copy.studentAge}
-        <select
-          name="studentAge"
-          required
-          className="mai-body rounded px-4 py-3 shadow-[var(--shadow-inset)]"
-          defaultValue=""
-        >
-          <option value="" disabled>
-            {copy.studentAgePlaceholder}
-          </option>
-          {contactStudentAgeOptions.map((option) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
-      </label>
-      <label className="mai-ui grid gap-2">
-        {copy.subject}
-        <select
-          name="subject"
-          required
-          className="mai-body rounded px-4 py-3 shadow-[var(--shadow-inset)]"
-          defaultValue=""
-        >
-          <option value="" disabled>
-            {copy.subjectPlaceholder}
-          </option>
-          {contactSubjectOptions.map((option) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
       </label>
       <label className="mai-ui grid gap-2">
         {copy.message}

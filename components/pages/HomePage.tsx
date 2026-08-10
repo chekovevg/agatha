@@ -50,6 +50,38 @@ export function HomePage({content}: {content: SiteContent}) {
               </p>
             </div>
           </section>
+
+          <section
+            data-home-faq="true"
+            aria-labelledby="home-faq-title"
+            className="mt-[var(--space-190)] w-full px-[var(--space-20)] text-[var(--ink)] max-[600px]:mt-[var(--space-144)]"
+          >
+            <div className="mx-auto grid w-full max-w-[643px] gap-[var(--space-32)]">
+              <h2 id="home-faq-title" className="mai-h4 text-center">
+                {content.pages.about.faqHeading}
+              </h2>
+              <div className="divide-y divide-[var(--line)] border-y border-[var(--line)] text-left">
+                {[...content.faq]
+                  .sort((a, b) => a.order - b.order)
+                  .map((item) => (
+                    <details
+                      key={item.question}
+                      className="group py-[var(--space-20)]"
+                    >
+                      <summary className="mai-body flex cursor-pointer list-none items-center justify-between gap-[var(--space-24)] text-[var(--ink)]">
+                        <span>{item.question}</span>
+                        <span aria-hidden="true" className="mai-ui">
+                          +
+                        </span>
+                      </summary>
+                      <p className="mai-body mt-[var(--space-16)] max-w-[780px] text-[var(--muted)]">
+                        {item.answer}
+                      </p>
+                    </details>
+                  ))}
+              </div>
+            </div>
+          </section>
         </div>
       </main>
       <Footer content={content} />

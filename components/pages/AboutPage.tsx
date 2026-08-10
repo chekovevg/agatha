@@ -74,47 +74,14 @@ export function AboutPage({
         </section>
 
         <section
-          aria-labelledby="about-faq-title"
-          className="grid min-[861px]:grid-cols-[repeat(24,minmax(0,1fr))] min-[861px]:gap-x-[var(--space-20)]"
-        >
-          <div className="grid max-w-[643px] gap-[var(--space-32)] min-[861px]:col-start-8 min-[861px]:col-span-11">
-            <h2 id="about-faq-title" className="mai-h4">
-              {content.pages.about.faqHeading}
-            </h2>
-            <div className="divide-y divide-[var(--line)] border-y border-[var(--line)]">
-              {[...content.faq]
-                .sort((a, b) => a.order - b.order)
-                .map((item) => (
-                  <details key={item.question} className="group py-[var(--space-20)]">
-                    <summary className="mai-body flex cursor-pointer list-none items-center justify-between gap-[var(--space-24)] text-[var(--ink)]">
-                      <span>{item.question}</span>
-                      <span aria-hidden="true" className="mai-ui">
-                        +
-                      </span>
-                    </summary>
-                    <p className="mai-body mt-[var(--space-16)] max-w-[780px] text-[var(--muted)]">
-                      {item.answer}
-                    </p>
-                  </details>
-                ))}
-            </div>
-          </div>
-        </section>
-
-        <section
           id="contact"
           aria-labelledby="about-contact-title"
           className="grid min-[861px]:grid-cols-[repeat(24,minmax(0,1fr))] min-[861px]:gap-x-[var(--space-20)]"
         >
           <div className="grid max-w-[643px] gap-[var(--space-40)] min-[861px]:col-start-8 min-[861px]:col-span-11">
-            <div>
-              <h2 id="about-contact-title" className="mai-h4">
-                {content.contact.heading}
-              </h2>
-              <p className="mai-body mt-[var(--space-24)] text-[var(--muted)]">
-                {content.contact.copy}
-              </p>
-            </div>
+            <h2 id="about-contact-title" className="mai-h4">
+              {content.contact.heading}
+            </h2>
             <ContactForm />
           </div>
         </section>

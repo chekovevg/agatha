@@ -60,11 +60,8 @@ function isTooFastForHuman(payload: unknown, now = Date.now()) {
   return !Number.isFinite(timestamp) || now - timestamp < MIN_FORM_FILL_MS;
 }
 
-function isMarketingSpam(input: {
-  message: string;
-  subject: string;
-}) {
-  const text = normalizeSpamText(`${input.subject} ${input.message}`);
+function isMarketingSpam(input: {message: string}) {
+  const text = normalizeSpamText(input.message);
   return MARKETING_SPAM_SNIPPETS.some((snippet) => text.includes(snippet));
 }
 
