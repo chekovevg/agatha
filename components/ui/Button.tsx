@@ -17,7 +17,7 @@ const variants: Record<ButtonVariant, string> = {
 };
 
 const base =
-  "mai-ui inline-flex h-12 flex-nowrap items-center justify-center rounded-[var(--radius-control)] border px-[42px] transition-[color,background-color] duration-[600ms] ease-[var(--alias-easeOutCubic)] focus-visible:outline-2";
+  "mai-ui inline-flex h-12 flex-nowrap items-center justify-center rounded-[var(--radius-control)] border px-[var(--space-40)] transition-[color,background-color] duration-[600ms] ease-[var(--alias-easeOutCubic)] focus-visible:outline-2";
 
 export function ButtonLink({
   variant = "primary",

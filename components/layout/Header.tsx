@@ -35,7 +35,7 @@ export function Header({
     <>
     <header
       className={cn(
-        "pointer-events-none fixed inset-x-0 top-0 z-[999] bg-transparent px-8 pt-[33px] max-[860px]:px-5 max-[860px]:pt-5",
+        "pointer-events-none fixed inset-x-0 top-0 z-[999] bg-transparent px-[var(--space-32)] pt-[var(--space-32)] max-[860px]:px-[var(--space-20)] max-[860px]:pt-[var(--space-20)]",
         "min-[861px]:transition-transform min-[861px]:duration-[400ms] min-[861px]:ease-[var(--alias-easeOutCubic)]",
         headerHidden && !menuVisible
           ? "min-[861px]:-translate-y-[calc(100%+12px)]"
@@ -53,7 +53,7 @@ export function Header({
         <div
           data-header-surface
           className={cn(
-            "pointer-events-auto relative grid h-[58px] grid-cols-2 items-center rounded-[5px] bg-[var(--background)] px-[22px] text-[var(--ink)] min-[861px]:grid-cols-3 min-[861px]:shadow-[var(--shadow-navigation-surface)] max-[860px]:px-[19px]",
+            "pointer-events-auto relative grid h-[58px] grid-cols-2 items-center rounded-[5px] bg-[var(--background)] px-[var(--space-24)] text-[var(--ink)] min-[861px]:grid-cols-3 min-[861px]:shadow-[var(--shadow-navigation-surface)] max-[860px]:px-[var(--space-20)]",
           )}
         >
           <Link
@@ -77,15 +77,15 @@ export function Header({
             className={cn(
               "mai-header-nav justify-self-center min-[861px]:h-full min-[861px]:w-full",
               menuVisible
-                ? "max-[860px]:fixed max-[860px]:inset-0 max-[860px]:z-[1] max-[860px]:flex max-[860px]:h-[100dvh] max-[860px]:w-full max-[860px]:flex-col max-[860px]:items-start max-[860px]:overflow-x-hidden max-[860px]:overflow-y-auto max-[860px]:bg-[var(--background)] max-[860px]:px-[calc(34*var(--unit-fx-type))] max-[860px]:pb-[calc(32*var(--unit-fx-type))] max-[860px]:pt-[calc(100*var(--unit-fx-type))] max-[860px]:transition-opacity max-[860px]:duration-[700ms] max-[860px]:ease-out"
-                : "max-[860px]:absolute max-[860px]:left-0 max-[860px]:right-0 max-[860px]:top-full max-[860px]:z-50 max-[860px]:hidden max-[860px]:w-full max-[860px]:bg-[var(--background)] max-[860px]:px-[calc(19*var(--unit-fx))] max-[860px]:pb-[calc(28*var(--unit-fx))] max-[860px]:pt-[calc(27*var(--unit-fx))]",
+                ? "max-[860px]:fixed max-[860px]:inset-0 max-[860px]:z-[1] max-[860px]:flex max-[860px]:h-[100dvh] max-[860px]:w-full max-[860px]:flex-col max-[860px]:items-start max-[860px]:overflow-x-hidden max-[860px]:overflow-y-auto max-[860px]:bg-[var(--background)] max-[860px]:px-[var(--space-32)] max-[860px]:pb-[var(--space-32)] max-[860px]:pt-[max(72px,var(--space-100))] max-[860px]:transition-opacity max-[860px]:duration-[700ms] max-[860px]:ease-out"
+                : "max-[860px]:absolute max-[860px]:left-0 max-[860px]:right-0 max-[860px]:top-full max-[860px]:z-50 max-[860px]:hidden max-[860px]:w-full max-[860px]:bg-[var(--background)] max-[860px]:px-[var(--space-20)] max-[860px]:pb-[var(--space-30)] max-[860px]:pt-[var(--space-30)]",
               menuVisible &&
                 (menuExpanded
                   ? "max-[860px]:opacity-100"
                   : "max-[860px]:pointer-events-none max-[860px]:opacity-0"),
             )}
           >
-            <ul className="flex h-full items-center justify-center gap-4 max-[860px]:block max-[860px]:h-auto max-[860px]:w-full max-[860px]:space-y-0">
+            <ul className="flex h-full items-center justify-center gap-[var(--space-16)] max-[860px]:block max-[860px]:h-auto max-[860px]:w-full max-[860px]:space-y-0">
             {navItems.map((item) =>
               item.href === "/classes" ? (
                 <ClassesMenu
@@ -112,14 +112,14 @@ export function Header({
             )}
             </ul>
             <div
-              className="mobile-menu-bottom hidden w-full max-[860px]:mt-auto max-[860px]:flex max-[860px]:flex-col max-[860px]:pt-[calc(56*var(--unit-fx-type))]"
+              className="mobile-menu-bottom hidden w-full max-[860px]:mt-auto max-[860px]:flex max-[860px]:flex-col max-[860px]:pt-[var(--space-56)]"
               data-mobile-menu-bottom
             >
               {showBookingCta ? (
                 <a
                   href={introBookingHref}
                   data-analytics-booking-cta="header"
-                  className="mobile-menu-booking-link inline-flex items-center gap-2 hover:underline"
+                  className="mobile-menu-booking-link inline-flex items-center gap-[var(--space-8)] hover:underline"
                   onClick={closeMenu}
                 >
                   {content.cta.header}
@@ -135,9 +135,9 @@ export function Header({
               ) : null}
               <div
                 className={cn(
-                  "flex flex-col items-start gap-4",
+                  "flex flex-col items-start gap-[var(--space-16)]",
                   showBookingCta &&
-                    "mt-[calc(56*var(--unit-fx-type))]",
+                    "mt-[var(--space-56)]",
                 )}
               >
                 <p className="ag-footer-copyright w-[269px] max-w-full">
@@ -158,7 +158,7 @@ export function Header({
               <a
                 href={introBookingHref}
                 data-analytics-booking-cta="header"
-                className="mai-ui inline-flex items-center gap-2 leading-none hover:underline"
+                className="mai-ui inline-flex items-center gap-[var(--space-8)] leading-none hover:underline"
                 onClick={closeMenu}
               >
                 {content.cta.header}

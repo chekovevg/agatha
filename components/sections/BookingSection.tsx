@@ -33,7 +33,7 @@ export function BookingSection({
 
   return (
     <section id="booking" className="bg-[var(--background)]">
-      <div className="mx-auto max-w-[1200px] px-5 py-16 sm:px-8 lg:py-24">
+      <div className="mx-auto max-w-[1200px] px-[var(--space-20)] py-[var(--space-64)] sm:px-[var(--space-32)] lg:py-[var(--space-100)]">
         <div className="mx-auto flex max-w-[760px] flex-col items-center text-center">
           <h1 className="sr-only">Book a Call</h1>
           <div>
@@ -51,14 +51,14 @@ export function BookingSection({
             />
           </div>
           <p
-            className="mai-text-28 mt-10 max-w-[720px] text-[var(--muted)]"
+            className="mai-text-28 mt-[var(--space-40)] max-w-[720px] text-[var(--muted)]"
             data-testid="booking-description"
           >
             {booking.copy}
           </p>
           {mode === "lesson" && subject ? (
             <p
-              className="mai-ui mt-5 text-[var(--ink)]"
+              className="mai-ui mt-[var(--space-20)] text-[var(--ink)]"
               data-testid="selected-class"
             >
               Selected class: <strong>{subject}</strong>
@@ -72,14 +72,14 @@ export function BookingSection({
                   ? lessonBookingHref(subject)
                   : introBookingHref
               }
-              className="mt-8"
+              className="mt-[var(--space-32)]"
             >
               {content.cta.primary}
             </ButtonLink>
           ) : null}
         </div>
 
-        <div className="mx-auto mt-12 w-full">
+        <div className="mx-auto mt-[var(--space-48)] w-full">
           {fallbackUrl ? (
             <div className="flex w-full flex-col items-center">
               <CalBookingEmbed
@@ -88,21 +88,21 @@ export function BookingSection({
                 title={calTitle}
                 notes={notes}
               />
-              <ButtonLink href={fallbackUrl} className="mt-6" variant="plain">
+              <ButtonLink href={fallbackUrl} className="mt-[var(--space-24)]" variant="plain">
                 Open booking page in Cal.com
               </ButtonLink>
             </div>
           ) : (
-            <div className="flex min-h-[420px] flex-col items-center justify-center p-8 text-center">
+            <div className="flex min-h-[420px] flex-col items-center justify-center p-[var(--space-32)] text-center">
               <h2 className="mai-h7">Booking link pending</h2>
-              <p className="mai-body mt-4 max-w-md text-[var(--muted)]">
+              <p className="mai-body mt-[var(--space-16)] max-w-md text-[var(--muted)]">
                 Add the relevant Cal.com link to enable the booking embed. The
                 site keeps Cal.com as the booking authority and does not
                 implement custom availability.
               </p>
               <ButtonLink
                 href="/about#contact"
-                className="mt-6"
+                className="mt-[var(--space-24)]"
                 variant="secondary"
               >
                 {content.booking.fallbackContactCta}

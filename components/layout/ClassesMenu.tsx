@@ -124,7 +124,7 @@ export function ClassesMenu({
         aria-hidden={!open}
         data-state={open ? "open" : "closed"}
         className={cn(
-          "absolute left-1/2 top-full w-[698px] -translate-x-1/2 pt-[9px] max-[860px]:hidden",
+          "absolute left-1/2 top-full w-[698px] -translate-x-1/2 pt-[var(--space-8)] max-[860px]:hidden",
           open ? "pointer-events-auto" : "pointer-events-none",
         )}
       >
@@ -132,9 +132,9 @@ export function ClassesMenu({
           data-state={open ? "open" : "closed"}
           className="classes-menu-panel h-[488px] w-[698px] rounded-[4px] text-[var(--ink)] shadow-[var(--shadow-menu-section)]"
         >
-          <div className="classes-menu-content grid h-full w-full grid-cols-[306.657px_333px] gap-[10px] rounded-[4px] bg-[var(--background)] p-6">
+          <div className="classes-menu-content grid h-full w-full grid-cols-[306.657px_333px] gap-[var(--space-10)] rounded-[4px] bg-[var(--background)] p-[var(--space-24)]">
             <div className="flex h-[440px] min-w-0 flex-col">
-              <div className="flex w-full flex-col gap-5">
+              <div className="flex w-full flex-col gap-[var(--space-20)]">
                 <p className="mai-metanav-title w-full [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">
                   What I teach
                 </p>
@@ -143,13 +143,13 @@ export function ClassesMenu({
                 </p>
               </div>
 
-              <div className="mt-8 grid gap-[10px]">
+              <div className="mt-[var(--space-32)] grid gap-[var(--space-10)]">
                 {lessons.map((lesson) => {
                   return (
                     <a
                       key={lesson.slug}
                       href={lessonBookingHref(lesson.title)}
-                      className="mai-ui group flex h-[50px] items-center gap-4 bg-[var(--hover-paper)] pl-[10px] pr-3 transition-colors duration-[600ms] ease-[var(--alias-easeOut)] focus-visible:outline-2"
+                      className="mai-ui group flex h-[50px] items-center gap-[var(--space-16)] bg-[var(--hover-paper)] pl-[var(--space-10)] pr-[var(--space-12)] transition-colors duration-[600ms] ease-[var(--alias-easeOut)] focus-visible:outline-2"
                       onMouseEnter={() => setActiveLesson(lesson)}
                       onFocus={() => setActiveLesson(lesson)}
                       onClick={onNavigate}
@@ -186,7 +186,7 @@ export function ClassesMenu({
             <a
               href={lessonBookingHref(activeLesson.title)}
               aria-label={`Book ${activeLesson.title} lesson`}
-              className="group flex h-[440px] min-w-0 flex-col items-center gap-6 bg-[var(--hover-paper)] px-4 pb-7 pt-4 focus-visible:outline-2"
+              className="group flex h-[440px] min-w-0 flex-col items-center gap-[var(--space-24)] bg-[var(--hover-paper)] px-[var(--space-16)] pb-[var(--space-30)] pt-[var(--space-16)] focus-visible:outline-2"
               onClick={onNavigate}
             >
               <span className="relative block h-[260px] w-[260px] shrink-0">
@@ -199,11 +199,11 @@ export function ClassesMenu({
                   className="object-contain"
                 />
               </span>
-              <span className="flex min-w-0 w-full flex-col items-start gap-5">
+              <span className="flex min-w-0 w-full flex-col items-start gap-[var(--space-20)]">
                 <span className="relative flex w-full items-center">
                   <span
                     data-testid="classes-menu-preview-title"
-                    className="mai-metanav-title min-w-0 flex-1 pr-[30px] underline-offset-4 transition-[text-decoration-color] duration-[600ms] [text-box-edge:cap_alphabetic] [text-box-trim:trim-both] group-hover:underline group-focus-visible:underline"
+                    className="mai-metanav-title min-w-0 flex-1 pr-[var(--space-30)] underline-offset-4 transition-[text-decoration-color] duration-[600ms] [text-box-edge:cap_alphabetic] [text-box-trim:trim-both] group-hover:underline group-focus-visible:underline"
                   >
                     {activeLesson.title}
                   </span>

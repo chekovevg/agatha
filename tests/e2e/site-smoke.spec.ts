@@ -713,7 +713,10 @@ test("footer keeps its link cluster centered and stacks before columns overlap",
       }),
     ]);
 
-    expect(footerStyle.columnGap).toBe("24px");
+    expect(Number.parseFloat(footerStyle.columnGap)).toBeCloseTo(
+      24 * (width / 1728),
+      1,
+    );
     expect(footerStyle.display).toBe("grid");
     expect(footerStyle.paddingBottom).toBeGreaterThanOrEqual(100);
     expect(brandBox!.width).toBeCloseTo(metaBox!.width, 0);
@@ -767,16 +770,19 @@ test("footer uses line-height rhythm on mobile and preserves desktop spacing", a
 
   expect(secondBox!.y - firstBox!.y).toBeCloseTo(lineHeight, 1);
   await expect(siteLinks).toHaveCSS("row-gap", "0px");
-  await expect(footer.locator('[data-footer-zone="links"]')).toHaveCSS(
-    "row-gap",
-    "48px",
-  );
+  expect(
+    await footer
+      .locator('[data-footer-zone="links"]')
+      .evaluate((element) => Number.parseFloat(getComputedStyle(element).rowGap)),
+  ).toBeCloseTo(48 * (390 / 402), 1);
 
   await page.setViewportSize({width: 1440, height: 900});
   await page.goto("/classes");
-  await expect(
-    page.locator('footer [data-footer-section="site"]'),
-  ).toHaveCSS("row-gap", "16px");
+  expect(
+    await page
+      .locator('footer [data-footer-section="site"]')
+      .evaluate((element) => Number.parseFloat(getComputedStyle(element).rowGap)),
+  ).toBeCloseTo(16 * (1440 / 1728), 1);
 });
 
 test("desktop Classes menu remains open while the pointer crosses the header gap", async ({
@@ -865,7 +871,11 @@ test("desktop Classes menu previews lessons and booking targets", async ({
     "Discover and choose what you want to learn",
     {exact: true},
   );
-  await expect(menuDescription.locator("..")).toHaveCSS("row-gap", "20px");
+  expect(
+    await menuDescription
+      .locator("..")
+      .evaluate((element) => Number.parseFloat(getComputedStyle(element).rowGap)),
+  ).toBeCloseTo(20 * (1440 / 1728), 1);
   expect(
     await menuDescription.evaluate(
       (element) => element.scrollWidth <= element.clientWidth,
@@ -878,10 +888,11 @@ test("desktop Classes menu previews lessons and booking targets", async ({
     "Build a clear tone, healthy breathing and relaxed posture from the very beginning. We work with sound, technique, hands, embouchure and musical expression step by step.",
     {exact: true},
   );
-  await expect(previewDescription.locator("..")).toHaveCSS(
-    "row-gap",
-    "20px",
-  );
+  expect(
+    await previewDescription
+      .locator("..")
+      .evaluate((element) => Number.parseFloat(getComputedStyle(element).rowGap)),
+  ).toBeCloseTo(20 * (1440 / 1728), 1);
 
   await menu.getByRole("link", {name: "Solfege", exact: true}).hover();
   await expect(menu.getByTestId("classes-menu-preview-title")).toHaveText(
@@ -912,7 +923,11 @@ test("booking route selects the relevant event and remains switchable", async ({
   ).toHaveClass(/sr-only/);
   const bookingType = page.getByRole("navigation", {name: "Booking type"});
   await expect(bookingType).toHaveAttribute("data-overflow", "false");
-  await expect(bookingType).toHaveCSS("padding", "10px");
+  expect(
+    await bookingType.evaluate((element) =>
+      Number.parseFloat(getComputedStyle(element).paddingTop),
+    ),
+  ).toBeCloseTo(10 * (1440 / 1728), 1);
   await expect(
     bookingType.getByRole("link", {name: "Intro Call", exact: true}),
   ).toHaveAttribute("aria-current", "page");
@@ -932,12 +947,23 @@ test("booking route selects the relevant event and remains switchable", async ({
   expect(tabTypography.fontWeight).toBe("500");
   expect(tabTypography.letterSpacing).toBeCloseTo(-0.24, 2);
   expect(tabTypography.lineHeight / tabTypography.fontSize).toBeCloseTo(1, 1);
-  await expect(bookingType).toHaveCSS("height", "59.2188px");
-  await expect(bookingType).toHaveCSS("padding", "10px");
-  await expect(introTab).toHaveCSS("padding-left", "25px");
-  await expect(introTab).toHaveCSS("padding-right", "25px");
-  await expect(lessonTab).toHaveCSS("padding-left", "25px");
-  await expect(lessonTab).toHaveCSS("padding-right", "25px");
+  const desktopScale = 1440 / 1728;
+  expect(
+    await bookingType.evaluate((element) =>
+      Number.parseFloat(getComputedStyle(element).height),
+    ),
+  ).toBeCloseTo(39.21875 + 2 * 10 * desktopScale, 1);
+  for (const tab of [introTab, lessonTab]) {
+    const padding = await tab.evaluate((element) => {
+      const style = getComputedStyle(element);
+      return [
+        Number.parseFloat(style.paddingLeft),
+        Number.parseFloat(style.paddingRight),
+      ];
+    });
+    expect(padding[0]).toBeCloseTo(24 * desktopScale, 1);
+    expect(padding[1]).toBeCloseTo(24 * desktopScale, 1);
+  }
   await lessonTab.hover();
   await expect(lessonTab).toHaveCSS("background-color", "rgb(254, 249, 238)");
   expect(
@@ -995,7 +1021,11 @@ test("booking route selects the relevant event and remains switchable", async ({
   const mobileBookingBox = await mobileBookingType.boundingBox();
   expect(mobileBookingBox!.width).toBeLessThan(366);
   expect(mobileBookingBox!.height).toBeCloseTo(54.66, 1);
-  await expect(mobileBookingType).toHaveCSS("padding", "11.64px");
+  expect(
+    await mobileBookingType.evaluate((element) =>
+      Number.parseFloat(getComputedStyle(element).paddingTop),
+    ),
+  ).toBeCloseTo(12 * (390 / 402), 2);
   await expect(
     mobileBookingType.getByRole("link", {name: "Intro Call", exact: true}),
   ).toHaveCSS("height", "31.375px");
@@ -1254,7 +1284,7 @@ test.describe("mobile navigation", () => {
     expect(secondRow!.y - (firstRow!.y + firstRow!.height)).toBeCloseTo(10, 0);
     await expect
       .poll(async () => (await submenu.boundingBox())?.height ?? 0)
-      .toBeCloseTo(382, 0);
+      .toBeCloseTo(262 + 120 * (390 / 402), 0);
 
     await page.keyboard.press("Escape");
     await expect(submenu).toBeHidden();

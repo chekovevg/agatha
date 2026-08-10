@@ -93,7 +93,7 @@ describe("footer", () => {
     );
 
     expect(html).toContain(
-      'class="footer-book-link items-center gap-2"',
+      'class="footer-book-link items-center gap-[var(--space-8)]"',
     );
     expect(html).toContain('src="/icons/arrow-up-right.svg"');
     expect(css).toContain(".ag-footer-link-list a.footer-book-link");

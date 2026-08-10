@@ -26,8 +26,8 @@ height, image-size, or container-size tokens.
 The initial scale required by the synchronized screens is:
 
 ```text
-0 · 2 · 4 · 8 · 12 · 12.5 · 16 · 20 · 24 · 30 · 32 · 37.5 · 40 · 48 · 50
-56 · 64 · 72 · 76 · 80 · 120 · 144 · 160 · 190 · 200 · 250
+0 · 2 · 4 · 8 · 10 · 12 · 12.5 · 16 · 20 · 24 · 30 · 32 · 37.5 · 40 · 48 · 50
+56 · 64 · 72 · 76 · 80 · 100 · 120 · 144 · 160 · 190 · 200 · 250
 ```
 
 Existing Tailwind spacing utilities already consume Tailwind's spacing scale.

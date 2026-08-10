@@ -14,11 +14,11 @@ export function ClassesPage({
   return (
     <div className="editorial-shell min-h-screen">
       <Header content={content} />
-      <main className="editorial-container py-[calc(144_*_var(--unit-fx))]">
+      <main className="editorial-container py-[var(--space-144)]">
         <h1 className="mai-h4 mx-auto max-w-[613px] text-center">
           {content.pages.classes.heading}
         </h1>
-        <div className="mx-auto mt-[calc(144_*_var(--unit-fx))] grid max-w-[1150px] gap-[calc(24_*_var(--unit-fx))]">
+        <div className="mx-auto mt-[var(--space-144)] grid max-w-[1150px] gap-[var(--space-24)]">
           {content.lessons.map((lesson) => (
             <LessonRow key={lesson.slug} lesson={lesson} />
           ))}
@@ -35,7 +35,7 @@ function LessonRow({
   lesson: Lesson;
 }) {
   return (
-    <article className="grid min-h-[328px] gap-8 rounded-[var(--radius-card)] bg-[var(--background)] px-6 py-10 transition-shadow duration-[150ms] hover:shadow-[var(--shadow-hover)] md:grid-cols-[216px_1fr] md:items-center md:px-12 lg:grid-cols-[216px_1fr_333px] lg:gap-[115px]">
+    <article className="grid min-h-[328px] gap-[var(--space-32)] rounded-[var(--radius-card)] bg-[var(--background)] px-[var(--space-24)] py-[var(--space-40)] transition-shadow duration-[150ms] hover:shadow-[var(--shadow-hover)] md:grid-cols-[216px_1fr] md:items-center md:px-[var(--space-48)] lg:grid-cols-[216px_1fr_333px] lg:gap-[var(--space-120)]">
       <div className="relative h-[216px] w-[216px] justify-self-center">
         <Image
           src={lesson.image}
@@ -49,12 +49,12 @@ function LessonRow({
         <p className="mai-eyebrow text-[var(--ink)]">
           Music lesson
         </p>
-        <h2 className="mai-h4 mt-[calc(24_*_var(--unit-fx))]">
+        <h2 className="mai-h4 mt-[var(--space-24)]">
           {lesson.title}
         </h2>
         <ButtonLink
           href={lessonBookingHref(lesson.title)}
-          className="mt-[calc(32_*_var(--unit-fx))]"
+          className="mt-[var(--space-32)]"
           data-analytics-booking-cta="classes"
         >
           Book a lesson

@@ -11,7 +11,7 @@ export function Footer({
   const footerContent = getFooterContent(content);
 
   return (
-    <footer className="mx-auto mt-[calc(320*var(--unit-fx))] grid w-[calc(100%_-_32px)] max-w-[1660px] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-start gap-x-6 bg-[var(--background)] pb-[calc(160*var(--unit-fx))] font-ui text-[var(--ink)] max-[1080px]:grid-cols-1 max-[1080px]:gap-x-0 max-[1080px]:gap-y-12 max-[600px]:pb-[calc(139*var(--unit-fx))]">
+    <footer className="mx-auto mt-[calc(320*var(--unit-fx))] grid w-[calc(100%_-_32px)] max-w-[1660px] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-start gap-x-[var(--space-24)] bg-[var(--background)] pb-[calc(160*var(--unit-fx))] font-ui text-[var(--ink)] max-[1080px]:grid-cols-1 max-[1080px]:gap-x-0 max-[1080px]:gap-y-[var(--space-48)] max-[600px]:pb-[calc(139*var(--unit-fx))]">
       <div className="min-w-0" data-footer-zone="brand">
         <Link href="/" aria-label={`${content.brand} home`}>
           <Image
@@ -24,7 +24,7 @@ export function Footer({
         </Link>
       </div>
       <div
-        className="ag-footer-links flex shrink-0 justify-center gap-[var(--footer-group-gap)] max-[1080px]:flex-col"
+        className="ag-footer-links flex shrink-0 justify-center gap-[var(--space-48)] max-[1080px]:flex-col"
         data-footer-zone="links"
       >
         <nav
@@ -61,7 +61,7 @@ export function Footer({
             item.showIcon ? (
               <Link
                 key={item.href}
-                className="footer-book-link items-center gap-2"
+                className="footer-book-link items-center gap-[var(--space-8)]"
                 href={item.href}
                 data-analytics-booking-cta="footer"
               >
@@ -84,7 +84,7 @@ export function Footer({
         </nav>
       </div>
       <div
-        className="flex min-w-0 flex-col items-end gap-4 max-[1080px]:items-start"
+        className="flex min-w-0 flex-col items-end gap-[var(--space-16)] max-[1080px]:items-start"
         data-footer-zone="meta"
       >
         <p className="ag-footer-copyright w-[269px] max-w-full">
