@@ -22,10 +22,10 @@ const responsiveCases = [
     hero: typography("EB Garamond", 48.5075, "500", 55.7836, -1.4552),
     locationHeading: typography(
       "EB Garamond",
-      46.5672,
+      29.1045,
       "400",
-      53.5522,
-      -0.03,
+      33.4701,
+      -0.5821,
     ),
     locationCopy: typography(
       "Newsreader",
@@ -53,10 +53,10 @@ const responsiveCases = [
     hero: typography("EB Garamond", 66.6667, "500", 66.6667, -2.6667),
     locationHeading: typography(
       "EB Garamond",
-      53.3333,
+      50.8031,
       "400",
-      53.3333,
-      -1.6,
+      50.8031,
+      -0.1905,
     ),
     locationCopy: typography(
       "Newsreader",
@@ -84,10 +84,10 @@ const responsiveCases = [
     hero: typography("EB Garamond", 106.25, "500", 106.25, -4.25),
     locationHeading: typography(
       "EB Garamond",
-      85,
+      56.8889,
       "400",
-      85,
-      -2.55,
+      56.8889,
+      -0.2133,
     ),
     locationCopy: typography(
       "Newsreader",
@@ -113,7 +113,13 @@ const responsiveCases = [
   {
     width: 1440,
     hero: typography("EB Garamond", 125, "500", 125, -5),
-    locationHeading: typography("EB Garamond", 100, "400", 100, -3),
+    locationHeading: typography(
+      "EB Garamond",
+      56.8889,
+      "400",
+      56.8889,
+      -0.2133,
+    ),
     locationCopy: typography(
       "Newsreader",
       21.3333,
@@ -138,7 +144,7 @@ const responsiveCases = [
   {
     width: 1728,
     hero: typography("EB Garamond", 150, "500", 150, -6),
-    locationHeading: typography("EB Garamond", 120, "400", 120, -3.6),
+    locationHeading: typography("EB Garamond", 64, "400", 64, -0.24),
     locationCopy: typography("Newsreader", 24, "400", 30, -0.24),
     headerNav: typography("Red Hat Mono", 16, "500", 28.8, -0.24),
     metaTitle: typography("Red Hat Mono", 15, "500", 15, -0.24),

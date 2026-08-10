@@ -48,9 +48,6 @@ export function Footer({
               {item.label}
             </Link>
           ))}
-          <Link className="footer-desktop-only" href="/about#contact">
-            Get In Touch
-          </Link>
         </nav>
         <nav
           aria-label="Contact links"

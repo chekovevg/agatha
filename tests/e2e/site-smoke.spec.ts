@@ -321,7 +321,7 @@ test("home spacing roles resolve from the shared scale", async ({page}) => {
       displayTabs: (width <= 600 ? 12.5 : 37.5) * scale,
       controlDescription: 30 * scale,
       descriptionAction: (width <= 600 ? 40 : 50) * scale,
-      sectionTransition: (width <= 600 ? 144 : 190) * scale,
+      sectionTransition: (width <= 600 ? 190 : 250) * scale,
     };
 
     for (const [role, value] of Object.entries(expected)) {
@@ -428,6 +428,9 @@ test("footer keeps its link cluster centered and stacks before columns overlap",
     await page.goto("/");
 
     const footer = page.locator("footer");
+    await expect(
+      footer.getByRole("link", {name: "Get In Touch", exact: true}),
+    ).toHaveCount(0);
     const brand = footer.locator('[data-footer-zone="brand"]');
     const links = footer.locator('[data-footer-zone="links"]');
     const meta = footer.locator('[data-footer-zone="meta"]');

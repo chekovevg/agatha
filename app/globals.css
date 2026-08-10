@@ -185,7 +185,7 @@
   --space-home-display-lead: var(--space-37-5);
   --space-home-copy-action: var(--space-50);
   --space-home-control-description: var(--space-30);
-  --space-home-section-transition: var(--space-190);
+  --space-home-section-transition: var(--space-250);
   --space-home-heading-media: var(--space-30);
   --space-home-media-copy: var(--space-30);
   --space-home-editorial-action: var(--space-76);
@@ -285,7 +285,7 @@
     --mai-caption-size: 12px;
     --space-home-display-lead: var(--space-12-5);
     --space-home-copy-action: var(--space-40);
-    --space-home-section-transition: var(--space-144);
+    --space-home-section-transition: var(--space-190);
   }
 }
 
@@ -853,10 +853,10 @@ select {
 
   .home-location-heading {
     font-family: var(--font-eb-garamond), Georgia, "Times New Roman", serif;
-    font-size: calc(120 * var(--unit-fx));
+    font-size: var(--mai-h3-size);
     font-weight: 400;
-    letter-spacing: var(--mai-h2-tracking);
-    line-height: var(--mai-h2-line);
+    letter-spacing: var(--mai-h3-tracking);
+    line-height: var(--mai-h3-line);
     text-wrap: balance;
   }
 
@@ -889,10 +889,6 @@ select {
 
     .plain-home-title {
       max-width: 340px;
-    }
-
-    .home-location-heading {
-      font-size: var(--mai-h2-size);
     }
 
     .home-location-image {

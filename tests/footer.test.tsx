@@ -47,7 +47,7 @@ import {Footer} from "@/components/layout/Footer";
 import {siteContent} from "@/content/site";
 
 describe("footer", () => {
-  it("uses the Figma link groups and footer note", () => {
+  it("renders the footer links without duplicate contact actions", () => {
     const html = renderToStaticMarkup(
       <Footer content={siteContent} />,
     );
@@ -60,8 +60,8 @@ describe("footer", () => {
     expect(html).toContain("Book Intro Call");
     expect(html).toContain('data-analytics-booking-cta="footer"');
     expect(html).not.toContain("Book a lesson");
-    expect(html).toContain("Get In Touch");
-    expect(html).toContain('href="mailto:agathagurko@gmail.com"');
+    expect(html).not.toContain("Get In Touch");
+    expect(html).not.toContain('href="mailto:agathagurko@gmail.com"');
     expect(html).not.toContain('href="#"');
     expect(html).toContain("Impressum");
     expect(html).toContain("Privacy and Cookies");
