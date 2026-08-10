@@ -81,12 +81,17 @@ export function BookingSection({
 
         <div className="mx-auto mt-12 w-full">
           {fallbackUrl ? (
-            <CalBookingEmbed
-              key={`${mode}-${subject ?? "general"}`}
-              url={fallbackUrl}
-              title={calTitle}
-              notes={notes}
-            />
+            <div className="flex w-full flex-col items-center">
+              <CalBookingEmbed
+                key={`${mode}-${subject ?? "general"}`}
+                url={fallbackUrl}
+                title={calTitle}
+                notes={notes}
+              />
+              <ButtonLink href={fallbackUrl} className="mt-6" variant="plain">
+                Open booking page in Cal.com
+              </ButtonLink>
+            </div>
           ) : (
             <div className="flex min-h-[420px] flex-col items-center justify-center p-8 text-center">
               <h2 className="mai-h7">Booking link pending</h2>

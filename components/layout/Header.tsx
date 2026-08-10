@@ -4,16 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 
 import {ClassesMenu} from "@/components/layout/ClassesMenu";
+import {getFooterContent} from "@/components/layout/footer-content";
 import {useHeaderController} from "@/components/layout/useHeaderController";
 import type {SiteContent} from "@/content/types";
 import {introBookingHref} from "@/lib/booking";
-import {cn, getExternalLinkProps} from "@/lib/utils";
-
-const mobileFooterLinks = [
-  {label: "Contact", href: introBookingHref},
-  {label: "Privacy & Cookies", href: "/datenschutz"},
-  {label: "Impressum", href: "/impressum"},
-];
+import {cn} from "@/lib/utils";
 
 export function Header({
   content,
@@ -33,23 +28,7 @@ export function Header({
     openMenu,
   } = useHeaderController();
   const navItems = content.nav;
-  const mobileSocialLinks = [
-    content.social.email
-      ? {label: "Email", href: `mailto:${content.social.email}`}
-      : null,
-    content.social.preply
-      ? {label: "Preply", href: content.social.preply}
-      : null,
-    content.social.instagram
-      ? {label: "Instagram", href: content.social.instagram}
-      : null,
-    content.social.telegram
-      ? {label: "Telegram", href: content.social.telegram}
-      : null,
-    content.social.whatsapp
-      ? {label: "WhatsApp", href: content.social.whatsapp}
-      : null,
-  ].filter((link): link is {label: string; href: string} => link != null);
+  const footerContent = getFooterContent(content);
   const isHome = variant === "home";
 
   return (
@@ -98,7 +77,7 @@ export function Header({
             className={cn(
               "mai-header-nav justify-self-center min-[861px]:h-full min-[861px]:w-full",
               menuVisible
-                ? "max-[860px]:fixed max-[860px]:inset-0 max-[860px]:z-[1] max-[860px]:flex max-[860px]:h-[100dvh] max-[860px]:w-full max-[860px]:flex-col max-[860px]:items-start max-[860px]:justify-between max-[860px]:overflow-x-hidden max-[860px]:overflow-y-auto max-[860px]:bg-[var(--background)] max-[860px]:px-[calc(34*var(--unit-fx-type))] max-[860px]:pb-[calc(32*var(--unit-fx-type))] max-[860px]:pt-[calc(100*var(--unit-fx-type))] max-[860px]:transition-opacity max-[860px]:duration-[700ms] max-[860px]:ease-out"
+                ? "max-[860px]:fixed max-[860px]:inset-0 max-[860px]:z-[1] max-[860px]:flex max-[860px]:h-[100dvh] max-[860px]:w-full max-[860px]:flex-col max-[860px]:items-start max-[860px]:overflow-x-hidden max-[860px]:overflow-y-auto max-[860px]:bg-[var(--background)] max-[860px]:px-[calc(34*var(--unit-fx-type))] max-[860px]:pb-[calc(32*var(--unit-fx-type))] max-[860px]:pt-[calc(100*var(--unit-fx-type))] max-[860px]:transition-opacity max-[860px]:duration-[700ms] max-[860px]:ease-out"
                 : "max-[860px]:absolute max-[860px]:left-0 max-[860px]:right-0 max-[860px]:top-full max-[860px]:z-50 max-[860px]:hidden max-[860px]:w-full max-[860px]:bg-[var(--background)] max-[860px]:px-[calc(19*var(--unit-fx))] max-[860px]:pb-[calc(28*var(--unit-fx))] max-[860px]:pt-[calc(27*var(--unit-fx))]",
               menuVisible &&
                 (menuExpanded
@@ -106,23 +85,24 @@ export function Header({
                   : "max-[860px]:pointer-events-none max-[860px]:opacity-0"),
             )}
           >
-            <ul className="flex h-full items-center justify-center gap-4 max-[860px]:block max-[860px]:space-y-4">
+            <ul className="flex h-full items-center justify-center gap-4 max-[860px]:block max-[860px]:h-auto max-[860px]:w-full max-[860px]:space-y-0">
             {navItems.map((item) =>
               item.href === "/classes" ? (
                 <ClassesMenu
                   key={item.href}
                   lessons={content.lessons}
                   intro={content.pages.classes.heading}
+                  mobileMenuVisible={menuVisible}
                   onNavigate={closeMenu}
                 />
               ) : (
               <li
                 key={item.href}
-                className="relative flex h-full items-center justify-center max-[860px]:block max-[860px]:h-auto"
+                className="relative flex h-full items-center justify-center max-[860px]:block max-[860px]:h-11"
               >
                 <a
                   href={item.href}
-                  className="inline-flex h-[38px] items-center rounded-[4px] px-[10px] hover:bg-[var(--hover-paper)] max-[860px]:h-auto max-[860px]:px-0 max-[860px]:leading-[1.8]"
+                  className="inline-flex h-[38px] items-center rounded-[4px] px-[10px] hover:bg-[var(--hover-paper)] max-[860px]:h-full max-[860px]:px-0 max-[860px]:leading-[1.8]"
                   onClick={closeMenu}
                 >
                   {item.label}
@@ -131,58 +111,42 @@ export function Header({
               ),
             )}
             </ul>
-            {showBookingCta ? (
-              <a
-                href={introBookingHref}
-                data-analytics-booking-cta="header"
-                className="mai-ui mt-7 hidden items-center gap-2 hover:underline max-[860px]:mt-auto max-[860px]:flex max-[860px]:leading-[1.8]"
-                onClick={closeMenu}
-              >
-                {content.cta.header}
-                <Image
-                  src="/icons/arrow-up-right.svg"
-                  alt=""
-                  aria-hidden="true"
-                  width={18}
-                  height={18}
-                  className="h-[18px] w-[18px]"
-                />
-              </a>
-            ) : null}
-            <div className="mt-9 hidden w-full gap-5 max-[860px]:flex">
-              <nav
-                aria-label="Footer links"
-                className="mai-footer w-1/2"
-              >
-                {mobileFooterLinks.map((link) => (
-                  <a
-                    key={link.href}
-                    href={link.href}
-                    className="block hover:underline"
-                    onClick={closeMenu}
-                  >
-                    {link.label}
-                  </a>
-                ))}
-              </nav>
-              {mobileSocialLinks.length > 0 ? (
-                <nav
-                  aria-label="Social links"
-                  className="mai-footer w-1/2"
+            <div
+              className="mobile-menu-bottom hidden w-full max-[860px]:mt-auto max-[860px]:flex max-[860px]:flex-col max-[860px]:pt-[calc(56*var(--unit-fx-type))]"
+              data-mobile-menu-bottom
+            >
+              {showBookingCta ? (
+                <a
+                  href={introBookingHref}
+                  data-analytics-booking-cta="header"
+                  className="mobile-menu-booking-link inline-flex items-center gap-2 hover:underline"
+                  onClick={closeMenu}
                 >
-                  {mobileSocialLinks.map((link) => (
-                    <a
-                      key={link.label}
-                      href={link.href}
-                      {...getExternalLinkProps(link.href)}
-                      className="block hover:underline"
-                      onClick={closeMenu}
-                    >
-                      {link.label}
-                    </a>
-                  ))}
-                </nav>
+                  {content.cta.header}
+                  <Image
+                    src="/icons/arrow-up-right.svg"
+                    alt=""
+                    aria-hidden="true"
+                    width={18}
+                    height={18}
+                    className="h-[18px] w-[18px]"
+                  />
+                </a>
               ) : null}
+              <div
+                className={cn(
+                  "flex flex-col items-start gap-4",
+                  showBookingCta &&
+                    "mt-[calc(56*var(--unit-fx-type))]",
+                )}
+              >
+                <p className="ag-footer-copyright w-[269px] max-w-full">
+                  {footerContent.copyright}
+                </p>
+                <p className="ag-footer-note w-[269px] max-w-full">
+                  {footerContent.note}
+                </p>
+              </div>
             </div>
           </nav>
           <div

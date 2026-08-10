@@ -1,7 +1,8 @@
 "use client";
 
-import type {KeyboardEvent} from "react";
+import {useEffect, useRef, useState, type KeyboardEvent} from "react";
 
+import {getNearestTabScrollLeft} from "@/components/ui/tab-menu-scroll";
 import {cn} from "@/lib/utils";
 
 type NavigationItem = {
@@ -30,63 +31,148 @@ type TabsProps = {
   panelId: string;
 };
 
-const containerClass =
-  "flex w-[366px] max-w-full items-center justify-center rounded-[5px] bg-[#f7f1e4] p-3";
-
 function itemClass(active: boolean) {
   return cn(
-    "mai-ui flex h-[38px] min-w-0 shrink-0 items-center justify-center whitespace-nowrap rounded-[3px] px-[30px] transition-colors duration-[600ms] ease-[var(--alias-easeOut)] hover:bg-[var(--background)] focus-visible:bg-[var(--background)] focus-visible:outline-2 max-[400px]:shrink max-[400px]:px-[27px]",
-    active ? "bg-[var(--background)]" : "bg-[#f7f1e4]",
+    "tab-menu-item mai-ui focus-visible:outline-2",
+    active ? "bg-[var(--background)]" : "bg-[var(--tab-surface)]",
+  );
+}
+
+function NavigationTabMenu({
+  ariaLabel,
+  items,
+}: Omit<NavigationProps, "mode">) {
+  const [overflow, setOverflow] = useState(false);
+  const viewportRef = useRef<HTMLElement>(null);
+  const rowRef = useRef<HTMLDivElement>(null);
+  const activeItemRef = useRef<HTMLAnchorElement>(null);
+
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    const row = rowRef.current;
+
+    if (!viewport || !row) return;
+
+    const measure = () => {
+      setOverflow(viewport.scrollWidth - viewport.clientWidth > 0.5);
+    };
+
+    measure();
+
+    if (typeof ResizeObserver === "undefined") {
+      window.addEventListener("resize", measure);
+      return () => window.removeEventListener("resize", measure);
+    }
+
+    const observer = new ResizeObserver(measure);
+    observer.observe(viewport);
+    observer.observe(row);
+    return () => observer.disconnect();
+  }, [items]);
+
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    const row = rowRef.current;
+    const activeItem = activeItemRef.current;
+
+    if (!overflow || !viewport || !row || !activeItem) return;
+
+    const target = getNearestTabScrollLeft({
+      clientWidth: viewport.clientWidth,
+      itemLeft: row.offsetLeft + activeItem.offsetLeft,
+      itemWidth: activeItem.offsetWidth,
+      scrollLeft: viewport.scrollLeft,
+    });
+
+    if (Math.abs(target - viewport.scrollLeft) < 0.5) return;
+
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    viewport.scrollTo({
+      behavior: reducedMotion ? "auto" : "smooth",
+      left: target,
+    });
+  }, [items, overflow]);
+
+  return (
+    <div className="tab-menu-layout" data-overflow={overflow}>
+      <nav
+        ref={viewportRef}
+        aria-label={ariaLabel}
+        data-overflow={overflow}
+        data-testid="booking-tab-menu"
+        className="tab-menu-viewport"
+      >
+        <div ref={rowRef} className="tab-menu-row">
+          {items.map((item) => (
+            <a
+              key={item.label}
+              ref={item.active ? activeItemRef : undefined}
+              href={item.href}
+              aria-current={item.active ? "page" : undefined}
+              className={itemClass(item.active)}
+            >
+              {item.label}
+            </a>
+          ))}
+        </div>
+      </nav>
+    </div>
   );
 }
 
 export function TabMenu(props: NavigationProps | TabsProps) {
-  if (props.mode === "tabs") {
-    const {activeId, ariaLabel, items, onTabChange, panelId} = props;
+  if (props.mode !== "tabs") {
+    return <NavigationTabMenu ariaLabel={props.ariaLabel} items={props.items} />;
+  }
 
-    const selectTab = (
-      index: number,
-      event: KeyboardEvent<HTMLButtonElement>,
-    ) => {
-      const item = items[index];
-      if (!item) return;
+  const {activeId, ariaLabel, items, onTabChange, panelId} = props;
 
-      onTabChange(item.id);
-      const buttons = event.currentTarget.parentElement?.querySelectorAll(
-        '[role="tab"]',
-      );
-      (buttons?.[index] as HTMLButtonElement | undefined)?.focus();
-    };
+  const selectTab = (
+    index: number,
+    event: KeyboardEvent<HTMLButtonElement>,
+  ) => {
+    const item = items[index];
+    if (!item) return;
 
-    const handleKeyDown = (
-      index: number,
-      event: KeyboardEvent<HTMLButtonElement>,
-    ) => {
-      let nextIndex: number | undefined;
+    onTabChange(item.id);
+    const buttons = event.currentTarget.parentElement?.querySelectorAll(
+      '[role="tab"]',
+    );
+    (buttons?.[index] as HTMLButtonElement | undefined)?.focus();
+  };
 
-      if (event.key === "ArrowLeft") {
-        nextIndex = (index - 1 + items.length) % items.length;
-      } else if (event.key === "ArrowRight") {
-        nextIndex = (index + 1) % items.length;
-      } else if (event.key === "Home") {
-        nextIndex = 0;
-      } else if (event.key === "End") {
-        nextIndex = items.length - 1;
-      }
+  const handleKeyDown = (
+    index: number,
+    event: KeyboardEvent<HTMLButtonElement>,
+  ) => {
+    let nextIndex: number | undefined;
 
-      if (nextIndex == null) return;
-      event.preventDefault();
-      selectTab(nextIndex, event);
-    };
+    if (event.key === "ArrowLeft") {
+      nextIndex = (index - 1 + items.length) % items.length;
+    } else if (event.key === "ArrowRight") {
+      nextIndex = (index + 1) % items.length;
+    } else if (event.key === "Home") {
+      nextIndex = 0;
+    } else if (event.key === "End") {
+      nextIndex = items.length - 1;
+    }
 
-    return (
+    if (nextIndex == null) return;
+    event.preventDefault();
+    selectTab(nextIndex, event);
+  };
+
+  return (
+    <div className="tab-menu-layout" data-overflow="false">
       <div
         aria-label={ariaLabel}
-        className={containerClass}
+        className="tab-menu-viewport"
         data-testid="home-audience-tabs"
         role="tablist"
       >
-        <div className="flex shrink-0 items-center justify-center">
+        <div className="tab-menu-row">
           {items.map((item, index) => {
             const active = item.id === activeId;
 
@@ -109,29 +195,6 @@ export function TabMenu(props: NavigationProps | TabsProps) {
           })}
         </div>
       </div>
-    );
-  }
-
-  const {ariaLabel, items} = props;
-
-  return (
-    <nav
-      aria-label={ariaLabel}
-      data-testid="booking-tab-menu"
-      className={containerClass}
-    >
-      <div className="flex shrink-0 items-center justify-center">
-        {items.map((item) => (
-          <a
-            key={item.label}
-            href={item.href}
-            aria-current={item.active ? "page" : undefined}
-            className={itemClass(item.active)}
-          >
-            {item.label}
-          </a>
-        ))}
-      </div>
-    </nav>
+    </div>
   );
 }

@@ -1,7 +1,9 @@
 /* eslint-disable prefer-rest-params -- kept in sync with Cal.com's official bootstrap */
 "use client";
 
-import {useEffect} from "react";
+import {useEffect, useReducer} from "react";
+
+import {calBookingStatusReducer} from "@/components/analytics/cal-booking-status";
 
 import {
   calPathFromUrl,
@@ -74,9 +76,21 @@ export function CalBookingEmbed({
   title: string;
   notes?: string;
 }) {
+  const [status, dispatch] = useReducer(calBookingStatusReducer, "loading");
+
   useEffect(() => {
+    let active = true;
+    dispatch({type: "reset"});
+
     const calLink = calPathFromUrl(url);
-    if (!calLink) return;
+    if (!calLink) {
+      dispatch({type: "linkFailed"});
+      return;
+    }
+
+    const slowTimer = window.setTimeout(() => {
+      if (active) dispatch({type: "slow"});
+    }, 8000);
 
     const Cal = loadCal();
     Cal("init", {origin: "https://cal.com"});
@@ -94,17 +108,63 @@ export function CalBookingEmbed({
       styles: {body: {background: "transparent"}},
     });
     Cal("on", {
+      action: "linkReady",
+      callback: () => {
+        if (active) dispatch({type: "linkReady"});
+      },
+    });
+    Cal("on", {
+      action: "bookerReady",
+      callback: () => {
+        if (active) {
+          window.clearTimeout(slowTimer);
+          dispatch({type: "bookerReady"});
+        }
+      },
+    });
+    Cal("on", {
+      action: "linkFailed",
+      callback: () => {
+        if (active) {
+          window.clearTimeout(slowTimer);
+          dispatch({type: "linkFailed"});
+        }
+      },
+    });
+    Cal("on", {
       action: "bookingSuccessfulV2",
       callback: trackBookingSuccess,
     });
+
+    return () => {
+      active = false;
+      window.clearTimeout(slowTimer);
+    };
   }, [notes, url]);
 
   return (
-    <div
-      id="agatha-cal-inline"
-      role="region"
-      aria-label={title}
-      className="min-h-[620px] w-full rounded-[var(--radius-card)]"
-    />
+    <div className="cal-booking-shell w-full">
+      {status !== "ready" ? (
+        <div
+          role="status"
+          aria-live="polite"
+          className="mai-ui mb-5 text-center text-[var(--muted)]"
+          data-cal-status={status}
+        >
+          {status === "failed"
+            ? "The booking calendar could not load. Use the direct Cal.com link below."
+            : status === "slow"
+              ? "The booking calendar is taking longer than expected. You can use the direct Cal.com link below."
+              : "Loading booking calendar…"}
+        </div>
+      ) : null}
+      <div
+        id="agatha-cal-inline"
+        role="region"
+        aria-label={title}
+        aria-busy={status === "loading" || status === "slow"}
+        className="min-h-[620px] w-full rounded-[var(--radius-card)]"
+      />
+    </div>
   );
 }

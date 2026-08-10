@@ -58,7 +58,7 @@ describe("footer", () => {
     expect(html).toContain('data-footer-section="site"');
     expect(html).toContain('data-footer-section="legal"');
     expect(html).toContain('data-footer-section="contact"');
-    expect(html).toContain("Book a Call");
+    expect(html).toContain("Book Intro Call");
     expect(html).toContain('data-analytics-booking-cta="footer"');
     expect(html).not.toContain("Book a lesson");
     expect(html).toContain("Get In Touch");
