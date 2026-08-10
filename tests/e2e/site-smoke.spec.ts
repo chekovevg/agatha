@@ -136,8 +136,6 @@ test("primary English routes render successfully with security headers", async (
     "/classes",
     "/media",
     "/book",
-    "/online-flute-lessons-for-adults",
-    "/online-flute-lessons-for-children",
   ]) {
     const response = await page.goto(path);
 
@@ -154,7 +152,7 @@ test("primary English routes render successfully with security headers", async (
   expect(pageErrors).toEqual([]);
 });
 
-test("home and audience pages expose their approved H1 and booking paths", async ({
+test("home exposes its approved H1, metadata, and booking path", async ({
   page,
 }) => {
   await page.goto("/");
@@ -179,37 +177,9 @@ test("home and audience pages expose their approved H1 and booking paths", async
   expect(
     homeJsonLd.some((value) => value.includes('"@type":"WebSite"')),
   ).toBe(true);
-
-  for (const [path, heading] of [
-    [
-      "/online-flute-lessons-for-adults",
-      "Private Online Flute Lessons for Adults",
-    ],
-    [
-      "/online-flute-lessons-for-children",
-      "Private Online Flute Lessons for Children",
-    ],
-  ] as const) {
-    await page.goto(path);
-    await expect(page.locator("h1:visible")).toHaveCount(1);
-    await expect(page.locator("h1:visible")).toHaveText(heading);
-    await expect(page).toHaveTitle(
-      `${heading.replace("Private ", "")} | Agatha Music`,
-    );
-    const canonical = await page
-      .locator('link[rel="canonical"]')
-      .getAttribute("href");
-    expect(new URL(canonical!).pathname).toBe(path);
-    const jsonLd = await page
-      .locator('script[type="application/ld+json"]')
-      .allTextContents();
-    expect(jsonLd.some((value) => value.includes('"@type":"Service"'))).toBe(
-      true,
-    );
-    await expect(
-      page.getByRole("link", {name: "Book a Call"}).first(),
-    ).toHaveAttribute("href", "/book?type=intro");
-  }
+  await expect(
+    page.getByRole("link", {name: "Book a Call"}).first(),
+  ).toHaveAttribute("href", "/book?type=intro");
 });
 
 test("desktop header keeps its three links and booking action clear", async ({
@@ -375,18 +345,6 @@ test("Red Hat Mono roles follow the reference responsive matrix", async ({
     }
   }
 
-  await page.setViewportSize({width: 1728, height: 1000});
-  await page.goto("/online-flute-lessons-for-adults");
-  const audienceEyebrow = await readTypography(
-    page.getByText("Private online flute lessons", {exact: true}),
-  );
-  expect(audienceEyebrow.fontSize).toBeCloseTo(16, 1);
-  expect(audienceEyebrow.fontWeight).toBe("500");
-  expect(audienceEyebrow.letterSpacing).toBeCloseTo(1.5, 2);
-  expect(audienceEyebrow.lineHeight / audienceEyebrow.fontSize).toBeCloseTo(
-    1,
-    1,
-  );
 });
 
 test("header and Classes menu use their designed desktop shadows", async ({
@@ -420,25 +378,201 @@ test("header and Classes menu use their designed desktop shadows", async ({
   await expect(headerSurface).toHaveCSS("box-shadow", "none");
 });
 
-test("home typography and audience buttons follow the current Figma contract", async ({
+test("home typography follows the reference baseline and breakpoint scale", async ({
+  page,
+}) => {
+  const cases = [
+    {
+      width: 390,
+      display: 48.51,
+      subtitle: 17.46,
+      manifestoCopy: 17.46,
+      locationHeading: 48.51,
+    },
+    {
+      width: 1440,
+      display: 125,
+      subtitle: 28.44,
+      manifestoCopy: 28.44,
+      locationHeading: 71.11,
+    },
+    {
+      width: 1728,
+      display: 150,
+      subtitle: 32,
+      manifestoCopy: 32,
+      locationHeading: 80,
+    },
+  ];
+
+  for (const expected of cases) {
+    await page.setViewportSize({width: expected.width, height: 1000});
+    await page.goto("/");
+
+    const fontSize = async (selector: string) =>
+      Number.parseFloat(
+        await page
+          .locator(selector)
+          .evaluate((element) => getComputedStyle(element).fontSize),
+      );
+
+    expect(await fontSize(".plain-home-title")).toBeCloseTo(
+      expected.display,
+      1,
+    );
+    expect(await fontSize(".plain-home-subtitle")).toBeCloseTo(
+      expected.subtitle,
+      1,
+    );
+    expect(await fontSize("[data-home-manifesto-copy]")).toBeCloseTo(
+      expected.manifestoCopy,
+      1,
+    );
+    expect(await fontSize("[data-home-location-heading]")).toBeCloseTo(
+      expected.locationHeading,
+      1,
+    );
+  }
+});
+
+test("editorial text uses Newsreader Regular and headings use EB Garamond Regular", async ({
+  page,
+}) => {
+  await page.setViewportSize({width: 1728, height: 1000});
+  await page.goto("/classes");
+
+  const copy = await readTypography(page.locator(".mai-body").first());
+  const heading = await readTypography(page.locator(".mai-h4").first());
+
+  expect(copy.fontFamily).toContain("Newsreader");
+  expect(copy.fontWeight).toBe("400");
+  expect(heading.fontFamily).toContain("EB Garamond");
+  expect(heading.fontWeight).toBe("400");
+});
+
+test("home display and lead spacing follows the reference layout scale", async ({
+  page,
+}) => {
+  const cases = [
+    {width: 390, displayLeadGap: 12.13},
+    {width: 1440, displayLeadGap: 31.25},
+    {width: 1728, displayLeadGap: 37.5},
+  ];
+
+  for (const expected of cases) {
+    await page.setViewportSize({width: expected.width, height: 1000});
+    await page.goto("/");
+
+    const gaps = await page.evaluate(() => {
+      const gapBetween = (first: Element, second: Element) => {
+        const firstRect = first.getBoundingClientRect();
+        const secondRect = second.getBoundingClientRect();
+        return secondRect.top - firstRect.bottom;
+      };
+      const display = document.querySelector(".plain-home-title");
+      const lead = document.querySelector(".plain-home-subtitle");
+      if (!display || !lead) {
+        throw new Error("Expected home typography nodes");
+      }
+      return {
+        displayLeadGap: gapBetween(display, lead),
+      };
+    });
+
+    expect(gaps.displayLeadGap).toBeCloseTo(expected.displayLeadGap, 1);
+  }
+});
+
+test("home spacing roles resolve from the shared scale", async ({page}) => {
+  for (const width of [390, 768, 1224, 1728]) {
+    await page.setViewportSize({width, height: 1000});
+    await page.goto("/");
+    await expect(page.locator(".home-location-copy-stack img")).toBeVisible();
+
+    const gaps = await page.evaluate(() => {
+      const gapBetween = (firstSelector: string, secondSelector: string) => {
+        const first = document.querySelector(firstSelector);
+        const second = document.querySelector(secondSelector);
+        if (!first || !second) {
+          throw new Error(
+            `Expected spacing nodes: ${firstSelector}, ${secondSelector}`,
+          );
+        }
+        const firstRect = first.getBoundingClientRect();
+        const secondRect = second.getBoundingClientRect();
+        return secondRect.top - firstRect.bottom;
+      };
+
+      return {
+        displayLead: gapBetween(
+          ".plain-home-title",
+          ".plain-home-subtitle",
+        ),
+        leadAction: gapBetween(
+          ".plain-home-subtitle",
+          '[data-analytics-booking-cta="home-hero"]',
+        ),
+        controlDescription: gapBetween(
+          '[role="tablist"]',
+          "[data-home-manifesto-copy]",
+        ),
+        descriptionAction: gapBetween(
+          "[data-home-manifesto-copy]",
+          '[data-analytics-booking-cta="home-audience"]',
+        ),
+        sectionTransition: gapBetween(
+          '[data-analytics-booking-cta="home-audience"]',
+          "[data-home-location-heading]",
+        ),
+        headingMedia: gapBetween(
+          "[data-home-location-heading]",
+          ".home-location-copy-stack img",
+        ),
+        mediaCopy: gapBetween(
+          ".home-location-copy-stack img",
+          "[data-home-location-copy]",
+        ),
+        editorialAction: gapBetween(
+          "[data-home-location-copy]",
+          '[data-analytics-booking-cta="home"]',
+        ),
+      };
+    });
+
+    const scale = width <= 600 ? width / 402 : Math.min(width / 1728, 1);
+    const expected = {
+      displayLead: (width <= 600 ? 12.5 : 37.5) * scale,
+      leadAction: (width <= 600 ? 40 : 50) * scale,
+      controlDescription: 30 * scale,
+      descriptionAction: (width <= 600 ? 40 : 50) * scale,
+      sectionTransition: (width <= 600 ? 144 : 190) * scale,
+      headingMedia: (width <= 600 ? 30 : 0) * scale,
+      mediaCopy: 30 * scale,
+      editorialAction: 76 * scale,
+    };
+
+    for (const [role, value] of Object.entries(expected)) {
+      expect(gaps[role as keyof typeof gaps], `${role} at ${width}px`).toBeCloseTo(
+        value,
+        1,
+      );
+    }
+  }
+});
+
+test("text selection uses the reference paper color", async ({page}) => {
+  await page.goto("/");
+  const selection = await page.locator("body").evaluate((element) =>
+    getComputedStyle(element, "::selection").backgroundColor,
+  );
+  expect(selection).toBe("rgb(245, 238, 224)");
+});
+
+test("home audience tabs switch their panel without navigation", async ({
   page,
 }) => {
   await page.setViewportSize({width: 1440, height: 1000});
   await page.goto("/");
-
-  const fontSize = async (selector: string) =>
-    Number.parseFloat(
-      await page
-        .locator(selector)
-        .evaluate((element) => getComputedStyle(element).fontSize),
-    );
-
-  expect(await fontSize(".plain-home-title")).toBeCloseTo(120, 1);
-  expect(await fontSize(".plain-home-subtitle")).toBeCloseTo(32, 1);
-  expect(await fontSize("[data-home-manifesto-heading]")).toBeCloseTo(62, 1);
-  expect(await fontSize("[data-home-manifesto-copy]")).toBeCloseTo(28, 1);
-  expect(await fontSize("[data-home-location-heading]")).toBeCloseTo(80, 1);
-  expect(await fontSize("[data-home-location-copy]")).toBeCloseTo(28, 1);
 
   const fontFaces = await page.evaluate(() =>
     Array.from(document.styleSheets).flatMap((sheet) =>
@@ -455,29 +589,77 @@ test("home typography and audience buttons follow the current Figma contract", a
     ),
   ).toBe(true);
 
-  const copy = page.locator("[data-home-manifesto-copy]");
-  const adults = page.getByRole("link", {name: "For adults"});
-  const children = page.getByRole("link", {name: "For children"});
-  const heroCta = page.getByRole("link", {name: "Get in Touch"}).first();
-
-  await expect(copy).toHaveText(
-    "Agatha teaches through small steps — helping students build confidence, sound and understanding.",
+  const panel = page.getByRole("tabpanel");
+  const adults = page.getByRole("tab", {name: "For adults"});
+  const children = page.getByRole("tab", {name: "For children"});
+  const audienceCta = page.locator(
+    '[data-analytics-booking-cta="home-audience"]',
   );
-  await adults.hover();
-  await expect(copy).toHaveText(
+
+  await expect(adults).toHaveAttribute("aria-selected", "true");
+  await expect(panel).toHaveText(
     "Start from your first note, return after a break, or strengthen the playing you already have.",
   );
   await children.hover();
-  await expect(copy).toHaveText(
-    "Clear musical foundations, age-appropriate goals and practical guidance for the time between lessons.",
+  await expect(panel).toHaveText(
+    "Start from your first note, return after a break, or strengthen the playing you already have.",
   );
 
-  await expect(adults).toHaveCSS("background-color", "rgb(246, 236, 218)");
-  await adults.hover();
-  await expect(adults).toHaveCSS("background-color", "rgb(92, 82, 76)");
-  await expect(heroCta).toHaveCSS("background-color", "rgb(92, 82, 76)");
-  await heroCta.hover();
-  await expect(heroCta).toHaveCSS("background-color", "rgb(246, 236, 218)");
+  await children.click();
+  await expect(children).toHaveAttribute("aria-selected", "true");
+  await expect(panel).toHaveText(
+    "Clear musical foundations, age-appropriate goals and practical guidance for the time between lessons.",
+  );
+  await expect(page).toHaveURL(/\/$/);
+
+  await children.press("ArrowLeft");
+  await expect(adults).toBeFocused();
+  await expect(adults).toHaveAttribute("aria-selected", "true");
+  await expect(panel).toHaveText(
+    "Start from your first note, return after a break, or strengthen the playing you already have.",
+  );
+
+  await adults.press("End");
+  await expect(children).toBeFocused();
+  await expect(children).toHaveAttribute("aria-selected", "true");
+  await children.press("Home");
+  await expect(adults).toBeFocused();
+  await expect(adults).toHaveAttribute("aria-selected", "true");
+
+  await expect(audienceCta).toHaveAttribute("href", "/book?type=intro");
+  await expect(audienceCta).toHaveClass(/split-link-button/);
+
+  for (const width of [390, 768, 1224, 1728]) {
+    await page.setViewportSize({width, height: 1000});
+    await page.goto("/");
+
+    const responsiveAdults = page.getByRole("tab", {name: "For adults"});
+    const responsiveChildren = page.getByRole("tab", {name: "For children"});
+    const responsivePanel = page.getByRole("tabpanel");
+    const responsiveCta = page.locator(
+      '[data-analytics-booking-cta="home-audience"]',
+    );
+    const [adultsBox, childrenBox, panelOverflow, ctaBox] = await Promise.all([
+      responsiveAdults.boundingBox(),
+      responsiveChildren.boundingBox(),
+      responsivePanel.evaluate((element) => ({
+        clientHeight: element.clientHeight,
+        scrollHeight: element.scrollHeight,
+      })),
+      responsiveCta.boundingBox(),
+    ]);
+
+    expect(adultsBox, `adult tab at ${width}px`).not.toBeNull();
+    expect(childrenBox, `child tab at ${width}px`).not.toBeNull();
+    expect(ctaBox, `booking CTA at ${width}px`).not.toBeNull();
+    expect(
+      adultsBox!.x + adultsBox!.width,
+      `audience tabs overlap at ${width}px`,
+    ).toBeLessThanOrEqual(childrenBox!.x + 0.5);
+    expect(panelOverflow.scrollHeight).toBeLessThanOrEqual(
+      panelOverflow.clientHeight + 1,
+    );
+  }
 });
 
 test("footer keeps its link cluster centered and stacks before columns overlap", async ({
@@ -825,8 +1007,17 @@ test("legacy English routes redirect only for the approved exact paths", async (
   }
 });
 
-test("unapproved locale routes remain standard 404 responses", async ({page}) => {
-  for (const path of ["/de", "/ru", "/en/unknown", "/de/book"]) {
+test("removed and unapproved routes remain standard 404 responses", async ({
+  page,
+}) => {
+  for (const path of [
+    "/de",
+    "/ru",
+    "/en/unknown",
+    "/de/book",
+    "/online-flute-lessons-for-adults",
+    "/online-flute-lessons-for-children",
+  ]) {
     const response = await page.goto(path);
 
     expect(response?.status(), path).toBe(404);

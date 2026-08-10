@@ -70,23 +70,30 @@ describe("home page", () => {
     expect(html).not.toContain("Play the phrase");
   });
 
-  it("keeps only the manifesto and Rhine blocks after the hero", () => {
+  it("renders local audience tabs and the Rhine block after the hero", () => {
     const html = renderToStaticMarkup(
       createElement(HomePage, {content: siteContent}),
     );
-    const manifesto = html.indexOf("Music becomes possible");
-    const adultLink = html.indexOf(
-      'href="/online-flute-lessons-for-adults"',
-    );
-    const childrenLink = html.indexOf(
-      'href="/online-flute-lessons-for-children"',
+    const adultsTab = html.indexOf("For adults");
+    const childrenTab = html.indexOf("For children");
+    const description = html.indexOf("Start from your first note");
+    const audienceCta = html.indexOf(
+      'data-analytics-booking-cta="home-audience"',
     );
     const location = html.indexOf("From the Rhine, online");
 
-    expect(manifesto).toBeGreaterThan(-1);
-    expect(adultLink).toBeGreaterThan(manifesto);
-    expect(childrenLink).toBeGreaterThan(manifesto);
-    expect(location).toBeGreaterThan(childrenLink);
+    expect(adultsTab).toBeGreaterThan(-1);
+    expect(childrenTab).toBeGreaterThan(adultsTab);
+    expect(description).toBeGreaterThan(childrenTab);
+    expect(audienceCta).toBeGreaterThan(description);
+    expect(location).toBeGreaterThan(audienceCta);
+    expect(html).toContain('role="tablist"');
+    expect(html).toContain('role="tabpanel"');
+    expect(html).toContain('class="split-link-button');
+    expect(html).toContain('href="/book?type=intro"');
+    expect(html).not.toContain("Music becomes possible");
+    expect(html).not.toContain("/online-flute-lessons-for-adults");
+    expect(html).not.toContain("/online-flute-lessons-for-children");
     expect(html).not.toContain(">Values<");
     expect(html).not.toContain("I believe music should never feel");
   });

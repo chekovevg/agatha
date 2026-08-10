@@ -1,7 +1,6 @@
 import type {Metadata} from "next";
 
 import {siteContent} from "@/content/site";
-import type {AudienceLessonContent} from "@/content/types";
 import {env} from "@/lib/env";
 
 const siteName = "Agatha Music";
@@ -99,16 +98,6 @@ export function mediaMetadata(): Metadata {
   });
 }
 
-export function audienceLessonMetadata(
-  content: AudienceLessonContent,
-): Metadata {
-  return pageMetadata({
-    path: content.path,
-    title: content.seo.title,
-    description: content.seo.description,
-  });
-}
-
 export function siteStructuredData() {
   return {
     "@context": "https://schema.org",
@@ -134,19 +123,6 @@ export function siteStructuredData() {
         publisher: {"@id": PERSON_ID},
       },
     ],
-  };
-}
-
-export function serviceStructuredData(content: AudienceLessonContent) {
-  return {
-    "@context": "https://schema.org",
-    "@type": "Service",
-    "@id": `${siteUrl(content.path)}#service`,
-    name: content.title,
-    description: content.seo.description,
-    serviceType: "Private online flute lessons",
-    url: siteUrl(content.path),
-    provider: {"@id": PERSON_ID},
   };
 }
 

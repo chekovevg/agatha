@@ -38,6 +38,7 @@ export function BookingSection({
           <h1 className="sr-only">Book a Call</h1>
           <div>
             <TabMenu
+              mode="navigation"
               ariaLabel="Booking type"
               items={content.booking.eventTypes.map((event) => ({
                 active: event.mode === mode,

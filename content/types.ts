@@ -34,16 +34,12 @@ export type SiteContent = {
       galleryHeading: string;
     };
   };
-  audienceLessons: {
-    adults: AudienceLessonContent;
-    children: AudienceLessonContent;
-  };
   home: {
     heroTitle: string;
     heroSubtitle: string;
-    manifesto: {
-      heading: string;
-      body: string;
+    audienceTabs: {
+      adults: {label: "For adults"; description: string};
+      children: {label: "For children"; description: string};
     };
     location: {
       heading: string;
@@ -86,30 +82,6 @@ export type SiteContent = {
     impressumTitle: string;
     privacyTitle: string;
   };
-};
-
-export type AudienceLessonContent = {
-  path:
-    | "/online-flute-lessons-for-adults"
-    | "/online-flute-lessons-for-children";
-  navLabel: "For adults" | "For children";
-  eyebrow: string;
-  title: string;
-  intro: string;
-  trustLine: string;
-  cardCopy: string;
-  audienceHeading: string;
-  audienceCopy: string;
-  audiencePoints: string[];
-  lessonsHeading: string;
-  lessonsCopy: string;
-  lessonFocus: {title: string; text: string}[];
-  whyHeading: string;
-  whyParagraphs: string[];
-  faq: {question: string; answer: string}[];
-  ctaHeading: string;
-  ctaCopy: string;
-  seo: {title: string; description: string};
 };
 
 export type Lesson = {

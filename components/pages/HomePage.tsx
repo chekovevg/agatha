@@ -2,7 +2,7 @@ import Image from "next/image";
 
 import {Footer} from "@/components/layout/Footer";
 import {Header} from "@/components/layout/Header";
-import {HomeAudienceSelector} from "@/components/sections/HomeAudienceSelector";
+import {HomeAudienceTabs} from "@/components/sections/HomeAudienceTabs";
 import {ButtonLink} from "@/components/ui/Button";
 import type {SiteContent} from "@/content/types";
 import {introBookingHref} from "@/lib/booking";
@@ -44,11 +44,7 @@ export function HomePage({
         </section>
 
         <div className="home-main-stack">
-          <HomeAudienceSelector
-            audiences={Object.values(content.audienceLessons)}
-            body={home.manifesto.body}
-            heading={home.manifesto.heading}
-          />
+          <HomeAudienceTabs tabs={home.audienceTabs} />
 
           <section
             className="home-location-section"
@@ -77,6 +73,7 @@ export function HomePage({
               <ButtonLink
                 href={introBookingHref}
                 variant="split"
+                className="home-location-action"
                 data-analytics-booking-cta="home"
               >
                 {home.location.cta}

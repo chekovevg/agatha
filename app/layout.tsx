@@ -34,24 +34,6 @@ const newsreader = Newsreader({
   subsets: ["latin"],
 });
 
-const garamondBookNarrow = localFont({
-  src: [
-    {
-      path: "./fonts/GaramondBookNarrowC.otf",
-      style: "normal",
-      weight: "400",
-    },
-    {
-      path: "./fonts/GaramondBookNarrowC-Italic.otf",
-      style: "italic",
-      weight: "400",
-    },
-  ],
-  adjustFontFallback: "Times New Roman",
-  display: "swap",
-  variable: "--font-garamond-book-narrow",
-});
-
 const azGaramond = localFont({
   src: "./fonts/AZGaramondC.otf",
   adjustFontFallback: "Times New Roman",
@@ -92,7 +74,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${redHatMono.variable} ${ebGaramond.variable} ${newsreader.variable} ${garamondBookNarrow.variable} ${azGaramond.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${redHatMono.variable} ${ebGaramond.variable} ${newsreader.variable} ${azGaramond.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <script

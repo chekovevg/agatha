@@ -50,7 +50,6 @@ vi.mock("next/image", async () => {
 
 import sitemap from "@/app/sitemap";
 import {AboutPage} from "@/components/pages/AboutPage";
-import {AudienceLessonPage} from "@/components/pages/AudienceLessonPage";
 import {ClassesPage} from "@/components/pages/ClassesPage";
 import {BookingSection} from "@/components/sections/BookingSection";
 import {siteContent} from "@/content/site";
@@ -105,59 +104,20 @@ describe("editorial site structure", () => {
     ]);
   });
 
-  it("keeps distinct adult and child lesson content", () => {
-    expect(siteContent).toHaveProperty(
-      "audienceLessons.adults.path",
-      "/online-flute-lessons-for-adults",
-    );
-    expect(siteContent).toHaveProperty(
-      "audienceLessons.children.path",
-      "/online-flute-lessons-for-children",
-    );
-    expect(siteContent).toHaveProperty(
-      "audienceLessons.adults.title",
-      "Private Online Flute Lessons for Adults",
-    );
-    expect(siteContent).toHaveProperty(
-      "audienceLessons.children.title",
-      "Private Online Flute Lessons for Children",
-    );
-  });
-
-  it("renders distinct audience pages with one H1, four FAQs, and booking CTAs", () => {
-    const adultHtml = renderToStaticMarkup(
-      createElement(AudienceLessonPage, {
-        content: siteContent.audienceLessons.adults,
-        site: siteContent,
-      }),
-    );
-    const childHtml = renderToStaticMarkup(
-      createElement(AudienceLessonPage, {
-        content: siteContent.audienceLessons.children,
-        site: siteContent,
-      }),
-    );
-
-    expect(adultHtml.match(/<h1/g)).toHaveLength(1);
-    expect(childHtml.match(/<h1/g)).toHaveLength(1);
-    expect(adultHtml).toContain("Private Online Flute Lessons for Adults");
-    expect(adultHtml).toContain(
-      "Returning players rebuilding confidence after a break",
-    );
-    expect(childHtml).toContain("Private Online Flute Lessons for Children");
-    expect(childHtml).toContain("Support that fits the child");
-    expect(adultHtml.match(/<details/g)).toHaveLength(4);
-    expect(childHtml.match(/<details/g)).toHaveLength(4);
-    expect(adultHtml).toContain('href="/book?type=intro"');
-    expect(childHtml).toContain('href="/book?type=intro"');
-    expect(adultHtml).toContain(
-      'data-analytics-booking-cta="audience-hero"',
-    );
-    expect(adultHtml).toContain(
-      'data-analytics-booking-cta="audience-final"',
-    );
-    expect(adultHtml).toContain('type="application/ld+json"');
-    expect(adultHtml).toContain('"@type":"Service"');
+  it("keeps only the compact Home audience tab content", () => {
+    expect(siteContent.home.audienceTabs).toEqual({
+      adults: {
+        label: "For adults",
+        description:
+          "Start from your first note, return after a break, or strengthen the playing you already have.",
+      },
+      children: {
+        label: "For children",
+        description:
+          "Clear musical foundations, age-appropriate goals and practical guidance for the time between lessons.",
+      },
+    });
+    expect(siteContent).not.toHaveProperty("audienceLessons");
   });
 
   it("renders one consistent booking action for each approved class", () => {
@@ -187,8 +147,6 @@ describe("editorial site structure", () => {
       "/classes",
       "/about",
       "/media",
-      "/online-flute-lessons-for-adults",
-      "/online-flute-lessons-for-children",
     ]);
     expect(sitemap().every((entry) => entry.lastModified == null)).toBe(true);
   });
@@ -202,11 +160,16 @@ describe("editorial site structure", () => {
       "app/classes/page.tsx",
       "app/media/page.tsx",
       "app/book/page.tsx",
+    ]) {
+      expect(existsSync(new URL(path, root))).toBe(true);
+    }
+
+    for (const path of [
       "app/online-flute-lessons-for-adults/page.tsx",
       "app/online-flute-lessons-for-children/page.tsx",
       "components/pages/AudienceLessonPage.tsx",
     ]) {
-      expect(existsSync(new URL(path, root))).toBe(true);
+      expect(existsSync(new URL(path, root))).toBe(false);
     }
 
     expect(existsSync(new URL("app/[locale]", root))).toBe(false);
@@ -243,6 +206,8 @@ describe("editorial site structure", () => {
       expect(html).toContain('<h1 class="sr-only">Book a Call</h1>');
       expect(html).toContain('aria-label="Booking type"');
       expect(html).toContain('aria-current="page"');
+      expect(html).toContain('href="/book?type=intro"');
+      expect(html).toContain('href="/book?type=lesson"');
       expect(html).toContain('aria-label="Book an intro call with Agatha"');
       expect(html).not.toContain('href="https://cal.com/agatha/trial"');
       expect(html).not.toContain("Choose the next step");
