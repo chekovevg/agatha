@@ -124,13 +124,13 @@ export function ClassesMenu({
         aria-hidden={!open}
         data-state={open ? "open" : "closed"}
         className={cn(
-          "absolute left-1/2 top-full w-[698px] -translate-x-1/2 pt-[var(--space-8)] max-[860px]:hidden",
+          "classes-menu-shell absolute left-1/2 top-full w-[698px] -translate-x-1/2 pt-[var(--space-8)] max-[860px]:hidden",
           open ? "pointer-events-auto" : "pointer-events-none",
         )}
       >
         <div
           data-state={open ? "open" : "closed"}
-          className="classes-menu-panel h-[488px] w-[698px] rounded-[4px] text-[var(--ink)] shadow-[var(--shadow-menu-section)]"
+          className="classes-menu-panel h-[488px] w-[698px] rounded-[4px] text-[var(--ink)]"
         >
           <div className="classes-menu-content grid h-full w-full grid-cols-[306.657px_333px] gap-[var(--space-10)] rounded-[4px] bg-[var(--background)] p-[var(--space-24)]">
             <div className="flex h-[440px] min-w-0 flex-col">
@@ -149,7 +149,7 @@ export function ClassesMenu({
                     <a
                       key={lesson.slug}
                       href={lessonBookingHref(lesson.title)}
-                      className="mai-ui group flex h-[50px] items-center gap-[var(--space-16)] bg-[var(--hover-paper)] pl-[var(--space-10)] pr-[var(--space-12)] transition-colors duration-[600ms] ease-[var(--alias-easeOut)] focus-visible:outline-2"
+                      className="mai-metanav-title group flex h-[50px] items-center gap-[var(--space-16)] bg-[var(--hover-paper)] pl-[var(--space-10)] pr-[var(--space-12)] transition-colors duration-[600ms] ease-[var(--alias-easeOut)] focus-visible:outline-2"
                       onMouseEnter={() => setActiveLesson(lesson)}
                       onFocus={() => setActiveLesson(lesson)}
                       onClick={onNavigate}
@@ -176,7 +176,7 @@ export function ClassesMenu({
 
               <a
                 href="/classes"
-                className="mai-ui mt-auto w-fit underline-offset-4 hover:underline focus-visible:outline-2"
+                className="mai-metanav-title mt-auto w-fit underline-offset-4 hover:underline focus-visible:outline-2"
                 onClick={onNavigate}
               >
                 All Classes

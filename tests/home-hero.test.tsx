@@ -91,6 +91,7 @@ describe("home page", () => {
     expect(html).toContain('role="tabpanel"');
     expect(html).toContain('class="split-link-button');
     expect(html).toContain('href="/book?type=intro"');
+    expect(html).not.toContain('data-analytics-booking-cta="home"');
     expect(html).not.toContain("Music becomes possible");
     expect(html).not.toContain("/online-flute-lessons-for-adults");
     expect(html).not.toContain("/online-flute-lessons-for-children");

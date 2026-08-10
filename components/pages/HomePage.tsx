@@ -63,22 +63,12 @@ export function HomePage({
                 alt="Watercolor view of Cologne Cathedral and the Rhine"
                 width={1501}
                 height={944}
-                style={{height: "auto", maxWidth: "500px", width: "100%"}}
+                className="home-location-image"
               />
               <p className="home-section-copy" data-home-location-copy>
                 {home.location.body}
               </p>
             </div>
-            {showActions ? (
-              <ButtonLink
-                href={introBookingHref}
-                variant="split"
-                className="home-location-action"
-                data-analytics-booking-cta="home"
-              >
-                {home.location.cta}
-              </ButtonLink>
-            ) : null}
           </section>
         </div>
       </main>

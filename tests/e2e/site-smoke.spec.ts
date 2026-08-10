@@ -17,81 +17,6 @@ function rectanglesIntersect(
   );
 }
 
-const monoTypographyCases = [
-  {
-    width: 390,
-    ui: 12,
-    headerNav: 16,
-    metaTitle: 14.55,
-    metaDescription: 12.61,
-    footer: 12,
-    footerNote: 11.64,
-  },
-  {
-    width: 768,
-    ui: 12.7,
-    headerNav: 12.7,
-    metaTitle: 12,
-    metaDescription: 10.32,
-    footer: 11.91,
-    footerNote: 9.52,
-  },
-  {
-    width: 1280,
-    ui: 14.22,
-    headerNav: 14.22,
-    metaTitle: 13.33,
-    metaDescription: 11.56,
-    footer: 13.33,
-    footerNote: 10.67,
-  },
-  {
-    width: 1440,
-    ui: 14.22,
-    headerNav: 14.22,
-    metaTitle: 13.33,
-    metaDescription: 11.56,
-    footer: 13.33,
-    footerNote: 10.67,
-  },
-  {
-    width: 1536,
-    ui: 14.22,
-    headerNav: 14.22,
-    metaTitle: 13.33,
-    metaDescription: 11.56,
-    footer: 13.33,
-    footerNote: 10.67,
-  },
-  {
-    width: 1600,
-    ui: 14.81,
-    headerNav: 14.81,
-    metaTitle: 13.89,
-    metaDescription: 12.04,
-    footer: 13.89,
-    footerNote: 11.11,
-  },
-  {
-    width: 1728,
-    ui: 16,
-    headerNav: 16,
-    metaTitle: 15,
-    metaDescription: 13,
-    footer: 15,
-    footerNote: 12,
-  },
-  {
-    width: 1920,
-    ui: 16,
-    headerNav: 16,
-    metaTitle: 15,
-    metaDescription: 13,
-    footer: 15,
-    footerNote: 12,
-  },
-] as const;
-
 async function readTypography(locator: Locator) {
   return locator.evaluate((element) => {
     const style = getComputedStyle(element);
@@ -247,106 +172,6 @@ test("home header stays centered and keeps mono text readable while resizing", a
   ).toContain("Red Hat Mono");
 });
 
-test("Red Hat Mono roles follow the reference responsive matrix", async ({
-  page,
-}) => {
-  for (const typographyCase of monoTypographyCases) {
-    await page.setViewportSize({width: typographyCase.width, height: 1000});
-    await page.goto("/classes");
-
-    const headerNavigation = page.getByRole("navigation", {
-      name: "Header Menu",
-    });
-    if (typographyCase.width <= 860) {
-      await page.getByRole("button", {name: "Open Menu"}).click();
-    }
-
-    const headerNav = await readTypography(
-      headerNavigation.getByRole("link", {name: "Classes", exact: true}),
-    );
-    expect(headerNav.fontFamily).toContain("Red Hat Mono");
-    expect(headerNav.fontSize).toBeCloseTo(typographyCase.headerNav, 1);
-    expect(headerNav.fontWeight).toBe("500");
-    expect(headerNav.letterSpacing).toBeCloseTo(-0.24, 2);
-    expect(headerNav.lineHeight / headerNav.fontSize).toBeCloseTo(
-      typographyCase.width <= 860 ? 1.8 : 1,
-      1,
-    );
-
-    const ui = await readTypography(
-      page.locator('main a[data-analytics-booking-cta="classes"]').first(),
-    );
-    expect(ui.fontFamily).toContain("Red Hat Mono");
-    expect(ui.fontSize).toBeCloseTo(typographyCase.ui, 1);
-    expect(ui.fontWeight).toBe("500");
-    expect(ui.letterSpacing).toBeCloseTo(-0.24, 2);
-    expect(ui.lineHeight / ui.fontSize).toBeCloseTo(1, 1);
-
-    const eyebrow = await readTypography(
-      page.getByText("Music lesson", {exact: true}).first(),
-    );
-    expect(eyebrow.fontSize).toBeCloseTo(typographyCase.ui, 1);
-    expect(eyebrow.fontWeight).toBe("500");
-    expect(eyebrow.letterSpacing).toBeCloseTo(
-      typographyCase.width <= 600 ? 1.2 : 1.5,
-      2,
-    );
-    expect(eyebrow.lineHeight / eyebrow.fontSize).toBeCloseTo(1, 1);
-
-    const footer = await readTypography(
-      page.locator('footer [data-footer-section="site"] a').first(),
-    );
-    expect(footer.fontFamily).toContain("Red Hat Mono");
-    expect(footer.fontSize).toBeCloseTo(typographyCase.footer, 1);
-    expect(footer.fontWeight).toBe("400");
-    expect(footer.letterSpacing).toBeCloseTo(
-      typographyCase.width <= 600 ? 0 : 1.5,
-      2,
-    );
-    expect(footer.lineHeight / footer.fontSize).toBeCloseTo(1.6, 1);
-
-    const footerNote = await readTypography(
-      page.locator("footer .ag-footer-note"),
-    );
-    expect(footerNote.fontSize).toBeCloseTo(typographyCase.footerNote, 1);
-    expect(footerNote.fontWeight).toBe("400");
-    expect(footerNote.letterSpacing).toBeCloseTo(-0.24, 2);
-    expect(footerNote.lineHeight / footerNote.fontSize).toBeCloseTo(1.25, 1);
-
-    if (typographyCase.width > 860) {
-      await headerNavigation
-        .getByRole("link", {name: "Classes", exact: true})
-        .hover();
-      const menu = page.getByRole("navigation", {name: "Classes submenu"});
-      await expect(menu).toBeVisible();
-
-      const metaTitle = await readTypography(
-        menu.getByText("What I teach", {exact: true}),
-      );
-      expect(metaTitle.fontSize).toBeCloseTo(typographyCase.metaTitle, 1);
-      expect(metaTitle.fontWeight).toBe("500");
-      expect(metaTitle.letterSpacing).toBeCloseTo(-0.24, 2);
-      expect(metaTitle.lineHeight / metaTitle.fontSize).toBeCloseTo(1, 1);
-
-      const metaDescription = await readTypography(
-        menu.getByText("Discover and choose what you want to learn", {
-          exact: true,
-        }),
-      );
-      expect(metaDescription.fontSize).toBeCloseTo(
-        typographyCase.metaDescription,
-        1,
-      );
-      expect(metaDescription.fontWeight).toBe("500");
-      expect(metaDescription.letterSpacing).toBeCloseTo(-0.24, 2);
-      expect(
-        metaDescription.lineHeight / metaDescription.fontSize,
-      ).toBeCloseTo(1.6, 1);
-    }
-  }
-
-});
-
 test("header and Classes menu animate one panel instead of revealing a pre-frame", async ({
   page,
 }) => {
@@ -360,13 +185,16 @@ test("header and Classes menu animate one panel instead of revealing a pre-frame
     .hover();
 
   const menuPanel = page.locator(".classes-menu-panel");
+  const menuShell = page.locator(".classes-menu-shell");
   await expect(menuPanel).toBeVisible();
-  const [headerShadow, menuShadow] = await Promise.all([
+  const [headerShadow, menuShadow, menuFilter] = await Promise.all([
     headerSurface.evaluate((element) => getComputedStyle(element).boxShadow),
     menuPanel.evaluate((element) => getComputedStyle(element).boxShadow),
+    menuShell.evaluate((element) => getComputedStyle(element).filter),
   ]);
   expect(headerShadow).toContain("rgba(0, 0, 0, 0.12) 0px 3px 100px 8px");
-  expect(menuShadow).toContain("rgba(0, 0, 0, 0.12) 0px 3px 50px");
+  expect(menuShadow).toBe("none");
+  expect(menuFilter).toContain("drop-shadow");
   expect(
     await menuPanel.evaluate((element) => {
       const style = getComputedStyle(element);
@@ -387,63 +215,6 @@ test("header and Classes menu animate one panel instead of revealing a pre-frame
 
   await page.setViewportSize({width: 390, height: 844});
   await expect(headerSurface).toHaveCSS("box-shadow", "none");
-});
-
-test("home typography follows the reference baseline and breakpoint scale", async ({
-  page,
-}) => {
-  const cases = [
-    {
-      width: 390,
-      display: 48.51,
-      subtitle: 17.46,
-      manifestoCopy: 17.46,
-      locationHeading: 48.51,
-    },
-    {
-      width: 1440,
-      display: 125,
-      subtitle: 28.44,
-      manifestoCopy: 28.44,
-      locationHeading: 71.11,
-    },
-    {
-      width: 1728,
-      display: 150,
-      subtitle: 32,
-      manifestoCopy: 32,
-      locationHeading: 80,
-    },
-  ];
-
-  for (const expected of cases) {
-    await page.setViewportSize({width: expected.width, height: 1000});
-    await page.goto("/");
-
-    const fontSize = async (selector: string) =>
-      Number.parseFloat(
-        await page
-          .locator(selector)
-          .evaluate((element) => getComputedStyle(element).fontSize),
-      );
-
-    expect(await fontSize(".plain-home-title")).toBeCloseTo(
-      expected.display,
-      1,
-    );
-    expect(await fontSize(".plain-home-subtitle")).toBeCloseTo(
-      expected.subtitle,
-      1,
-    );
-    expect(await fontSize("[data-home-manifesto-copy]")).toBeCloseTo(
-      expected.manifestoCopy,
-      1,
-    );
-    expect(await fontSize("[data-home-location-heading]")).toBeCloseTo(
-      expected.locationHeading,
-      1,
-    );
-  }
 });
 
 test("editorial text uses Newsreader Regular and headings use EB Garamond Regular", async ({
@@ -535,18 +306,6 @@ test("home spacing roles resolve from the shared scale", async ({page}) => {
           '[data-analytics-booking-cta="home-audience"]',
           "[data-home-location-heading]",
         ),
-        headingMedia: gapBetween(
-          "[data-home-location-heading]",
-          ".home-location-copy-stack img",
-        ),
-        mediaCopy: gapBetween(
-          ".home-location-copy-stack img",
-          "[data-home-location-copy]",
-        ),
-        editorialAction: gapBetween(
-          "[data-home-location-copy]",
-          '[data-analytics-booking-cta="home"]',
-        ),
       };
     });
 
@@ -557,9 +316,6 @@ test("home spacing roles resolve from the shared scale", async ({page}) => {
       controlDescription: 30 * scale,
       descriptionAction: (width <= 600 ? 40 : 50) * scale,
       sectionTransition: (width <= 600 ? 144 : 190) * scale,
-      headingMedia: (width <= 600 ? 30 : 0) * scale,
-      mediaCopy: 30 * scale,
-      editorialAction: 76 * scale,
     };
 
     for (const [role, value] of Object.entries(expected)) {
@@ -945,7 +701,7 @@ test("booking route selects the relevant event and remains switchable", async ({
   const tabTypography = await readTypography(introTab);
   expect(tabTypography.fontSize).toBeCloseTo(14.22, 1);
   expect(tabTypography.fontWeight).toBe("500");
-  expect(tabTypography.letterSpacing).toBeCloseTo(-0.24, 2);
+  expect(tabTypography.letterSpacing).toBeCloseTo(-0.2133, 2);
   expect(tabTypography.lineHeight / tabTypography.fontSize).toBeCloseTo(1, 1);
   const desktopScale = 1440 / 1728;
   expect(

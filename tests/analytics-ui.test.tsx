@@ -178,7 +178,7 @@ describe("analytics consent UI", () => {
     const mediaHtml = renderToStaticMarkup(createElement(MediaPage, {content: siteContent}));
 
     expect(headerHtml.match(/data-analytics-booking-cta="header"/g)).toHaveLength(2);
-    expect(homeHtml).toContain('data-analytics-booking-cta="home"');
+    expect(homeHtml).not.toContain('data-analytics-booking-cta="home"');
     expect(classesHtml).toContain('data-analytics-booking-cta="classes"');
     expect(mediaHtml).toContain('data-analytics-booking-cta="media"');
   });

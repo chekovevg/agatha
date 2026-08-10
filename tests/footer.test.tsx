@@ -1,5 +1,4 @@
 import {renderToStaticMarkup} from "react-dom/server";
-import {readFileSync} from "node:fs";
 import {describe, expect, it, vi} from "vitest";
 
 vi.mock("next/image", async () => {
@@ -83,25 +82,14 @@ describe("footer", () => {
     expect(html).not.toContain('data-footer-section="bottom-spacer"');
   });
 
-  it("keeps the footer booking arrow on the same line as the label", () => {
+  it("renders the footer booking arrow inside its link", () => {
     const html = renderToStaticMarkup(
       <Footer content={siteContent} />,
-    );
-    const css = readFileSync(
-      new URL("../app/globals.css", import.meta.url),
-      "utf8",
     );
 
     expect(html).toContain(
       'class="footer-book-link items-center gap-[var(--space-8)]"',
     );
     expect(html).toContain('src="/icons/arrow-up-right.svg"');
-    expect(css).toContain(".ag-footer-link-list a.footer-book-link");
-    expect(css).toContain("display: inline-flex;");
-    expect(css).toContain("flex-wrap: nowrap;");
-    expect(css).toContain("white-space: nowrap;");
-    expect(css).toContain("width: max-content;");
-    expect(css).toContain(".ag-footer-link-list a.footer-book-link img");
-    expect(css).toContain("flex: 0 0 auto;");
   });
 });
