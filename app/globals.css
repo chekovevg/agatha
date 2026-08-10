@@ -780,7 +780,7 @@ select {
     align-content: start;
     display: grid;
     justify-items: center;
-    padding: clamp(210px, 23vw, 331px) 20px 72px;
+    padding: clamp(210px, 23vw, 331px) 20px 0;
     text-align: center;
   }
 
@@ -789,6 +789,7 @@ select {
     display: flex;
     flex-direction: column;
     gap: 0;
+    width: 100%;
   }
 
   .plain-home-title {
@@ -802,26 +803,11 @@ select {
     text-wrap: balance;
   }
 
-  .plain-home-subtitle {
-    color: var(--ink);
-    font-family: var(--font-newsreader), var(--font-display), Georgia, serif;
-    font-size: var(--mai-text-large-size);
-    font-weight: 400;
-    letter-spacing: var(--mai-text-large-tracking);
-    line-height: var(--mai-text-large-line);
-    margin-top: var(--space-home-display-lead);
-  }
-
-  .plain-home-cta {
-    flex: 0 0 auto;
-    margin-top: var(--space-home-copy-action);
-  }
-
   .home-main-stack {
     background-color: var(--background);
     display: grid;
     gap: var(--space-0);
-    padding-block: var(--space-120);
+    padding-block: var(--space-0) var(--space-120);
   }
 
   .home-manifesto-section {
@@ -829,8 +815,9 @@ select {
     display: flex;
     flex-direction: column;
     gap: var(--space-0);
-    padding-block: var(--space-80) var(--space-0);
+    padding-block: var(--space-home-display-lead) var(--space-0);
     text-align: center;
+    width: 100%;
   }
 
   .home-manifesto-section .home-section-copy {
@@ -866,10 +853,10 @@ select {
 
   .home-location-heading {
     font-family: var(--font-eb-garamond), Georgia, "Times New Roman", serif;
-    font-size: var(--mai-h1-size);
+    font-size: calc(120 * var(--unit-fx));
     font-weight: 400;
-    letter-spacing: -0.015em;
-    line-height: var(--mai-h1-line);
+    letter-spacing: var(--mai-h2-tracking);
+    line-height: var(--mai-h2-line);
     text-wrap: balance;
   }
 
@@ -895,7 +882,7 @@ select {
     width: calc(540 * var(--unit-fx));
   }
 
-  @media (width < 600px) {
+  @media (width <= 600px) {
     .plain-home-hero {
       padding-top: 155px;
     }
@@ -904,12 +891,8 @@ select {
       max-width: 340px;
     }
 
-    .home-main-stack {
-      padding-block: var(--space-72) var(--space-120);
-    }
-
-    .home-manifesto-section {
-      padding-top: var(--space-48);
+    .home-location-heading {
+      font-size: var(--mai-h2-size);
     }
 
     .home-location-image {

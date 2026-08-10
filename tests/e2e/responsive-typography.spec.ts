@@ -20,13 +20,12 @@ const responsiveCases = [
   {
     width: 390,
     hero: typography("EB Garamond", 48.5075, "500", 55.7836, -1.4552),
-    heroLead: typography("Newsreader", 17.4627, "400", 20.3732, -0.1746),
     locationHeading: typography(
       "EB Garamond",
-      48.5075,
+      46.5672,
       "400",
-      55.7836,
-      -0.7276,
+      53.5522,
+      -0.03,
     ),
     locationCopy: typography(
       "Newsreader",
@@ -52,13 +51,12 @@ const responsiveCases = [
   {
     width: 768,
     hero: typography("EB Garamond", 66.6667, "500", 66.6667, -2.6667),
-    heroLead: typography("Newsreader", 23.814, "400", 28.5767, -0.2381),
     locationHeading: typography(
       "EB Garamond",
-      66.6667,
+      53.3333,
       "400",
-      66.6667,
-      -1,
+      53.3333,
+      -1.6,
     ),
     locationCopy: typography(
       "Newsreader",
@@ -84,13 +82,12 @@ const responsiveCases = [
   {
     width: 1224,
     hero: typography("EB Garamond", 106.25, "500", 106.25, -4.25),
-    heroLead: typography("Newsreader", 26.6667, "400", 32, -0.2667),
     locationHeading: typography(
       "EB Garamond",
-      106.25,
+      85,
       "400",
-      106.25,
-      -1.5938,
+      85,
+      -2.55,
     ),
     locationCopy: typography(
       "Newsreader",
@@ -116,8 +113,7 @@ const responsiveCases = [
   {
     width: 1440,
     hero: typography("EB Garamond", 125, "500", 125, -5),
-    heroLead: typography("Newsreader", 26.6667, "400", 32, -0.2667),
-    locationHeading: typography("EB Garamond", 125, "400", 125, -1.875),
+    locationHeading: typography("EB Garamond", 100, "400", 100, -3),
     locationCopy: typography(
       "Newsreader",
       21.3333,
@@ -142,8 +138,7 @@ const responsiveCases = [
   {
     width: 1728,
     hero: typography("EB Garamond", 150, "500", 150, -6),
-    heroLead: typography("Newsreader", 30, "400", 36, -0.3),
-    locationHeading: typography("EB Garamond", 150, "400", 150, -2.25),
+    locationHeading: typography("EB Garamond", 120, "400", 120, -3.6),
     locationCopy: typography("Newsreader", 24, "400", 30, -0.24),
     headerNav: typography("Red Hat Mono", 16, "500", 28.8, -0.24),
     metaTitle: typography("Red Hat Mono", 15, "500", 15, -0.24),
@@ -335,11 +330,6 @@ test("responsive typography and location geometry match the Chrome audit", async
       await readTypography(page.locator(".plain-home-title")),
       expected.hero,
       `hero at ${expected.width}px`,
-    );
-    expectTypography(
-      await readTypography(page.locator(".plain-home-subtitle")),
-      expected.heroLead,
-      `hero lead at ${expected.width}px`,
     );
     expectTypography(
       await readTypography(page.locator("[data-home-location-heading]")),

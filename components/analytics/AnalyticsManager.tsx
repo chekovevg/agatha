@@ -113,7 +113,7 @@ export function AnalyticsConsentBanner({
     >
       <p className="mai-ui w-full">We use analytics to understand page visits.</p>
       <Button
-        className="h-[50px] w-full hover:bg-[var(--paper)] hover:text-[var(--ink)]"
+        className="h-[50px] w-full cursor-pointer hover:bg-[var(--paper)] hover:text-[var(--ink)]"
         onClick={onAllow}
         type="button"
       >

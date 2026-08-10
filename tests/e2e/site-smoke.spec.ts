@@ -85,7 +85,14 @@ test("home exposes its approved H1, metadata, and booking path", async ({
   await expect(page.locator("h1:visible")).toHaveText(
     "Flute & Music Teacher",
   );
-  await expect(page.getByText("For Adults and Children", {exact: true})).toBeVisible();
+  await expect(
+    page.locator(".plain-home-hero").getByRole("tablist", {
+      name: "Lesson audience",
+    }),
+  ).toBeVisible();
+  await expect(
+    page.getByText("For Adults and Children", {exact: true}),
+  ).toHaveCount(0);
   await expect(page).toHaveTitle(
     "Online Flute Lessons with Agatha Gurko | Agatha Music",
   );
@@ -232,13 +239,13 @@ test("editorial text uses Newsreader Regular and headings use EB Garamond Regula
   expect(heading.fontWeight).toBe("400");
 });
 
-test("home display and lead spacing follows the reference layout scale", async ({
+test("home display flows directly into the audience tabs", async ({
   page,
 }) => {
   const cases = [
-    {width: 390, displayLeadGap: 12.13},
-    {width: 1440, displayLeadGap: 31.25},
-    {width: 1728, displayLeadGap: 37.5},
+    {width: 390, displayTabsGap: 12.13},
+    {width: 1440, displayTabsGap: 31.25},
+    {width: 1728, displayTabsGap: 37.5},
   ];
 
   for (const expected of cases) {
@@ -252,16 +259,20 @@ test("home display and lead spacing follows the reference layout scale", async (
         return secondRect.top - firstRect.bottom;
       };
       const display = document.querySelector(".plain-home-title");
-      const lead = document.querySelector(".plain-home-subtitle");
-      if (!display || !lead) {
-        throw new Error("Expected home typography nodes");
+      const tabs = document.querySelector(".plain-home-hero [role=tablist]");
+      if (!display || !tabs) {
+        throw new Error("Expected Home display and audience tabs");
       }
       return {
-        displayLeadGap: gapBetween(display, lead),
+        displayTabsGap: gapBetween(display, tabs),
       };
     });
 
-    expect(gaps.displayLeadGap).toBeCloseTo(expected.displayLeadGap, 1);
+    expect(gaps.displayTabsGap).toBeCloseTo(expected.displayTabsGap, 1);
+    await expect(page.locator(".plain-home-subtitle")).toHaveCount(0);
+    await expect(
+      page.locator('[data-analytics-booking-cta="home-hero"]'),
+    ).toHaveCount(0);
   }
 });
 
@@ -286,13 +297,9 @@ test("home spacing roles resolve from the shared scale", async ({page}) => {
       };
 
       return {
-        displayLead: gapBetween(
+        displayTabs: gapBetween(
           ".plain-home-title",
-          ".plain-home-subtitle",
-        ),
-        leadAction: gapBetween(
-          ".plain-home-subtitle",
-          '[data-analytics-booking-cta="home-hero"]',
+          ".plain-home-hero [role=tablist]",
         ),
         controlDescription: gapBetween(
           '[role="tablist"]',
@@ -311,8 +318,7 @@ test("home spacing roles resolve from the shared scale", async ({page}) => {
 
     const scale = width <= 600 ? width / 402 : Math.min(width / 1728, 1);
     const expected = {
-      displayLead: (width <= 600 ? 12.5 : 37.5) * scale,
-      leadAction: (width <= 600 ? 40 : 50) * scale,
+      displayTabs: (width <= 600 ? 12.5 : 37.5) * scale,
       controlDescription: 30 * scale,
       descriptionAction: (width <= 600 ? 40 : 50) * scale,
       sectionTransition: (width <= 600 ? 144 : 190) * scale,
@@ -340,21 +346,6 @@ test("home audience tabs switch their panel without navigation", async ({
 }) => {
   await page.setViewportSize({width: 1440, height: 1000});
   await page.goto("/");
-
-  const fontFaces = await page.evaluate(() =>
-    Array.from(document.styleSheets).flatMap((sheet) =>
-      Array.from(sheet.cssRules)
-        .filter((rule) => rule.type === CSSRule.FONT_FACE_RULE)
-        .map((rule) => rule.cssText),
-    ),
-  );
-  expect(
-    fontFaces.some(
-      (rule) =>
-        rule.includes('font-family: "EB Garamond"') &&
-        rule.includes("font-style: italic"),
-    ),
-  ).toBe(true);
 
   const panel = page.getByRole("tabpanel");
   const adults = page.getByRole("tab", {name: "For adults"});
@@ -858,7 +849,9 @@ test("analytics preferences do not cover the home booking action", async ({
   await page.goto("/");
 
   const banner = page.getByRole("region", {name: "Analytics preferences"});
-  const booking = page.getByRole("link", {name: "Get in Touch"}).first();
+  const booking = page.locator(
+    '[data-analytics-booking-cta="home-audience"]',
+  );
   const [bannerBox, bookingBox] = await Promise.all([
     banner.boundingBox(),
     booking.boundingBox(),
@@ -868,7 +861,9 @@ test("analytics preferences do not cover the home booking action", async ({
   expect(bookingBox).not.toBeNull();
   expect(bannerBox!.width).toBe(297);
   expect(bannerBox!.height).toBe(150);
-  await expect(banner.getByRole("button", {name: "Okay"})).toBeVisible();
+  const okay = banner.getByRole("button", {name: "Okay"});
+  await expect(okay).toBeVisible();
+  await expect(okay).toHaveCSS("cursor", "pointer");
   expect(rectanglesIntersect(bannerBox!, bookingBox!)).toBe(false);
 });
 

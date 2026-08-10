@@ -53,7 +53,7 @@ import {HomePage} from "@/components/pages/HomePage";
 import {siteContent} from "@/content/site";
 
 describe("home page", () => {
-  it("renders the approved plain hero without interactive media", () => {
+  it("renders the audience selector as the single hero message and action", () => {
     const html = renderToStaticMarkup(
       createElement(HomePage, {content: siteContent}),
     );
@@ -61,16 +61,19 @@ describe("home page", () => {
     expect(html).toContain('data-home-hero="plain"');
     expect(html).toContain("<h1");
     expect(html).toContain("Flute &amp; Music Teacher");
-    expect(html).toContain("For Adults and Children");
     expect(html).toContain('href="/book?type=intro"');
-    expect(html).toContain('data-analytics-booking-cta="home-hero"');
-    expect(html).toContain("Get in Touch");
+    expect(
+      html.match(/data-analytics-booking-cta="home-audience"/g),
+    ).toHaveLength(1);
+    expect(html).not.toContain("For Adults and Children");
+    expect(html).not.toContain('data-analytics-booking-cta="home-hero"');
+    expect(html).not.toContain("Get in Touch");
     expect(html).not.toContain("<canvas");
     expect(html).not.toContain("<audio");
     expect(html).not.toContain("Play the phrase");
   });
 
-  it("renders local audience tabs and the Rhine block after the hero", () => {
+  it("renders local audience tabs before the Rhine block", () => {
     const html = renderToStaticMarkup(
       createElement(HomePage, {content: siteContent}),
     );

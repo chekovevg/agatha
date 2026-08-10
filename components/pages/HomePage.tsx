@@ -3,17 +3,9 @@ import Image from "next/image";
 import {Footer} from "@/components/layout/Footer";
 import {Header} from "@/components/layout/Header";
 import {HomeAudienceTabs} from "@/components/sections/HomeAudienceTabs";
-import {ButtonLink} from "@/components/ui/Button";
 import type {SiteContent} from "@/content/types";
-import {introBookingHref} from "@/lib/booking";
 
-export function HomePage({
-  content,
-  showActions = true,
-}: {
-  content: SiteContent;
-  showActions?: boolean;
-}) {
+export function HomePage({content}: {content: SiteContent}) {
   const home = content.home;
 
   return (
@@ -29,23 +21,11 @@ export function HomePage({
             <h1 id="home-hero-title" className="plain-home-title">
               {home.heroTitle}
             </h1>
-            <p className="plain-home-subtitle">{home.heroSubtitle}</p>
-            {showActions ? (
-              <ButtonLink
-                href={introBookingHref}
-                variant="accent"
-                className="plain-home-cta"
-                data-analytics-booking-cta="home-hero"
-              >
-                {home.location.cta}
-              </ButtonLink>
-            ) : null}
+            <HomeAudienceTabs tabs={home.audienceTabs} />
           </div>
         </section>
 
         <div className="home-main-stack">
-          <HomeAudienceTabs tabs={home.audienceTabs} />
-
           <section
             className="home-location-section"
             aria-labelledby="home-location-title"

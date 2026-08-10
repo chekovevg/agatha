@@ -8,12 +8,11 @@ The Home block will use the existing Tab Menu visual language. It replaces the c
 
 ## Approved page composition
 
-The Home sequence remains:
+The Home sequence is:
 
-1. Hero.
-2. Audience tabs, description, and booking call to action.
-3. Location section.
-4. Footer.
+1. Hero title followed immediately by the audience tabs, description, and booking call to action.
+2. Location section.
+3. Footer.
 
 The audience block anatomy is:
 
@@ -22,6 +21,10 @@ The audience block anatomy is:
 3. `Book a Call` split-arrow link to the existing intro booking route.
 
 `For adults` is selected by default. No heading is displayed above the Tab Menu. The block must retain an accessible programmatic label even though it has no visible heading.
+
+The former `For Adults and Children` hero subtitle and hero booking action are removed because the audience block supplies the same meaning and action. The existing `HomeAudienceTabs` component is moved into the hero rather than duplicated or visually repositioned with negative margins.
+
+`From the Rhine, online` remains a semantic `h2` and moves from the display H1 typography role to responsive H2 geometry in EB Garamond. The shared tablet H2 token is not used for its font size because its plateau renders larger than the H1 at 768px; Location instead follows the fluid grid scale from 120px at 1728px and retains the existing 48px mobile H2 role.
 
 ## Interaction contract
 
@@ -93,14 +96,16 @@ Both URLs are removed from `app/sitemap.ts`. Internal links, metadata generation
 
 ## Spacing boundary
 
-This change establishes the new anatomy but does not finalize the site-wide spacing model. The audience block initially keeps the existing Home section container and responsive geometry.
+The audience block keeps the existing Home section container and responsive spacing roles, adapted only as needed to sit directly below the hero title.
 
-The following relationships will be assigned semantic spacing roles in the immediately following spacing-system task:
+Existing semantic spacing roles continue to define:
 
-- section start to Tab Menu;
+- hero title to Tab Menu;
 - Tab Menu to description;
 - description to booking action;
-- audience block to Location.
+- hero to Location.
+
+No new spacing token is introduced for this composition change.
 
 No image, explainer, booking form, or Cal.com embed is added underneath the tabs in this change.
 
@@ -130,6 +135,9 @@ No image, explainer, booking form, or Cal.com embed is added underneath the tabs
 - Arrow, Home, End, Enter, and Space behavior matches the interaction contract.
 - Hover alone does not change the description.
 - `Book a Call` points to the existing intro booking route and uses the split-arrow visual.
+- The old hero subtitle and hero booking link are absent, leaving one audience message and one hero booking action.
+- `From the Rhine, online` renders with the existing responsive H2 role.
+- The analytics consent `Okay` button shows the pointer cursor without changing its focus or click behavior.
 - Booking's existing navigation-mode Tab Menu still works.
 
 ### Responsive and accessibility checks
@@ -144,7 +152,7 @@ Run the existing typecheck, lint, unit, build, and browser suites after implemen
 ## Out of scope
 
 - Final spacing-token values or Figma spacing-variable modes.
-- Changes to the Hero, Location, Header, Footer, Classes cards, or booking implementation.
+- Changes to Header, Footer, Classes cards, booking implementation, or Home content.
 - A Home booking embed or contact form.
 - New images, explainers, audience-specific pages, redirects, or SEO landing pages.
 - Deployment, push, or merge.
