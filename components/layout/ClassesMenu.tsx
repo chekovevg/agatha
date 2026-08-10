@@ -1,8 +1,8 @@
 "use client";
 
-import {ChevronRight} from "lucide-react";
+import {ChevronDown, ChevronRight} from "lucide-react";
 import Image from "next/image";
-import {useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 
 import type {Lesson} from "@/content/types";
 import {lessonBookingHref} from "@/lib/booking";
@@ -11,16 +11,28 @@ import {cn} from "@/lib/utils";
 export function ClassesMenu({
   lessons,
   intro,
+  mobileMenuVisible,
   onNavigate,
 }: {
   lessons: Lesson[];
   intro: string;
+  mobileMenuVisible?: boolean;
   onNavigate: () => void;
 }) {
   const [open, setOpen] = useState(false);
   const [activeLesson, setActiveLesson] = useState(lessons[0]);
   const suppressNextFocusOpen = useRef(false);
-  const triggerRef = useRef<HTMLAnchorElement>(null);
+  const desktopTriggerRef = useRef<HTMLAnchorElement>(null);
+  const mobileTriggerRef = useRef<HTMLButtonElement>(null);
+  const previousMobileMenuVisible = useRef(mobileMenuVisible);
+
+  useEffect(() => {
+    if (previousMobileMenuVisible.current && !mobileMenuVisible) {
+      setOpen(false);
+    }
+
+    previousMobileMenuVisible.current = mobileMenuVisible;
+  }, [mobileMenuVisible]);
 
   if (!activeLesson) return null;
 
@@ -29,12 +41,32 @@ export function ClassesMenu({
     setOpen(true);
   };
 
+  const focusResponsiveTrigger = () => {
+    const isMobile = window.matchMedia("(max-width: 860px)").matches;
+    const trigger = isMobile
+      ? mobileTriggerRef.current
+      : desktopTriggerRef.current;
+    trigger?.focus();
+  };
+
   return (
     <li
       className="relative flex h-full items-center justify-center max-[860px]:block max-[860px]:h-auto"
-      onMouseEnter={openMenu}
-      onMouseLeave={() => setOpen(false)}
+      onMouseEnter={() => {
+        if (window.matchMedia("(min-width: 861px)").matches) {
+          openMenu();
+        }
+      }}
+      onMouseLeave={() => {
+        if (window.matchMedia("(min-width: 861px)").matches) {
+          setOpen(false);
+        }
+      }}
       onFocus={() => {
+        if (!window.matchMedia("(min-width: 861px)").matches) {
+          return;
+        }
+
         if (suppressNextFocusOpen.current) {
           suppressNextFocusOpen.current = false;
           return;
@@ -50,24 +82,45 @@ export function ClassesMenu({
         if (event.key === "Escape") {
           suppressNextFocusOpen.current = true;
           setOpen(false);
-          triggerRef.current?.focus();
+          focusResponsiveTrigger();
         }
       }}
     >
-      <a
-        ref={triggerRef}
-        href="/classes"
-        aria-expanded={open}
-        aria-controls="classes-menu"
-        className="inline-flex h-[38px] items-center rounded-[4px] px-[10px] hover:bg-[var(--hover-paper)] max-[860px]:h-auto max-[860px]:px-0 max-[860px]:leading-[1.8]"
-        onClick={onNavigate}
-      >
-        Classes
-      </a>
+      <div className="classes-menu-trigger-row">
+        <a
+          ref={desktopTriggerRef}
+          href="/classes"
+          aria-haspopup="true"
+          aria-expanded={open}
+          aria-controls="classes-menu-desktop"
+          className="classes-menu-link classes-menu-link-desktop"
+          onClick={onNavigate}
+        >
+          Classes
+        </a>
+        <a
+          href="/classes"
+          className="classes-menu-link classes-menu-link-mobile"
+          onClick={onNavigate}
+        >
+          Classes
+        </a>
+        <button
+          ref={mobileTriggerRef}
+          type="button"
+          aria-label="Classes menu"
+          aria-expanded={open}
+          aria-controls="classes-menu-mobile"
+          className="classes-menu-disclosure classes-menu-disclosure-mobile"
+          onClick={() => setOpen((current) => !current)}
+        >
+          <ChevronDown aria-hidden="true" strokeWidth={1.5} />
+        </button>
+      </div>
 
       <nav
-        id="classes-menu"
-        aria-label="Classes submenu"
+        id="classes-menu-desktop"
+        aria-label="Desktop Classes submenu"
         aria-hidden={!open}
         data-state={open ? "open" : "closed"}
         className={cn(
@@ -166,6 +219,47 @@ export function ClassesMenu({
               </span>
             </a>
           </div>
+        </div>
+      </nav>
+
+      <nav
+        id="classes-menu-mobile"
+        aria-label="Mobile Classes submenu"
+        aria-hidden={!open}
+        data-state={open ? "open" : "closed"}
+        className="classes-menu-mobile-panel"
+      >
+        <div className="classes-menu-mobile-content">
+          <div className="classes-menu-mobile-items">
+            {lessons.map((lesson) => (
+              <a
+                key={lesson.slug}
+                href={lessonBookingHref(lesson.title)}
+                className="classes-menu-mobile-link"
+                tabIndex={open ? 0 : -1}
+                onClick={onNavigate}
+              >
+                <span className="relative h-10 w-10 shrink-0">
+                  <Image
+                    src={lesson.image}
+                    alt=""
+                    fill
+                    sizes="40px"
+                    className="object-contain"
+                  />
+                </span>
+                <span>{lesson.title}</span>
+              </a>
+            ))}
+          </div>
+          <a
+            href="/classes"
+            className="classes-menu-mobile-all"
+            tabIndex={open ? 0 : -1}
+            onClick={onNavigate}
+          >
+            <span>All classes</span>
+          </a>
         </div>
       </nav>
     </li>

@@ -49,6 +49,7 @@ vi.mock("next/image", async () => {
 });
 
 import sitemap from "@/app/sitemap";
+import {ClassesMenu} from "@/components/layout/ClassesMenu";
 import {AboutPage} from "@/components/pages/AboutPage";
 import {AudienceLessonPage} from "@/components/pages/AudienceLessonPage";
 import {ClassesPage} from "@/components/pages/ClassesPage";
@@ -103,6 +104,28 @@ describe("editorial site structure", () => {
       {label: "Classes", href: "/classes"},
       {label: "Media", href: "/media"},
     ]);
+  });
+
+  it("keeps the Classes disclosure mobile-only", () => {
+    const html = renderToStaticMarkup(
+      createElement(ClassesMenu, {
+        intro: siteContent.pages.classes.heading,
+        lessons: siteContent.lessons,
+        onNavigate: () => undefined,
+      }),
+    );
+
+    expect(html).toContain('href="/classes"');
+    expect(html).toContain(">Classes</a>");
+    expect(html.match(/aria-label="Classes menu"/g)).toHaveLength(1);
+    expect(html).toContain('class="classes-menu-link classes-menu-link-desktop"');
+    expect(html).toContain('aria-haspopup="true"');
+    expect(html).not.toContain("classes-menu-disclosure-desktop");
+    expect(html).toContain('aria-controls="classes-menu-desktop"');
+    expect(html).toContain('aria-controls="classes-menu-mobile"');
+    expect(html).toContain('id="classes-menu-desktop"');
+    expect(html).toContain('id="classes-menu-mobile"');
+    expect(html).toContain('aria-expanded="false"');
   });
 
   it("keeps distinct adult and child lesson content", () => {
@@ -226,7 +249,7 @@ describe("editorial site structure", () => {
     expect(existsSync(new URL("messages", root))).toBe(false);
   });
 
-  it("renders the Cal inline embed without a duplicate booking link", () => {
+  it("renders the Cal inline embed with an immediate direct booking path", () => {
     const previousCalLink = env.NEXT_PUBLIC_CAL_LINK;
     env.NEXT_PUBLIC_CAL_LINK = "https://cal.com/agatha/trial";
 
@@ -244,7 +267,10 @@ describe("editorial site structure", () => {
       expect(html).toContain('aria-label="Booking type"');
       expect(html).toContain('aria-current="page"');
       expect(html).toContain('aria-label="Book an intro call with Agatha"');
-      expect(html).not.toContain('href="https://cal.com/agatha/trial"');
+      expect(html).toContain('href="https://cal.com/agatha/trial"');
+      expect(html).toContain('target="_blank"');
+      expect(html).toContain('rel="noreferrer"');
+      expect(html).toContain("Open booking page in Cal.com");
       expect(html).not.toContain("Choose the next step");
       expect(html).not.toContain("<iframe");
     } finally {
@@ -271,7 +297,7 @@ describe("editorial site structure", () => {
       expect(html).toContain('<h1 class="sr-only">Book a Call</h1>');
       expect(html).toContain("Flute");
       expect(html).toContain('aria-label="Book a music lesson with Agatha"');
-      expect(html).not.toContain(
+      expect(html).toContain(
         'href="https://cal.com/agatha/music-lesson?notes=Class%3A+Flute"',
       );
       expect(html).toContain('href="/book?type=intro"');
@@ -295,6 +321,9 @@ describe("editorial site structure", () => {
 
     const embedSource = readFileSync(embedUrl, "utf8");
     expect(embedSource).toContain("https://app.cal.com/embed/embed.js");
+    expect(embedSource).toContain('action: "linkReady"');
+    expect(embedSource).toContain('action: "bookerReady"');
+    expect(embedSource).toContain('action: "linkFailed"');
     expect(embedSource).toContain('action: "bookingSuccessfulV2"');
     expect(embedSource).not.toContain('action: "bookingSuccessful"');
   });

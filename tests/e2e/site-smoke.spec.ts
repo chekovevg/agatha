@@ -336,7 +336,7 @@ test("Red Hat Mono roles follow the reference responsive matrix", async ({
     expect(footer.lineHeight / footer.fontSize).toBeCloseTo(1.6, 1);
 
     const footerNote = await readTypography(
-      page.locator(".ag-footer-note"),
+      page.locator("footer .ag-footer-note"),
     );
     expect(footerNote.fontSize).toBeCloseTo(typographyCase.footerNote, 1);
     expect(footerNote.fontWeight).toBe("400");
@@ -389,7 +389,7 @@ test("Red Hat Mono roles follow the reference responsive matrix", async ({
   );
 });
 
-test("header and Classes menu use their designed desktop shadows", async ({
+test("header and Classes menu animate one panel instead of revealing a pre-frame", async ({
   page,
 }) => {
   const headerSurface = page.locator("[data-header-surface]");
@@ -409,12 +409,23 @@ test("header and Classes menu use their designed desktop shadows", async ({
   ]);
   expect(headerShadow).toContain("rgba(0, 0, 0, 0.12) 0px 3px 100px 8px");
   expect(menuShadow).toContain("rgba(0, 0, 0, 0.12) 0px 3px 50px");
-  await expect(menuPanel).toHaveCSS("clip-path", "none");
   expect(
-    await menuPanel
-      .locator(".classes-menu-content")
-      .evaluate((element) => getComputedStyle(element).clipPath),
-  ).not.toBe("none");
+    await menuPanel.evaluate((element) => {
+      const style = getComputedStyle(element);
+      return {
+        clipPath: style.clipPath,
+        transitionProperty: style.transitionProperty,
+      };
+    }),
+  ).toEqual(
+    expect.objectContaining({
+      transitionProperty: expect.stringContaining("clip-path"),
+    }),
+  );
+  await expect(menuPanel.locator(".classes-menu-content")).toHaveCSS(
+    "clip-path",
+    "none",
+  );
 
   await page.setViewportSize({width: 390, height: 844});
   await expect(headerSurface).toHaveCSS("box-shadow", "none");
@@ -554,6 +565,38 @@ test("footer keeps its link cluster centered and stacks before columns overlap",
   ).toBeGreaterThan(80);
 });
 
+test("footer uses line-height rhythm on mobile and preserves desktop spacing", async ({
+  page,
+}) => {
+  await page.setViewportSize({width: 390, height: 844});
+  await page.goto("/classes");
+
+  const footer = page.locator("footer");
+  const siteLinks = footer.locator('[data-footer-section="site"]');
+  const firstLink = siteLinks.getByRole("link").nth(0);
+  const secondLink = siteLinks.getByRole("link").nth(1);
+  const [firstBox, secondBox, lineHeight] = await Promise.all([
+    firstLink.boundingBox(),
+    secondLink.boundingBox(),
+    firstLink.evaluate((element) =>
+      Number.parseFloat(getComputedStyle(element).lineHeight),
+    ),
+  ]);
+
+  expect(secondBox!.y - firstBox!.y).toBeCloseTo(lineHeight, 1);
+  await expect(siteLinks).toHaveCSS("row-gap", "0px");
+  await expect(footer.locator('[data-footer-zone="links"]')).toHaveCSS(
+    "row-gap",
+    "48px",
+  );
+
+  await page.setViewportSize({width: 1440, height: 900});
+  await page.goto("/classes");
+  await expect(
+    page.locator('footer [data-footer-section="site"]'),
+  ).toHaveCSS("row-gap", "16px");
+});
+
 test("desktop Classes menu remains open while the pointer crosses the header gap", async ({
   page,
 }) => {
@@ -565,7 +608,9 @@ test("desktop Classes menu remains open while the pointer crosses the header gap
     .getByRole("link", {name: "Classes", exact: true});
   await classesLink.hover();
 
-  const menu = page.getByRole("navigation", {name: "Classes submenu"});
+  const menu = page.getByRole("navigation", {
+    name: "Desktop Classes submenu",
+  });
   await expect(menu).toBeVisible();
 
   const [classesItemBox, menuBox] = await Promise.all([
@@ -587,6 +632,26 @@ test("desktop Classes menu remains open while the pointer crosses the header gap
   await expect(menu).toBeVisible();
 });
 
+test("desktop Classes opens on hover without a visible disclosure control", async ({
+  page,
+}) => {
+  await page.setViewportSize({width: 1440, height: 1000});
+  await page.goto("/classes");
+
+  const classesLink = page
+    .getByRole("navigation", {name: "Header Menu"})
+    .getByRole("link", {name: "Classes", exact: true});
+  const disclosure = page.getByRole("button", {name: "Classes menu"});
+  const menu = page.getByRole("navigation", {
+    name: "Desktop Classes submenu",
+  });
+
+  await expect(disclosure).toBeHidden();
+  await classesLink.hover();
+  await expect(classesLink).toHaveAttribute("aria-expanded", "true");
+  await expect(menu).toBeVisible();
+});
+
 test("desktop Classes menu previews lessons and booking targets", async ({
   page,
 }) => {
@@ -598,7 +663,9 @@ test("desktop Classes menu previews lessons and booking targets", async ({
     .getByRole("link", {name: "Classes", exact: true});
   await classesLink.hover();
 
-  const menu = page.getByRole("navigation", {name: "Classes submenu"});
+  const menu = page.getByRole("navigation", {
+    name: "Desktop Classes submenu",
+  });
   await expect(menu).toBeVisible();
   await expect(menu.getByRole("link", {name: "All classes"})).toHaveAttribute(
     "href",
@@ -662,14 +729,14 @@ test("booking route selects the relevant event and remains switchable", async ({
     page.getByRole("heading", {name: "Book a Call", exact: true}),
   ).toHaveClass(/sr-only/);
   const bookingType = page.getByRole("navigation", {name: "Booking type"});
-  await expect(bookingType).toHaveCSS("width", "366px");
-  await expect(bookingType).toHaveCSS("padding", "12px");
+  await expect(bookingType).toHaveAttribute("data-overflow", "false");
+  await expect(bookingType).toHaveCSS("padding", "10px");
   await expect(
     bookingType.getByRole("link", {name: "Intro Call", exact: true}),
   ).toHaveAttribute("aria-current", "page");
   await expect(
     bookingType.getByRole("link", {name: "Intro Call", exact: true}),
-  ).toHaveCSS("height", "38px");
+  ).toHaveCSS("height", "39.2188px");
   const introTab = bookingType.getByRole("link", {
     name: "Intro Call",
     exact: true,
@@ -683,12 +750,12 @@ test("booking route selects the relevant event and remains switchable", async ({
   expect(tabTypography.fontWeight).toBe("500");
   expect(tabTypography.letterSpacing).toBeCloseTo(-0.24, 2);
   expect(tabTypography.lineHeight / tabTypography.fontSize).toBeCloseTo(1, 1);
-  await expect(bookingType).toHaveCSS("height", "62px");
-  await expect(bookingType).toHaveCSS("padding", "12px");
-  await expect(introTab).toHaveCSS("padding-left", "30px");
-  await expect(introTab).toHaveCSS("padding-right", "30px");
-  await expect(lessonTab).toHaveCSS("padding-left", "30px");
-  await expect(lessonTab).toHaveCSS("padding-right", "30px");
+  await expect(bookingType).toHaveCSS("height", "59.2188px");
+  await expect(bookingType).toHaveCSS("padding", "10px");
+  await expect(introTab).toHaveCSS("padding-left", "25px");
+  await expect(introTab).toHaveCSS("padding-right", "25px");
+  await expect(lessonTab).toHaveCSS("padding-left", "25px");
+  await expect(lessonTab).toHaveCSS("padding-right", "25px");
   await lessonTab.hover();
   await expect(lessonTab).toHaveCSS("background-color", "rgb(254, 249, 238)");
   expect(
@@ -708,7 +775,10 @@ test("booking route selects the relevant event and remains switchable", async ({
   );
   await expect(
     page.locator('a[href*="cal.com/agafiia-gurko/intro-call"]'),
-  ).toHaveCount(0);
+  ).toHaveCount(1);
+  await expect(
+    page.getByRole("link", {name: "Open booking page in Cal.com"}),
+  ).toHaveAttribute("target", "_blank");
 
   await page.goto("/book?type=lesson&subject=Piccolo");
   await expect(
@@ -722,7 +792,7 @@ test("booking route selects the relevant event and remains switchable", async ({
   ).toHaveAttribute("aria-current", "page");
   await expect(
     page.locator('a[href*="cal.com/agafiia-gurko/music-lesson"]'),
-  ).toHaveCount(0);
+  ).toHaveCount(1);
 
   await bookingType.getByRole("link", {name: "Intro Call", exact: true}).click();
   await expect(page).toHaveURL(/\/book\?type=intro$/);
@@ -737,10 +807,39 @@ test("booking route selects the relevant event and remains switchable", async ({
 
   await page.setViewportSize({width: 390, height: 844});
   await page.goto("/book?type=intro");
+  const mobileBookingType = page.getByRole("navigation", {
+    name: "Booking type",
+  });
+  const mobileBookingBox = await mobileBookingType.boundingBox();
+  expect(mobileBookingBox!.width).toBeLessThan(366);
+  expect(mobileBookingBox!.height).toBeCloseTo(54.66, 1);
+  await expect(mobileBookingType).toHaveCSS("padding", "11.64px");
+  await expect(
+    mobileBookingType.getByRole("link", {name: "Intro Call", exact: true}),
+  ).toHaveCSS("height", "31.375px");
   await expect(page.getByTestId("booking-description")).toHaveCSS(
     "font-size",
     "18px",
   );
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth - window.innerWidth,
+    ),
+  ).toBeLessThanOrEqual(0);
+
+  await page.emulateMedia({reducedMotion: "reduce"});
+  await page.setViewportSize({width: 180, height: 844});
+  await page.goto("/book?type=lesson&subject=Flute");
+  const narrowBookingType = page.getByRole("navigation", {
+    name: "Booking type",
+  });
+  await expect(narrowBookingType).toHaveAttribute("data-overflow", "true");
+  expect(
+    await narrowBookingType.evaluate(
+      (element) => element.scrollWidth > element.clientWidth,
+    ),
+  ).toBe(true);
+  expect(await narrowBookingType.evaluate((element) => element.scrollLeft)).toBeGreaterThan(0);
   expect(
     await page.evaluate(
       () => document.documentElement.scrollWidth - window.innerWidth,
@@ -872,6 +971,110 @@ test.describe("mobile navigation", () => {
 
     await page.getByRole("button", {name: "Close Menu"}).click();
     await expect(page.getByRole("button", {name: "Open Menu"})).toBeVisible();
+  });
+
+  test("keeps one booking CTA and pins only the brand meta to the menu bottom", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    await page.getByRole("button", {name: "Open Menu"}).click();
+
+    const menu = page.getByRole("navigation", {name: "Header Menu"});
+    await expect(menu.getByRole("link", {name: "Book a Call"})).toHaveCount(1);
+    for (const duplicate of [
+      "Get In Touch",
+      "Book Intro Call",
+      "Impressum",
+      "Privacy and Cookies",
+    ]) {
+      await expect(
+        menu.getByRole("link", {name: duplicate, exact: true}),
+      ).toHaveCount(0);
+    }
+
+    const copyright = menu.getByText(/Agatha Gurko Music 2026/);
+    const note = menu.getByText(
+      "Flute, recorder and music theory lessons online.",
+    );
+    const booking = menu.getByRole("link", {name: "Book a Call"});
+    await expect(copyright).toBeVisible();
+    await expect(note).toBeVisible();
+
+    const [menuBox, bookingBox, copyrightBox, noteBox] = await Promise.all([
+      menu.boundingBox(),
+      booking.boundingBox(),
+      copyright.boundingBox(),
+      note.boundingBox(),
+    ]);
+    expect(bookingBox!.y).toBeLessThan(copyrightBox!.y);
+    expect(copyrightBox!.y).toBeLessThan(noteBox!.y);
+    expect(
+      menuBox!.y + menuBox!.height - (noteBox!.y + noteBox!.height),
+    ).toBeLessThanOrEqual(32);
+  });
+
+  test("expands Classes in normal flow and resets it when the header closes", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    await page.getByRole("button", {name: "Open Menu"}).click();
+
+    const disclosure = page.getByRole("button", {name: "Classes menu"});
+    const headerSurface = page.locator("[data-header-surface]");
+    const submenu = page.getByRole("navigation", {
+      name: "Mobile Classes submenu",
+    });
+    const headerYBefore = (await headerSurface.boundingBox())!.y;
+    await expect(disclosure).toHaveAttribute("aria-expanded", "false");
+    await expect(submenu).toBeHidden();
+
+    await page
+      .getByRole("navigation", {name: "Header Menu"})
+      .getByRole("link", {name: "Classes", exact: true})
+      .focus();
+    await expect(disclosure).toHaveAttribute("aria-expanded", "false");
+    await expect(submenu).toBeHidden();
+
+    await disclosure.click();
+    await expect(disclosure).toHaveAttribute("aria-expanded", "true");
+    await expect(submenu).toBeVisible();
+    expect((await headerSurface.boundingBox())!.y).toBeCloseTo(headerYBefore, 0);
+    await expect(submenu.getByRole("link")).toHaveCount(6);
+    await expect(
+      submenu.getByRole("link", {name: "Flute", exact: true}),
+    ).toHaveAttribute("href", "/book?type=lesson&subject=Flute");
+    await expect(
+      submenu.getByRole("link", {name: "All classes", exact: true}),
+    ).toHaveAttribute("href", "/classes");
+
+    const lessonLinks = submenu.getByRole("link").filter({has: page.locator("img")});
+    await expect(lessonLinks).toHaveCount(5);
+
+    const fluteLink = submenu.getByRole("link", {name: "Flute", exact: true});
+    await expect(fluteLink.locator("img")).toHaveCount(1);
+    await expect(fluteLink.locator("svg")).toHaveCount(0);
+    await expect(fluteLink).toHaveCSS("background-color", "rgb(250, 240, 221)");
+
+    const [firstRow, secondRow] = await Promise.all([
+      fluteLink.boundingBox(),
+      submenu.getByRole("link", {name: "Recorder", exact: true}).boundingBox(),
+    ]);
+    expect(firstRow!.height).toBeCloseTo(50, 0);
+    expect(secondRow!.y - (firstRow!.y + firstRow!.height)).toBeCloseTo(10, 0);
+    await expect
+      .poll(async () => (await submenu.boundingBox())?.height ?? 0)
+      .toBeCloseTo(382, 0);
+
+    await page.keyboard.press("Escape");
+    await expect(submenu).toBeHidden();
+    await expect(disclosure).toBeFocused();
+
+    await disclosure.click();
+    await page.getByRole("button", {name: "Close Menu"}).click();
+    await expect(page.getByRole("button", {name: "Open Menu"})).toBeVisible();
+    await page.getByRole("button", {name: "Open Menu"}).click();
+    await expect(disclosure).toHaveAttribute("aria-expanded", "false");
+    await expect(submenu).toBeHidden();
   });
 
   test("uses the same menu through tablet width", async ({page}) => {

@@ -1,20 +1,14 @@
 import type {SiteContent} from "@/content/types";
 import Link from "next/link";
 import Image from "next/image";
-import {introBookingHref} from "@/lib/booking";
+import {getFooterContent} from "@/components/layout/footer-content";
 
 export function Footer({
   content,
 }: {
   content: SiteContent;
 }) {
-  const footerNav = content.nav.map((item) => ({
-    label: item.label,
-    href: item.href,
-  }));
-  const directContactHref = content.social.email
-    ? `mailto:${content.social.email}`
-    : "/about#contact";
+  const footerContent = getFooterContent(content);
 
   return (
     <footer className="mx-auto mt-[calc(320*var(--unit-fx))] grid w-[calc(100%_-_32px)] max-w-[1660px] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-start gap-x-6 bg-[var(--background)] pb-[calc(160*var(--unit-fx))] font-ui text-[var(--ink)] max-[1080px]:grid-cols-1 max-[1080px]:gap-x-0 max-[1080px]:gap-y-12 max-[600px]:pb-[calc(139*var(--unit-fx))]">
@@ -30,7 +24,7 @@ export function Footer({
         </Link>
       </div>
       <div
-        className="ag-footer-links flex shrink-0 justify-center gap-12 max-[1080px]:flex-col"
+        className="ag-footer-links flex shrink-0 justify-center gap-[var(--footer-group-gap)] max-[1080px]:flex-col"
         data-footer-zone="links"
       >
         <nav
@@ -38,7 +32,7 @@ export function Footer({
           className="ag-footer-link-list"
           data-footer-section="site"
         >
-          {footerNav.map((item) => (
+          {footerContent.siteLinks.map((item) => (
             <Link key={item.href} href={item.href}>
               {item.label}
             </Link>
@@ -49,8 +43,11 @@ export function Footer({
           className="ag-footer-link-list"
           data-footer-section="legal"
         >
-          <Link href="/impressum">Impressum</Link>
-          <Link href="/datenschutz">Privacy and Cookies</Link>
+          {footerContent.legalLinks.map((item) => (
+            <Link key={item.href} href={item.href}>
+              {item.label}
+            </Link>
+          ))}
           <Link className="footer-desktop-only" href="/about#contact">
             Get In Touch
           </Link>
@@ -60,22 +57,30 @@ export function Footer({
           className="ag-footer-link-list"
           data-footer-section="contact"
         >
-          <a href={directContactHref}>Get In Touch</a>
-          <Link
-            className="footer-book-link items-center gap-2"
-            href={introBookingHref}
-            data-analytics-booking-cta="footer"
-          >
-            {content.cta.header}
-            <Image
-              src="/icons/arrow-up-right.svg"
-              alt=""
-              aria-hidden="true"
-              width={18}
-              height={18}
-              className="h-[18px] w-[18px]"
-            />
-          </Link>
+          {footerContent.contactLinks.map((item) =>
+            item.showIcon ? (
+              <Link
+                key={item.href}
+                className="footer-book-link items-center gap-2"
+                href={item.href}
+                data-analytics-booking-cta="footer"
+              >
+                {item.label}
+                <Image
+                  src="/icons/arrow-up-right.svg"
+                  alt=""
+                  aria-hidden="true"
+                  width={18}
+                  height={18}
+                  className="h-[18px] w-[18px]"
+                />
+              </Link>
+            ) : (
+              <a key={item.href} href={item.href}>
+                {item.label}
+              </a>
+            ),
+          )}
         </nav>
       </div>
       <div
@@ -83,10 +88,10 @@ export function Footer({
         data-footer-zone="meta"
       >
         <p className="ag-footer-copyright w-[269px] max-w-full">
-          &copy; Agatha Gurko Music 2026
+          {footerContent.copyright}
         </p>
         <p className="ag-footer-note w-[269px] max-w-full text-[var(--ink)]">
-          {content.home.footerNote}
+          {footerContent.note}
         </p>
       </div>
     </footer>

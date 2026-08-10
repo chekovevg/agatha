@@ -1,3 +1,8 @@
+"use client";
+
+import {useEffect, useRef, useState} from "react";
+
+import {getNearestTabScrollLeft} from "@/components/ui/tab-menu-scroll";
 import {cn} from "@/lib/utils";
 
 type TabMenuItem = {
@@ -13,29 +18,87 @@ export function TabMenu({
   ariaLabel: string;
   items: TabMenuItem[];
 }) {
+  const [overflow, setOverflow] = useState(false);
+  const viewportRef = useRef<HTMLElement>(null);
+  const rowRef = useRef<HTMLDivElement>(null);
+  const activeItemRef = useRef<HTMLAnchorElement>(null);
+
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    const row = rowRef.current;
+
+    if (!viewport || !row) return;
+
+    const measure = () => {
+      setOverflow(viewport.scrollWidth - viewport.clientWidth > 0.5);
+    };
+
+    measure();
+
+    if (typeof ResizeObserver === "undefined") {
+      window.addEventListener("resize", measure);
+      return () => window.removeEventListener("resize", measure);
+    }
+
+    const observer = new ResizeObserver(measure);
+    observer.observe(viewport);
+    observer.observe(row);
+    return () => observer.disconnect();
+  }, [items]);
+
+  useEffect(() => {
+    const viewport = viewportRef.current;
+    const row = rowRef.current;
+    const activeItem = activeItemRef.current;
+
+    if (!overflow || !viewport || !row || !activeItem) return;
+
+    const target = getNearestTabScrollLeft({
+      clientWidth: viewport.clientWidth,
+      itemLeft: row.offsetLeft + activeItem.offsetLeft,
+      itemWidth: activeItem.offsetWidth,
+      scrollLeft: viewport.scrollLeft,
+    });
+
+    if (Math.abs(target - viewport.scrollLeft) < 0.5) return;
+
+    const reducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    viewport.scrollTo({
+      behavior: reducedMotion ? "auto" : "smooth",
+      left: target,
+    });
+  }, [items, overflow]);
+
   return (
-    <nav
-      aria-label={ariaLabel}
-      data-testid="booking-tab-menu"
-      className="flex w-[366px] max-w-full items-center justify-center rounded-[5px] bg-[#f7f1e4] p-3"
-    >
-      <div className="flex shrink-0 items-center justify-center">
+    <div className="tab-menu-layout" data-overflow={overflow}>
+      <nav
+        ref={viewportRef}
+        aria-label={ariaLabel}
+        data-overflow={overflow}
+        data-testid="booking-tab-menu"
+        className="tab-menu-viewport"
+      >
+        <div ref={rowRef} className="tab-menu-row">
         {items.map((item) => (
           <a
             key={item.label}
+            ref={item.active ? activeItemRef : undefined}
             href={item.href}
             aria-current={item.active ? "page" : undefined}
             className={cn(
-              "mai-ui flex h-[38px] min-w-0 shrink-0 items-center justify-center whitespace-nowrap rounded-[3px] px-[30px] transition-colors duration-[600ms] ease-[var(--alias-easeOut)] hover:bg-[var(--background)] focus-visible:bg-[var(--background)] focus-visible:outline-2 max-[400px]:shrink max-[400px]:px-[27px]",
+              "tab-menu-item mai-ui",
               item.active
                 ? "bg-[var(--background)]"
-                : "bg-[#f7f1e4]",
+                : "bg-[var(--tab-surface)]",
             )}
           >
             {item.label}
           </a>
         ))}
-      </div>
-    </nav>
+        </div>
+      </nav>
+    </div>
   );
 }
