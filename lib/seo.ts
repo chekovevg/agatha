@@ -109,7 +109,7 @@ export function siteStructuredData() {
         alternateName: "Agafiia Gurko",
         jobTitle: "Flutist and music teacher",
         url: siteUrl("/about"),
-        image: siteUrl("/images/about/agatha-portrait.png"),
+        image: siteUrl("/images/about/agatha-portrait.webp"),
         knowsLanguage: ["English", "German", "Russian"],
         sameAs: [
           "https://www.lessonface.com/instructor/agafiia-gurko",

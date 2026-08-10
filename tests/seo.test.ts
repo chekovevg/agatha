@@ -43,6 +43,7 @@ describe("SEO metadata and structured data", () => {
         name: "Agatha Gurko",
         alternateName: "Agafiia Gurko",
         jobTitle: "Flutist and music teacher",
+        image: seo.siteUrl("/images/about/agatha-portrait.webp"),
         sameAs: [
           "https://www.lessonface.com/instructor/agafiia-gurko",
         ],
