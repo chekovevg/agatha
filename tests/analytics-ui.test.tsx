@@ -143,6 +143,7 @@ describe("analytics consent UI", () => {
     expect(html).toContain("Google Analytics");
     expect(html).toContain("consent");
     expect(html).toContain("data-analytics-preferences");
+    expect(html).toContain(">Review Analytics Preferences</button>");
   });
 
   it("expires visible analytics cookies for host-only and domain scopes", () => {

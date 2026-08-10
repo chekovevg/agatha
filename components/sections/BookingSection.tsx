@@ -89,7 +89,7 @@ export function BookingSection({
                 notes={notes}
               />
               <ButtonLink href={fallbackUrl} className="mt-[var(--space-24)]" variant="plain">
-                Open booking page in Cal.com
+                Open Booking Page in Cal.com
               </ButtonLink>
             </div>
           ) : (

@@ -239,6 +239,42 @@ test("editorial text uses Newsreader Regular and headings use EB Garamond Regula
   expect(heading.fontWeight).toBe("400");
 });
 
+test("Classes renders the named artwork and Title Case booking actions", async ({
+  page,
+}) => {
+  await page.setViewportSize({width: 1440, height: 1000});
+  await page.goto("/classes");
+
+  const expectedAssets = [
+    "flute.webp",
+    "recorder.webp",
+    "piccolo.webp",
+    "music-theory.webp",
+    "solfege.webp",
+  ];
+  const images = page.locator("main article img");
+
+  await expect(images).toHaveCount(expectedAssets.length);
+  await expect(
+    page.getByRole("link", {name: "Book a Lesson", exact: true}),
+  ).toHaveCount(expectedAssets.length);
+
+  for (const [index, asset] of expectedAssets.entries()) {
+    const image = images.nth(index);
+    await expect(image).toHaveAttribute("src", new RegExp(asset));
+    await image.scrollIntoViewIfNeeded();
+    await expect
+      .poll(
+        () =>
+          image.evaluate(
+            (element) => (element as HTMLImageElement).naturalWidth,
+          ),
+        {message: `${asset} should load`},
+      )
+      .toBeGreaterThan(0);
+  }
+});
+
 test("home display flows directly into the audience tabs", async ({
   page,
 }) => {
@@ -348,8 +384,8 @@ test("home audience tabs switch their panel without navigation", async ({
   await page.goto("/");
 
   const panel = page.getByRole("tabpanel");
-  const adults = page.getByRole("tab", {name: "For adults"});
-  const children = page.getByRole("tab", {name: "For children"});
+  const adults = page.getByRole("tab", {name: "For Adults"});
+  const children = page.getByRole("tab", {name: "For Children"});
   const audienceCta = page.locator(
     '[data-analytics-booking-cta="home-audience"]',
   );
@@ -391,8 +427,8 @@ test("home audience tabs switch their panel without navigation", async ({
     await page.setViewportSize({width, height: 1000});
     await page.goto("/");
 
-    const responsiveAdults = page.getByRole("tab", {name: "For adults"});
-    const responsiveChildren = page.getByRole("tab", {name: "For children"});
+    const responsiveAdults = page.getByRole("tab", {name: "For Adults"});
+    const responsiveChildren = page.getByRole("tab", {name: "For Children"});
     const responsivePanel = page.getByRole("tabpanel");
     const responsiveCta = page.locator(
       '[data-analytics-booking-cta="home-audience"]',
@@ -605,7 +641,7 @@ test("desktop Classes menu previews lessons and booking targets", async ({
     name: "Desktop Classes submenu",
   });
   await expect(menu).toBeVisible();
-  await expect(menu.getByRole("link", {name: "All classes"})).toHaveAttribute(
+  await expect(menu.getByRole("link", {name: "All Classes"})).toHaveAttribute(
     "href",
     "/classes",
   );
@@ -650,7 +686,7 @@ test("desktop Classes menu previews lessons and booking targets", async ({
   );
   await expect(menu.getByTestId("classes-menu-preview-image")).toHaveAttribute(
     "src",
-    /ear-training/,
+    /solfege\.webp/,
   );
   await expect(
     menu.getByRole("link", {name: "Solfege", exact: true}),
@@ -735,7 +771,7 @@ test("booking route selects the relevant event and remains switchable", async ({
     page.locator('a[href*="cal.com/agafiia-gurko/intro-call"]'),
   ).toHaveCount(1);
   await expect(
-    page.getByRole("link", {name: "Open booking page in Cal.com"}),
+    page.getByRole("link", {name: "Open Booking Page in Cal.com"}),
   ).toHaveAttribute("target", "_blank");
 
   await page.goto("/book?type=lesson&subject=Piccolo");
@@ -1057,7 +1093,7 @@ test.describe("mobile navigation", () => {
       submenu.getByRole("link", {name: "Flute", exact: true}),
     ).toHaveAttribute("href", "/book?type=lesson&subject=Flute");
     await expect(
-      submenu.getByRole("link", {name: "All classes", exact: true}),
+      submenu.getByRole("link", {name: "All Classes", exact: true}),
     ).toHaveAttribute("href", "/classes");
 
     const lessonLinks = submenu.getByRole("link").filter({has: page.locator("img")});
@@ -1118,7 +1154,7 @@ test("video iframe loads only after explicit interaction", async ({page}) => {
   await page.goto("/media");
   await expect(page.locator("iframe")).toHaveCount(0);
 
-  await page.getByRole("button", {name: "Watch preview"}).click();
+  await page.getByRole("button", {name: "Watch Preview"}).click();
 
   await expect(page.locator("iframe")).toHaveCount(1);
 });
@@ -1132,10 +1168,10 @@ test("contact network failure is announced and remains retryable", async ({
   await page
     .getByLabel("Message")
     .fill("I would like to ask about a first flute lesson.");
-  await page.getByRole("button", {name: "Send message"}).click();
+  await page.getByRole("button", {name: "Send Message"}).click();
 
   await expect(page.getByRole("status")).toContainText(
     "Something went wrong. Please try again or use the booking link.",
   );
-  await expect(page.getByRole("button", {name: "Send message"})).toBeEnabled();
+  await expect(page.getByRole("button", {name: "Send Message"})).toBeEnabled();
 });

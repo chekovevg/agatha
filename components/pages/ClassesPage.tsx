@@ -57,7 +57,7 @@ function LessonRow({
           className="mt-[var(--space-32)]"
           data-analytics-booking-cta="classes"
         >
-          Book a lesson
+          Book a Lesson
         </ButtonLink>
       </div>
       <p className="mai-body text-[var(--ink)]">

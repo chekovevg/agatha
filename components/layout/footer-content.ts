@@ -8,7 +8,7 @@ export function getFooterContent(content: SiteContent) {
       href: item.href,
     })),
     contactLinks: [
-      {label: "Book Intro Call", href: introBookingHref, showIcon: true},
+      {label: "Book a Call", href: introBookingHref, showIcon: true},
     ],
     legalLinks: [
       {label: "Impressum", href: "/impressum"},

@@ -38,8 +38,8 @@ export type SiteContent = {
     heroTitle: string;
     heroSubtitle: string;
     audienceTabs: {
-      adults: {label: "For adults"; description: string};
-      children: {label: "For children"; description: string};
+      adults: {label: "For Adults"; description: string};
+      children: {label: "For Children"; description: string};
     };
     location: {
       heading: string;

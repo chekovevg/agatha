@@ -257,7 +257,7 @@ test("captures the responsive Home and Classes menu audit when requested", async
       const [submenuBox, allClassesBox] = await Promise.all([
         mobileClasses.boundingBox(),
         mobileClasses
-          .getByRole("link", {name: "All classes", exact: true})
+          .getByRole("link", {name: "All Classes", exact: true})
           .boundingBox(),
       ]);
       expect(allClassesBox!.y + allClassesBox!.height).toBeLessThan(

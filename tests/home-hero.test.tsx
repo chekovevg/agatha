@@ -77,8 +77,8 @@ describe("home page", () => {
     const html = renderToStaticMarkup(
       createElement(HomePage, {content: siteContent}),
     );
-    const adultsTab = html.indexOf("For adults");
-    const childrenTab = html.indexOf("For children");
+    const adultsTab = html.indexOf("For Adults");
+    const childrenTab = html.indexOf("For Children");
     const description = html.indexOf("Start from your first note");
     const audienceCta = html.indexOf(
       'data-analytics-booking-cta="home-audience"',

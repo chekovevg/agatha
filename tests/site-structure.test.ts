@@ -109,12 +109,12 @@ describe("editorial site structure", () => {
   it("keeps only the compact Home audience tab content", () => {
     expect(siteContent.home.audienceTabs).toEqual({
       adults: {
-        label: "For adults",
+        label: "For Adults",
         description:
           "Start from your first note, return after a break, or strengthen the playing you already have.",
       },
       children: {
-        label: "For children",
+        label: "For Children",
         description:
           "Clear musical foundations, age-appropriate goals and practical guidance for the time between lessons.",
       },
@@ -150,7 +150,16 @@ describe("editorial site structure", () => {
     );
 
     expect(html.match(/>Music lesson</g)).toHaveLength(5);
-    expect(html.match(/>Book a lesson</g)).toHaveLength(5);
+    expect(html.match(/>Book a Lesson</g)).toHaveLength(5);
+    for (const asset of [
+      "flute.webp",
+      "recorder.webp",
+      "piccolo.webp",
+      "music-theory.webp",
+      "solfege.webp",
+    ]) {
+      expect(html).toContain(`/images/classes/${asset}`);
+    }
     expect(html).toContain(
       'href="/book?type=lesson&amp;subject=Flute"',
     );
@@ -236,7 +245,7 @@ describe("editorial site structure", () => {
       expect(html).toContain('href="https://cal.com/agatha/trial"');
       expect(html).toContain('target="_blank"');
       expect(html).toContain('rel="noreferrer"');
-      expect(html).toContain("Open booking page in Cal.com");
+      expect(html).toContain("Open Booking Page in Cal.com");
       expect(html).not.toContain("Choose the next step");
       expect(html).not.toContain("<iframe");
     } finally {
@@ -405,7 +414,7 @@ describe("editorial site structure", () => {
     expect(html).not.toContain('name="name"');
     expect(html).not.toContain('name="studentAge"');
     expect(html).not.toContain('name="subject"');
-    expect(html).toContain(">Send message<");
+    expect(html).toContain(">Send Message<");
   });
 
   it("links booking fallback contact CTA to the unprefixed contact form", () => {
@@ -423,6 +432,7 @@ describe("editorial site structure", () => {
 
       expect(html).toContain("Booking link pending");
       expect(html).toContain('href="/about#contact"');
+      expect(html).toContain("Ask a Question Before Booking");
       expect(html).not.toMatch(/href="\/(en|de|ru)\//);
       expect(html).not.toContain('href="#contact"');
     } finally {

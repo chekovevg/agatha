@@ -26,7 +26,7 @@ export function MediaPage({
             title={content.openLesson.caption}
             videoUrl={content.openLesson.videoUrl}
             thumbnail="/images/media/open-lesson-preview.png"
-            playLabel="Watch preview"
+            playLabel="Watch Preview"
             unoptimizedThumbnail
             className="mt-[var(--space-80)] w-full max-w-[calc(844*var(--unit-fx))] max-[600px]:mt-[var(--space-48)]"
           />

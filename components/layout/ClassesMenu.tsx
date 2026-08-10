@@ -258,7 +258,7 @@ export function ClassesMenu({
             tabIndex={open ? 0 : -1}
             onClick={onNavigate}
           >
-            <span>All classes</span>
+            <span>All Classes</span>
           </a>
         </div>
       </nav>

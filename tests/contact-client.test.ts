@@ -32,7 +32,7 @@ describe("contact client", () => {
   it("renders the approved English copy and accessible status semantics", () => {
     const html = renderToStaticMarkup(createElement(ContactForm));
 
-    expect(contactFormContent.submit).toBe("Send message");
+    expect(contactFormContent.submit).toBe("Send Message");
     expect(contactFormContent.success).toBe(
       "Thank you. Your message has been sent.",
     );
@@ -42,7 +42,7 @@ describe("contact client", () => {
     expect(html).toContain('aria-busy="false"');
     expect(html).toContain('role="status"');
     expect(html).toContain('aria-live="polite"');
-    expect(html).toContain(">Send message<");
+    expect(html).toContain(">Send Message<");
     expect(html).toContain('name="email"');
     expect(html).toContain('name="message"');
     expect(html).not.toContain('name="name"');

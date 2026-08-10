@@ -44,7 +44,7 @@ export default function DatenschutzPage() {
             data-analytics-preferences
             type="button"
           >
-            Review analytics preferences
+            Review Analytics Preferences
           </button>
         </section>
       </div>

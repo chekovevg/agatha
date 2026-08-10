@@ -47,12 +47,12 @@ const baseContent: SiteContent = {
     heroSubtitle: "For Adults and Children",
     audienceTabs: {
       adults: {
-        label: "For adults",
+        label: "For Adults",
         description:
           "Start from your first note, return after a break, or strengthen the playing you already have.",
       },
       children: {
-        label: "For children",
+        label: "For Children",
         description:
           "Clear musical foundations, age-appropriate goals and practical guidance for the time between lessons.",
       },
@@ -87,35 +87,35 @@ const baseContent: SiteContent = {
     {
       slug: "flute",
       title: "Flute",
-      image: "/images/classes/flute.png",
+      image: "/images/classes/flute.webp",
       description:
         "Build a clear tone, healthy breathing and relaxed posture from the very beginning. We work with sound, technique, hands, embouchure and musical expression step by step.",
     },
     {
       slug: "recorder",
       title: "Recorder",
-      image: "/images/classes/recorder.png",
+      image: "/images/classes/recorder.webp",
       description:
         "Recorder lessons for beginners and continuing students, with attention to beautiful sound, confident playing and the joy of making music.",
     },
     {
       slug: "piccolo",
       title: "Piccolo",
-      image: "/images/classes/piccolo.png",
+      image: "/images/classes/piccolo.webp",
       description:
         "Support for flutists moving to piccolo: specific technique, repertoire, sound control and a smoother transition from flute.",
     },
     {
       slug: "music-theory",
       title: "Music Theory",
-      image: "/images/classes/music-theory.png",
+      image: "/images/classes/music-theory.webp",
       description:
         "Understand intervals, keys, harmony, form and musical structure through clear explanations and practical examples.",
     },
     {
       slug: "solfege",
       title: "Solfege",
-      image: "/images/classes/ear-training.png",
+      image: "/images/classes/solfege.webp",
       description:
         "Train your ear, recognise intervals and chords, sing and write melodic lines, and connect theory with real musical listening.",
     },
@@ -294,7 +294,7 @@ const baseContent: SiteContent = {
           "Online lessons in flute, recorder, piccolo, music theory or solfege.",
       },
     ],
-    fallbackContactCta: "Ask a question before booking",
+    fallbackContactCta: "Ask a Question Before Booking",
   },
   faq: [
     {
