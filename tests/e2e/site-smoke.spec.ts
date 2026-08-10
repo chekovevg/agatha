@@ -920,6 +920,30 @@ test("about contact keeps only the two-field question form", async ({page}) => {
   }
 });
 
+test("about renders the replacement portrait at mobile and desktop widths", async ({
+  page,
+}) => {
+  for (const width of [390, 1440]) {
+    await page.setViewportSize({width, height: 1000});
+    await page.goto("/about");
+
+    const portrait = page.getByRole("img", {name: "Agatha Gurko portrait"});
+    await expect(portrait).toHaveAttribute("src", /agatha-portrait\.webp/);
+    await expect
+      .poll(() =>
+        portrait.evaluate(
+          (element) => (element as HTMLImageElement).naturalWidth,
+        ),
+      )
+      .toBeGreaterThan(0);
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth - window.innerWidth,
+      ),
+    ).toBeLessThanOrEqual(0.5);
+  }
+});
+
 test("analytics preferences do not cover the home booking action", async ({
   page,
 }) => {

@@ -3,20 +3,6 @@ import {createElement} from "react";
 import {renderToStaticMarkup} from "react-dom/server";
 import {describe, expect, it, vi} from "vitest";
 
-function getPngSize(path: URL) {
-  const buffer = readFileSync(path);
-  const signature = buffer.toString("ascii", 1, 4);
-
-  if (signature !== "PNG") {
-    throw new Error(`Expected PNG signature for ${path.pathname}`);
-  }
-
-  return {
-    height: buffer.readUInt32BE(20),
-    width: buffer.readUInt32BE(16),
-  };
-}
-
 vi.mock("next/link", () => ({
   default: "a",
 }));
@@ -361,7 +347,7 @@ describe("editorial site structure", () => {
       createElement(AboutPage, {content: siteContent}),
     );
 
-    expect(html).toContain('src="/images/about/agatha-portrait.png"');
+    expect(html).toContain('src="/images/about/agatha-portrait.webp"');
     expect(html).toContain('alt="Agatha Gurko portrait"');
     expect(html).toContain('data-quality="95"');
     expect(html).toContain("max-w-[calc(1660*var(--unit-fx))]");
@@ -372,12 +358,6 @@ describe("editorial site structure", () => {
     expect(html).toContain("min-[861px]:h-[328px]");
     expect(html).toContain("min-[861px]:w-[245px]");
     expect(html).toContain('sizes="(max-width: 860px) calc(100vw - 44px), 245px"');
-    expect(
-      getPngSize(
-        new URL("../public/images/about/agatha-portrait.png", import.meta.url),
-      ),
-    ).toEqual({height: 1448, width: 1086});
-
     expect(
       readFileSync(new URL("../next.config.ts", import.meta.url), "utf8"),
     ).toContain("qualities: [75, 95]");

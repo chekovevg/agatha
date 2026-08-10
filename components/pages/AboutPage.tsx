@@ -23,7 +23,7 @@ export function AboutPage({
           <div className="grid w-full content-start gap-[var(--space-16)] justify-self-center min-[861px]:col-span-5 min-[861px]:w-[245px] min-[861px]:justify-self-start">
             <div className="relative aspect-[1086/1448] w-full overflow-hidden rounded-[var(--radius-card)] bg-[var(--paper)] min-[861px]:h-[328px] min-[861px]:aspect-auto">
               <Image
-                src="/images/about/agatha-portrait.png"
+                src="/images/about/agatha-portrait.webp"
                 alt="Agatha Gurko portrait"
                 fill
                 preload
