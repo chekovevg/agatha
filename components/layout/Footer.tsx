@@ -11,7 +11,7 @@ export function Footer({
   const footerContent = getFooterContent(content);
 
   return (
-    <footer className="mx-auto mt-[calc(320*var(--unit-fx))] grid w-[calc(100%_-_32px)] max-w-[1660px] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-start gap-x-[var(--space-24)] bg-[var(--background)] pb-[calc(160*var(--unit-fx))] font-ui text-[var(--ink)] max-[1080px]:grid-cols-1 max-[1080px]:gap-x-0 max-[1080px]:gap-y-[var(--space-48)] max-[600px]:pb-[calc(139*var(--unit-fx))]">
+    <footer className="mx-auto mt-[calc(320*var(--unit-fx))] grid w-[calc(100%_-_32px)] max-w-[1660px] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-start gap-x-[var(--space-24)] bg-[var(--background)] pb-[calc(160*var(--unit-fx))] font-ui text-[var(--ink)] max-[1080px]:grid-cols-1 max-[1080px]:gap-x-0 max-[1080px]:gap-y-[var(--space-48)] max-[600px]:mt-[var(--space-100)] max-[600px]:gap-y-[var(--space-24)] max-[600px]:pb-[var(--space-72)]">
       <div className="min-w-0" data-footer-zone="brand">
         <Link href="/" aria-label={`${content.brand} home`}>
           <Image
@@ -24,7 +24,7 @@ export function Footer({
         </Link>
       </div>
       <div
-        className="ag-footer-links flex shrink-0 justify-center gap-[var(--space-48)] max-[1080px]:flex-col"
+        className="ag-footer-links flex shrink-0 justify-center gap-[var(--space-48)] max-[1080px]:flex-col max-[600px]:gap-[var(--space-24)]"
         data-footer-zone="links"
       >
         <nav

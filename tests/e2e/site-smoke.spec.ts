@@ -357,7 +357,7 @@ test("home spacing roles resolve from the shared scale", async ({page}) => {
       displayTabs: (width <= 600 ? 12.5 : 37.5) * scale,
       controlDescription: 30 * scale,
       descriptionAction: (width <= 600 ? 40 : 50) * scale,
-      sectionTransition: (width <= 600 ? 190 : 250) * scale,
+      sectionTransition: (width <= 600 ? 120 : 250) * scale,
     };
 
     for (const [role, value] of Object.entries(expected)) {
@@ -556,11 +556,29 @@ test("footer uses line-height rhythm on mobile and preserves desktop spacing", a
 
   expect(secondBox!.y - firstBox!.y).toBeCloseTo(lineHeight, 1);
   await expect(siteLinks).toHaveCSS("row-gap", "0px");
-  expect(
-    await footer
-      .locator('[data-footer-zone="links"]')
-      .evaluate((element) => Number.parseFloat(getComputedStyle(element).rowGap)),
-  ).toBeCloseTo(48 * (390 / 402), 1);
+  const mobileScale = 390 / 402;
+  const [linksGap, footerGap, footerMarginTop, footerPaddingBottom] =
+    await Promise.all([
+      footer
+        .locator('[data-footer-zone="links"]')
+        .evaluate((element) =>
+          Number.parseFloat(getComputedStyle(element).rowGap),
+        ),
+      footer.evaluate((element) =>
+        Number.parseFloat(getComputedStyle(element).rowGap),
+      ),
+      footer.evaluate((element) =>
+        Number.parseFloat(getComputedStyle(element).marginTop),
+      ),
+      footer.evaluate((element) =>
+        Number.parseFloat(getComputedStyle(element).paddingBottom),
+      ),
+    ]);
+
+  expect(linksGap).toBeCloseTo(24 * mobileScale, 1);
+  expect(footerGap).toBeCloseTo(24 * mobileScale, 1);
+  expect(footerMarginTop).toBeCloseTo(100 * mobileScale, 1);
+  expect(footerPaddingBottom).toBeCloseTo(72 * mobileScale, 1);
 
   await page.setViewportSize({width: 1440, height: 900});
   await page.goto("/classes");
@@ -806,15 +824,18 @@ test("booking route selects the relevant event and remains switchable", async ({
   });
   const mobileBookingBox = await mobileBookingType.boundingBox();
   expect(mobileBookingBox!.width).toBeLessThan(366);
-  expect(mobileBookingBox!.height).toBeCloseTo(54.66, 1);
+  expect(mobileBookingBox!.height).toBeCloseTo(
+    44 + 8 * (390 / 402),
+    1,
+  );
   expect(
     await mobileBookingType.evaluate((element) =>
       Number.parseFloat(getComputedStyle(element).paddingTop),
     ),
-  ).toBeCloseTo(12 * (390 / 402), 2);
+  ).toBeCloseTo(4 * (390 / 402), 2);
   await expect(
     mobileBookingType.getByRole("link", {name: "Intro Call", exact: true}),
-  ).toHaveCSS("height", "31.375px");
+  ).toHaveCSS("height", "44px");
   await expect(page.getByTestId("booking-description")).toHaveCSS(
     "font-size",
     "18px",
@@ -892,6 +913,35 @@ test("home FAQ is the centered third block with readable disclosure text", async
   await expect(
     page.getByRole("heading", {name: "Questions before the first lesson"}),
   ).toHaveCount(0);
+});
+
+test("mobile home keeps the location, FAQ, and footer visually connected", async ({
+  page,
+}) => {
+  await page.setViewportSize({width: 390, height: 844});
+  await page.goto("/");
+
+  const location = page.locator(".home-location-section");
+  const faq = page.locator("[data-home-faq]");
+  const footer = page.locator("footer");
+  const [locationBox, faqBox, footerBox] = await Promise.all([
+    location.boundingBox(),
+    faq.boundingBox(),
+    footer.boundingBox(),
+  ]);
+  const mobileScale = 390 / 402;
+
+  expect(locationBox).not.toBeNull();
+  expect(faqBox).not.toBeNull();
+  expect(footerBox).not.toBeNull();
+  expect(faqBox!.y - (locationBox!.y + locationBox!.height)).toBeCloseTo(
+    100 * mobileScale,
+    1,
+  );
+  expect(footerBox!.y - (faqBox!.y + faqBox!.height)).toBeCloseTo(
+    (72 + 100) * mobileScale,
+    1,
+  );
 });
 
 test("about contact keeps only the two-field question form", async ({page}) => {
