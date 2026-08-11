@@ -43,6 +43,12 @@ describe("Next.js response headers", () => {
             value:
               "camera=(), microphone=(), geolocation=(), payment=(), usb=(), browsing-topics=()",
           },
+          {key: "X-Frame-Options", value: "DENY"},
+          {
+            key: "Content-Security-Policy-Report-Only",
+            value:
+              "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; img-src 'self' data: blob: https:; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://app.cal.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; frame-src https://www.youtube-nocookie.com https://cal.com https://app.cal.com; connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com https://region1.google-analytics.com https://cal.com https://app.cal.com",
+          },
         ],
       },
     ]);
