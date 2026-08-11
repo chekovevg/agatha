@@ -851,7 +851,7 @@ select {
     width: 100%;
   }
 
-  .home-location-heading {
+  .home-section-heading {
     font-family: var(--font-eb-garamond), Georgia, "Times New Roman", serif;
     font-size: var(--mai-h3-size);
     font-weight: 400;
@@ -892,6 +892,7 @@ select {
     }
 
     .plain-home-title {
+      line-height: 1.05;
       max-width: 340px;
     }
 

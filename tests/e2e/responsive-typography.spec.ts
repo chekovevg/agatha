@@ -19,7 +19,7 @@ type TypographyResult = {
 const responsiveCases = [
   {
     width: 390,
-    hero: typography("EB Garamond", 48.5075, "500", 55.7836, -1.4552),
+    hero: typography("EB Garamond", 48.5075, "500", 50.9328, -1.4552),
     locationHeading: typography(
       "EB Garamond",
       29.1045,

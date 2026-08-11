@@ -915,6 +915,47 @@ test("home FAQ is the centered third block with readable disclosure text", async
   ).toHaveCount(0);
 });
 
+test("home location and FAQ headings use the same display scale", async ({
+  page,
+}) => {
+  for (const width of [390, 1440]) {
+    await page.setViewportSize({width, height: 1000});
+    await page.goto("/");
+
+    const locationHeading = page.locator("#home-location-title");
+    const faqHeading = page.locator("#home-faq-title");
+    const [locationTypography, faqTypography] = await Promise.all([
+      locationHeading.evaluate((element) => {
+        const style = getComputedStyle(element);
+        return {fontSize: style.fontSize, lineHeight: style.lineHeight};
+      }),
+      faqHeading.evaluate((element) => {
+        const style = getComputedStyle(element);
+        return {fontSize: style.fontSize, lineHeight: style.lineHeight};
+      }),
+    ]);
+
+    expect(faqTypography, `heading scale at ${width}px`).toEqual(
+      locationTypography,
+    );
+  }
+});
+
+test("mobile home display uses compact two-line leading", async ({page}) => {
+  await page.setViewportSize({width: 390, height: 844});
+  await page.goto("/");
+
+  const typography = await page.locator(".plain-home-title").evaluate((element) => {
+    const style = getComputedStyle(element);
+    return {
+      fontSize: Number.parseFloat(style.fontSize),
+      lineHeight: Number.parseFloat(style.lineHeight),
+    };
+  });
+
+  expect(typography.lineHeight / typography.fontSize).toBeCloseTo(1.05, 2);
+});
+
 test("mobile home keeps the location, FAQ, and footer visually connected", async ({
   page,
 }) => {
