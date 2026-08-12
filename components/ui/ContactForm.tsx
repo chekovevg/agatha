@@ -51,15 +51,27 @@ export function ContactForm() {
           className="mai-body rounded px-4 py-3 shadow-[var(--shadow-inset)]"
         />
       </label>
-      <label className="mai-ui grid gap-2">
-        {copy.message}
+      <div className="grid gap-2">
+        <label htmlFor="contact-message" className="mai-ui">
+          {copy.message}
+        </label>
         <textarea
+          id="contact-message"
           name="message"
           required
+          minLength={10}
+          maxLength={3000}
           rows={5}
+          aria-describedby="contact-message-hint"
           className="mai-body rounded px-4 py-3 shadow-[var(--shadow-inset)]"
         />
-      </label>
+        <p
+          id="contact-message-hint"
+          className="mai-caption text-[var(--muted)]"
+        >
+          {copy.messageHint}
+        </p>
+      </div>
       <Button type="submit" disabled={state === "submitting"}>
         {state === "submitting" ? copy.sending : copy.submit}
       </Button>

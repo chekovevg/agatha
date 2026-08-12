@@ -1011,6 +1011,43 @@ test("about contact keeps only the two-field question form", async ({page}) => {
   }
 });
 
+test("about contact blocks messages shorter than the server minimum", async ({
+  page,
+}) => {
+  let contactRequests = 0;
+  await page.route("**/api/contact", async (route) => {
+    contactRequests += 1;
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: '{"ok":true}',
+    });
+  });
+  await page.setViewportSize({width: 390, height: 844});
+  await page.goto("/about");
+
+  const form = page.locator("#contact form");
+  const message = form.getByRole("textbox", {name: "Message", exact: true});
+  await form.getByLabel("Email").fill("student@example.com");
+  await message.fill("Test");
+  await form.getByRole("button", {name: "Send Message"}).click();
+
+  expect(
+    await message.evaluate(
+      (element) => (element as HTMLTextAreaElement).validity.tooShort,
+    ),
+  ).toBe(true);
+  await expect(
+    form.getByText("Please enter at least 10 characters."),
+  ).toBeVisible();
+  await expect(
+    form.getByText(
+      "Something went wrong. Please try again or use the booking link.",
+    ),
+  ).toHaveCount(0);
+  expect(contactRequests).toBe(0);
+});
+
 test("about renders the replacement portrait at mobile and desktop widths", async ({
   page,
 }) => {
