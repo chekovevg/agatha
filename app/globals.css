@@ -285,7 +285,7 @@
     --mai-caption-size: 12px;
     --space-home-display-lead: var(--space-12-5);
     --space-home-copy-action: var(--space-40);
-    --space-home-section-transition: var(--space-190);
+    --space-home-section-transition: var(--space-120);
   }
 }
 
@@ -627,11 +627,11 @@ select {
     }
 
     .tab-menu-viewport {
-      padding: var(--space-12);
+      padding: var(--space-4);
     }
 
     .tab-menu-item {
-      height: 31.38px;
+      height: 44px;
       padding-inline: var(--space-20);
     }
 
@@ -851,7 +851,7 @@ select {
     width: 100%;
   }
 
-  .home-location-heading {
+  .home-section-heading {
     font-family: var(--font-eb-garamond), Georgia, "Times New Roman", serif;
     font-size: var(--mai-h3-size);
     font-weight: 400;
@@ -887,7 +887,12 @@ select {
       padding-top: 155px;
     }
 
+    .home-main-stack {
+      padding-bottom: var(--space-72);
+    }
+
     .plain-home-title {
+      line-height: 1.05;
       max-width: 340px;
     }
 

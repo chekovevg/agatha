@@ -357,7 +357,7 @@ test("home spacing roles resolve from the shared scale", async ({page}) => {
       displayTabs: (width <= 600 ? 12.5 : 37.5) * scale,
       controlDescription: 30 * scale,
       descriptionAction: (width <= 600 ? 40 : 50) * scale,
-      sectionTransition: (width <= 600 ? 190 : 250) * scale,
+      sectionTransition: (width <= 600 ? 120 : 250) * scale,
     };
 
     for (const [role, value] of Object.entries(expected)) {
@@ -556,11 +556,29 @@ test("footer uses line-height rhythm on mobile and preserves desktop spacing", a
 
   expect(secondBox!.y - firstBox!.y).toBeCloseTo(lineHeight, 1);
   await expect(siteLinks).toHaveCSS("row-gap", "0px");
-  expect(
-    await footer
-      .locator('[data-footer-zone="links"]')
-      .evaluate((element) => Number.parseFloat(getComputedStyle(element).rowGap)),
-  ).toBeCloseTo(48 * (390 / 402), 1);
+  const mobileScale = 390 / 402;
+  const [linksGap, footerGap, footerMarginTop, footerPaddingBottom] =
+    await Promise.all([
+      footer
+        .locator('[data-footer-zone="links"]')
+        .evaluate((element) =>
+          Number.parseFloat(getComputedStyle(element).rowGap),
+        ),
+      footer.evaluate((element) =>
+        Number.parseFloat(getComputedStyle(element).rowGap),
+      ),
+      footer.evaluate((element) =>
+        Number.parseFloat(getComputedStyle(element).marginTop),
+      ),
+      footer.evaluate((element) =>
+        Number.parseFloat(getComputedStyle(element).paddingBottom),
+      ),
+    ]);
+
+  expect(linksGap).toBeCloseTo(24 * mobileScale, 1);
+  expect(footerGap).toBeCloseTo(24 * mobileScale, 1);
+  expect(footerMarginTop).toBeCloseTo(100 * mobileScale, 1);
+  expect(footerPaddingBottom).toBeCloseTo(72 * mobileScale, 1);
 
   await page.setViewportSize({width: 1440, height: 900});
   await page.goto("/classes");
@@ -806,15 +824,18 @@ test("booking route selects the relevant event and remains switchable", async ({
   });
   const mobileBookingBox = await mobileBookingType.boundingBox();
   expect(mobileBookingBox!.width).toBeLessThan(366);
-  expect(mobileBookingBox!.height).toBeCloseTo(54.66, 1);
+  expect(mobileBookingBox!.height).toBeCloseTo(
+    44 + 8 * (390 / 402),
+    1,
+  );
   expect(
     await mobileBookingType.evaluate((element) =>
       Number.parseFloat(getComputedStyle(element).paddingTop),
     ),
-  ).toBeCloseTo(12 * (390 / 402), 2);
+  ).toBeCloseTo(4 * (390 / 402), 2);
   await expect(
     mobileBookingType.getByRole("link", {name: "Intro Call", exact: true}),
-  ).toHaveCSS("height", "31.375px");
+  ).toHaveCSS("height", "44px");
   await expect(page.getByTestId("booking-description")).toHaveCSS(
     "font-size",
     "18px",
@@ -894,6 +915,76 @@ test("home FAQ is the centered third block with readable disclosure text", async
   ).toHaveCount(0);
 });
 
+test("home location and FAQ headings use the same display scale", async ({
+  page,
+}) => {
+  for (const width of [390, 1440]) {
+    await page.setViewportSize({width, height: 1000});
+    await page.goto("/");
+
+    const locationHeading = page.locator("#home-location-title");
+    const faqHeading = page.locator("#home-faq-title");
+    const [locationTypography, faqTypography] = await Promise.all([
+      locationHeading.evaluate((element) => {
+        const style = getComputedStyle(element);
+        return {fontSize: style.fontSize, lineHeight: style.lineHeight};
+      }),
+      faqHeading.evaluate((element) => {
+        const style = getComputedStyle(element);
+        return {fontSize: style.fontSize, lineHeight: style.lineHeight};
+      }),
+    ]);
+
+    expect(faqTypography, `heading scale at ${width}px`).toEqual(
+      locationTypography,
+    );
+  }
+});
+
+test("mobile home display uses compact two-line leading", async ({page}) => {
+  await page.setViewportSize({width: 390, height: 844});
+  await page.goto("/");
+
+  const typography = await page.locator(".plain-home-title").evaluate((element) => {
+    const style = getComputedStyle(element);
+    return {
+      fontSize: Number.parseFloat(style.fontSize),
+      lineHeight: Number.parseFloat(style.lineHeight),
+    };
+  });
+
+  expect(typography.lineHeight / typography.fontSize).toBeCloseTo(1.05, 2);
+});
+
+test("mobile home keeps the location, FAQ, and footer visually connected", async ({
+  page,
+}) => {
+  await page.setViewportSize({width: 390, height: 844});
+  await page.goto("/");
+
+  const location = page.locator(".home-location-section");
+  const faq = page.locator("[data-home-faq]");
+  const footer = page.locator("footer");
+  const [locationBox, faqBox, footerBox] = await Promise.all([
+    location.boundingBox(),
+    faq.boundingBox(),
+    footer.boundingBox(),
+  ]);
+  const mobileScale = 390 / 402;
+
+  expect(locationBox).not.toBeNull();
+  expect(faqBox).not.toBeNull();
+  expect(footerBox).not.toBeNull();
+  expect(faqBox!.y - (locationBox!.y + locationBox!.height)).toBeCloseTo(
+    100 * mobileScale,
+    1,
+  );
+  expect(footerBox!.y - (faqBox!.y + faqBox!.height)).toBeCloseTo(
+    (72 + 100) * mobileScale,
+    1,
+  );
+});
+
 test("about contact keeps only the two-field question form", async ({page}) => {
   for (const width of [390, 1440]) {
     await page.setViewportSize({width, height: 1000});
@@ -918,6 +1009,46 @@ test("about contact keeps only the two-field question form", async ({page}) => {
       ),
     ).toBeLessThanOrEqual(0.5);
   }
+});
+
+test("about contact validates the trimmed server minimum", async ({page}) => {
+  let contactRequests = 0;
+  await page.route("**/api/contact", async (route) => {
+    contactRequests += 1;
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: '{"ok":true}',
+    });
+  });
+  await page.setViewportSize({width: 390, height: 844});
+  await page.goto("/about");
+
+  const form = page.locator("#contact form");
+  const message = form.getByRole("textbox", {name: "Message", exact: true});
+  await form.getByLabel("Email").fill("student@example.com");
+  await message.fill("Test      ");
+  await form.getByRole("button", {name: "Send Message"}).click();
+
+  expect(await message.evaluate((element) => {
+    const textarea = element as HTMLTextAreaElement;
+    return {
+      valid: textarea.validity.valid,
+      validationMessage: textarea.validationMessage,
+    };
+  })).toEqual({
+    valid: false,
+    validationMessage: "Please enter at least 10 characters.",
+  });
+  await expect(
+    form.getByText("Please enter at least 10 characters."),
+  ).toBeVisible();
+  await expect(
+    form.getByText(
+      "Something went wrong. Please try again or use the booking link.",
+    ),
+  ).toHaveCount(0);
+  expect(contactRequests).toBe(0);
 });
 
 test("about renders the replacement portrait at mobile and desktop widths", async ({

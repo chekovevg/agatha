@@ -32,7 +32,7 @@ export function HomePage({content}: {content: SiteContent}) {
           >
             <h2
               id="home-location-title"
-              className="home-location-heading"
+              className="home-section-heading"
               data-home-location-heading
             >
               {home.location.heading}
@@ -54,10 +54,10 @@ export function HomePage({content}: {content: SiteContent}) {
           <section
             data-home-faq="true"
             aria-labelledby="home-faq-title"
-            className="mt-[var(--space-190)] w-full px-[var(--space-20)] text-[var(--ink)] max-[600px]:mt-[var(--space-144)]"
+            className="mt-[var(--space-190)] w-full px-[var(--space-20)] text-[var(--ink)] max-[600px]:mt-[var(--space-100)]"
           >
             <div className="mx-auto grid w-full max-w-[643px] gap-[var(--space-32)]">
-              <h2 id="home-faq-title" className="mai-h4 text-center">
+              <h2 id="home-faq-title" className="home-section-heading text-center">
                 {content.pages.about.faqHeading}
               </h2>
               <div className="divide-y divide-[var(--line)] border-y border-[var(--line)] text-left">
