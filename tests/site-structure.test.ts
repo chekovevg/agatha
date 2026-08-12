@@ -310,10 +310,16 @@ describe("editorial site structure", () => {
     expect(existsSync(workflowUrl)).toBe(true);
 
     const workflow = readFileSync(workflowUrl, "utf8");
-    expect(workflow).toContain("actions/checkout@v4");
-    expect(workflow).toContain("actions/setup-node@v4");
-    expect(workflow).toContain("node-version: 20");
+    expect(workflow).toContain(
+      "actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+    );
+    expect(workflow).toContain(
+      "actions/setup-node@820762786026740c76f36085b0efc47a31fe5020",
+    );
+    expect(workflow).toContain("persist-credentials: false");
+    expect(workflow).toContain("node-version: 24");
     expect(workflow).toContain("npm ci");
+    expect(workflow).toContain("npm audit --audit-level=low");
     expect(workflow).toContain("npm run check");
     expect(workflow).toContain("playwright install --with-deps chromium");
     expect(workflow).toContain("npm run e2e:run");
