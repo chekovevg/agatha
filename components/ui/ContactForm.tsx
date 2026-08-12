@@ -8,6 +8,13 @@ import {submitContact} from "@/lib/contact-client";
 
 type FormState = "idle" | "submitting" | "success" | "error";
 
+function validateMessage(event: React.FormEvent<HTMLTextAreaElement>) {
+  const message = event.currentTarget;
+  message.setCustomValidity(
+    message.value.trim().length >= message.minLength ? "" : copy.messageHint,
+  );
+}
+
 export function ContactForm() {
   const formStartedAt = useRef("");
   const [state, setState] = useState<FormState>("idle");
@@ -63,6 +70,7 @@ export function ContactForm() {
           maxLength={3000}
           rows={5}
           aria-describedby="contact-message-hint"
+          onInput={validateMessage}
           className="mai-body rounded px-4 py-3 shadow-[var(--shadow-inset)]"
         />
         <p

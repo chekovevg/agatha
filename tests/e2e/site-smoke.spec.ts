@@ -1011,9 +1011,7 @@ test("about contact keeps only the two-field question form", async ({page}) => {
   }
 });
 
-test("about contact blocks messages shorter than the server minimum", async ({
-  page,
-}) => {
+test("about contact validates the trimmed server minimum", async ({page}) => {
   let contactRequests = 0;
   await page.route("**/api/contact", async (route) => {
     contactRequests += 1;
@@ -1029,14 +1027,19 @@ test("about contact blocks messages shorter than the server minimum", async ({
   const form = page.locator("#contact form");
   const message = form.getByRole("textbox", {name: "Message", exact: true});
   await form.getByLabel("Email").fill("student@example.com");
-  await message.fill("Test");
+  await message.fill("Test      ");
   await form.getByRole("button", {name: "Send Message"}).click();
 
-  expect(
-    await message.evaluate(
-      (element) => (element as HTMLTextAreaElement).validity.tooShort,
-    ),
-  ).toBe(true);
+  expect(await message.evaluate((element) => {
+    const textarea = element as HTMLTextAreaElement;
+    return {
+      valid: textarea.validity.valid,
+      validationMessage: textarea.validationMessage,
+    };
+  })).toEqual({
+    valid: false,
+    validationMessage: "Please enter at least 10 characters.",
+  });
   await expect(
     form.getByText("Please enter at least 10 characters."),
   ).toBeVisible();
