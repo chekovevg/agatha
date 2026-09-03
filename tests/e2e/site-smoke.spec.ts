@@ -77,6 +77,37 @@ test("primary English routes render successfully with security headers", async (
   expect(pageErrors).toEqual([]);
 });
 
+test("classes preserves the Models-inspired mobile visual hierarchy", async ({
+  page,
+}) => {
+  await page.setViewportSize({width: 393, height: 852});
+  await page.goto("/classes");
+
+  const header = page.locator("[data-header-surface]");
+  const intro = page.getByTestId("classes-intro");
+  const heading = page.getByTestId("classes-heading");
+  const subtitle = page.getByTestId("classes-subtitle");
+
+  await expect(intro).toBeVisible();
+  await expect(subtitle).toHaveText(
+    "Choose the instrument or subject that suits your musical goals, level and pace.",
+  );
+  await expect(page.locator(".classes-page-backdrop")).toBeVisible();
+
+  const [headerBox, headingBox, headingType] = await Promise.all([
+    header.boundingBox(),
+    heading.boundingBox(),
+    readTypography(heading),
+  ]);
+  expect(headerBox).not.toBeNull();
+  expect(headingBox).not.toBeNull();
+  expect(headerBox!.x).toBeCloseTo(15, 0);
+  expect(headerBox!.width).toBeCloseTo(363, 0);
+  expect(headingBox!.y).toBeGreaterThan(190);
+  expect(headingType.fontSize).toBeCloseTo(29.3284, 1);
+  expect(headingType.lineHeight).toBeCloseTo(33.7276, 1);
+});
+
 test("home exposes its approved H1, metadata, and booking path", async ({
   page,
 }) => {

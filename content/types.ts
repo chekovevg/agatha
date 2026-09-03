@@ -23,6 +23,7 @@ export type SiteContent = {
   pages: {
     classes: {
       heading: string;
+      intro: string;
     };
     about: {
       trustHeading: string;
