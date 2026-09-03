@@ -53,28 +53,28 @@ function LessonRow({
           src={lesson.image}
           alt=""
           fill
-          sizes="216px"
+          sizes="(max-width: 640px) calc(100vw - 30px), 216px"
           className="object-contain"
         />
       </div>
       <div className="classes-lesson-details">
-        <p className="mai-eyebrow text-[var(--ink)]">
+        <p className="classes-lesson-eyebrow mai-eyebrow text-[var(--ink)]">
           Music lesson
         </p>
         <h2 className="classes-lesson-title mai-h4 mt-[var(--space-24)]">
           {lesson.title}
         </h2>
-        <ButtonLink
-          href={lessonBookingHref(lesson.title)}
-          className="classes-lesson-cta mt-[var(--space-32)]"
-          data-analytics-booking-cta="classes"
-        >
-          Book a Lesson
-        </ButtonLink>
       </div>
       <p className="classes-lesson-description mai-body text-[var(--ink)]">
         {lesson.description}
       </p>
+      <ButtonLink
+        href={lessonBookingHref(lesson.title)}
+        className="classes-lesson-cta mt-[var(--space-32)] md:col-start-2"
+        data-analytics-booking-cta="classes"
+      >
+        Book a Lesson
+      </ButtonLink>
     </article>
   );
 }
