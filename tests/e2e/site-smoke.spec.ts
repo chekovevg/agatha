@@ -49,6 +49,20 @@ test("assigns the requested artwork to each color scheme", async ({page}) => {
   ).toHaveAttribute("href", "/favicon-light.svg");
 });
 
+test("home applies the reference background fade while its hero owns the viewport", async ({
+  page,
+}) => {
+  await page.setViewportSize({width: 393, height: 852});
+  await page.goto("/");
+
+  const shell = page.getByTestId("home-background-fade");
+  await expect(shell).toHaveCSS("background-color", "rgb(244, 232, 200)");
+  await expect(shell).toHaveCSS("transition-duration", "1.1s");
+
+  await page.evaluate(() => window.scrollTo(0, window.innerHeight * 2));
+  await expect(shell).toHaveCSS("background-color", "rgb(254, 249, 238)");
+});
+
 test("primary English routes render successfully with security headers", async ({
   page,
 }) => {
@@ -103,7 +117,8 @@ test("classes preserves the Models-inspired mobile visual hierarchy", async ({
   expect(headingBox).not.toBeNull();
   expect(headerBox!.x).toBeCloseTo(15, 0);
   expect(headerBox!.width).toBeCloseTo(363, 0);
-  expect(headingBox!.y).toBeGreaterThan(190);
+  expect(headingBox!.y).toBeGreaterThan(135);
+  expect(headingBox!.y).toBeLessThan(150);
   expect(headingType.fontSize).toBeCloseTo(29.3284, 1);
   expect(headingType.lineHeight).toBeCloseTo(33.7276, 1);
 });
@@ -117,32 +132,41 @@ test("classes keeps the reference card order and mobile text scale", async ({
   const pageShell = page.locator(".classes-page-shell");
   const card = page.locator(".classes-lesson-card").first();
   const media = card.locator(".classes-lesson-media");
-  const details = card.locator(".classes-lesson-details");
+  const eyebrow = card.locator(".classes-lesson-eyebrow");
   const description = card.locator(".classes-lesson-description");
   const title = card.locator(".classes-lesson-title");
+  const cta = card.locator(".classes-lesson-cta");
 
   await expect(card).toBeVisible();
   await expect(media).toBeVisible();
-  await expect(details).toBeVisible();
+  await expect(eyebrow).toBeVisible();
   await expect(description).toBeVisible();
+  await expect(cta).toBeVisible();
 
-  const [shellBackground, cardDisplay, mediaOrder, detailsOrder, descriptionOrder, titleType, descriptionType] =
+  const [shellBackground, cardDisplay, mediaOrder, eyebrowOrder, titleOrder, descriptionOrder, ctaOrder, titleType, descriptionType, descriptionBox, ctaBox] =
     await Promise.all([
       pageShell.evaluate((element) => getComputedStyle(element).backgroundColor),
       card.evaluate((element) => getComputedStyle(element).display),
       media.evaluate((element) => getComputedStyle(element).order),
-      details.evaluate((element) => getComputedStyle(element).order),
+      eyebrow.evaluate((element) => getComputedStyle(element).order),
+      title.evaluate((element) => getComputedStyle(element).order),
       description.evaluate((element) => getComputedStyle(element).order),
+      cta.evaluate((element) => getComputedStyle(element).order),
       readTypography(title),
       readTypography(description),
+      description.boundingBox(),
+      cta.boundingBox(),
     ]);
 
   expect(shellBackground).toBe("rgba(0, 0, 0, 0)");
   expect(cardDisplay).toBe("flex");
-  expect([mediaOrder, detailsOrder, descriptionOrder]).toEqual(["1", "2", "3"]);
-  expect(titleType.fontSize).toBeCloseTo(32, 1);
-  expect(descriptionType.fontSize).toBeCloseTo(19.5522, 1);
-  expect(descriptionType.lineHeight).toBeCloseTo(23.4627, 1);
+  expect([mediaOrder, eyebrowOrder, titleOrder, descriptionOrder, ctaOrder]).toEqual(["1", "2", "2", "3", "4"]);
+  expect(descriptionBox).not.toBeNull();
+  expect(ctaBox).not.toBeNull();
+  expect(ctaBox!.y).toBeGreaterThan(descriptionBox!.y + descriptionBox!.height);
+  expect(titleType.fontSize).toBeCloseTo(26.3955, 1);
+  expect(descriptionType.fontSize).toBeCloseTo(17.597, 1);
+  expect(descriptionType.lineHeight).toBeCloseTo(23.404, 1);
 });
 
 test("classes uses the reference spacing and centered card artwork on mobile", async ({
@@ -164,12 +188,12 @@ test("classes uses the reference spacing and centered card artwork on mobile", a
   expect(headingBox).not.toBeNull();
   expect(cardBox).not.toBeNull();
   expect(mediaBox).not.toBeNull();
-  expect(headingBox!.y).toBeGreaterThan(190);
-  expect(headingBox!.y).toBeLessThan(220);
+  expect(headingBox!.y).toBeGreaterThan(135);
+  expect(headingBox!.y).toBeLessThan(150);
   expect(cardBox!.x).toBeCloseTo(15, 0);
   expect(mediaBox!.x).toBeCloseTo((393 - mediaBox!.width) / 2, 0);
   expect(cardStyle).not.toBe("rgba(0, 0, 0, 0)");
-  expect(cardBox!.height).toBeGreaterThanOrEqual(620);
+  expect(cardBox!.height).toBeGreaterThanOrEqual(601);
 });
 
 test("home exposes its approved H1, metadata, and booking path", async ({

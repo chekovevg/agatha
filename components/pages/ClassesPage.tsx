@@ -58,7 +58,7 @@ function LessonRow({
         />
       </div>
       <div className="classes-lesson-details">
-        <p className="mai-eyebrow text-[var(--ink)]">
+        <p className="classes-lesson-eyebrow mai-eyebrow text-[var(--ink)]">
           Music lesson
         </p>
         <h2 className="classes-lesson-title mai-h4 mt-[var(--space-24)]">
