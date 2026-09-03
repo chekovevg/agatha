@@ -113,22 +113,20 @@ import {WebGLHeroBackground} from "@/components/ui/WebGLHeroBackground";
 import {siteContent} from "@/content/site";
 
 describe("home hero", () => {
-  it("uses a one-screen canvas hero instead of a raster or extended sticky intro", () => {
+  it("renders the approved musical score hero without the old background stack", () => {
     const html = renderToStaticMarkup(
       <HomePage content={siteContent} />,
     );
 
-    expect(html).toContain('data-home-hero="watercolor-intro"');
-    expect(html).toContain('data-home-hero-background-switcher="canvas"');
-    expect(html).toContain("home-hero-canvas-stage");
-    expect(html).toContain("watercolor-hero-bg");
-    expect(html).toContain("<canvas");
-    expect(html).toContain("h-[100svh]");
+    expect(html).toContain('data-home-hero="musical-score"');
+    expect(html).toContain("musical-home-hero");
+    expect(html).toContain('data-musical-score="true"');
+    expect(html).toContain("<svg");
+    expect(html).toContain("Play the phrase");
+    expect(html).not.toContain("home-hero-canvas-stage");
+    expect(html).not.toContain("watercolor-hero-bg");
+    expect(html).not.toContain("<canvas");
     expect(html).not.toContain("webgl-hero-bg");
-    expect(html).not.toContain("min-h-[200svh]");
-    expect(html).not.toContain("sticky top-0");
-    expect(html).not.toContain("home-hero-scroll-marker");
-    expect(html).not.toContain("/images/home/hero-background.png");
   });
 
   it("enables the ASCII hero layer by default on local browser hosts", () => {
@@ -166,21 +164,15 @@ describe("home hero", () => {
 
     expect(html).toContain('data-reference-section="hero"');
     expect(html).toContain('data-reference-section="manifesto"');
-    expect(html).toContain('data-reference-section="values"');
     expect(html).toContain('data-reference-section="single-location"');
-    expect(html).toContain('data-reference-section="quote"');
+    expect(html).not.toContain('data-reference-section="values"');
+    expect(html).not.toContain('data-reference-section="quote"');
     expect(html).toContain('data-reference-background="cream-stack"');
-    expect(html).toContain('class="home-scroll-background"');
-    expect(html).toContain('data-scroll-bg="#fef9ed"');
-    expect(html).toContain('data-scroll-bg-mode="early-pulse"');
-    expect(html).toContain('data-scroll-bg-peak="#f4e8c8"');
-    expect(html).toContain('data-scroll-bg-mode="center-pulse"');
-    expect(html).toContain('data-scroll-bg-peak="#fbf9ee"');
-    expect(html).not.toContain(
-      'data-reference-section="hero" data-scroll-bg',
-    );
+    expect(html).not.toContain('class="home-scroll-background"');
+    expect(html).not.toContain("data-scroll-bg");
     expect(html).toContain("Music becomes possible");
-    expect(html).toContain("Values");
+    expect(html).not.toContain("Find the right lesson");
+    expect(html).not.toContain(">Values<");
     expect(html).toContain("From the Rhine, online");
     expect(html).not.toContain('data-reference-section="news-link"');
     expect(html).not.toContain('data-reference-section="models"');
@@ -292,27 +284,78 @@ describe("home hero", () => {
     );
 
     expect(html).toContain("mai-h1");
-    expect(html).toContain("home-hero-copy");
-    expect(html).toContain("home-hero-title");
-    expect(html).toContain("min-[601px]:h-[calc(70.6875*var(--unit-fx))]");
-    expect(html).not.toContain("min-[601px]:min-h-[calc(70.6875*var(--unit-fx))]");
+    expect(html).toContain("musical-home-hero-copy");
+    expect(html).toContain("musical-home-title");
+    expect(html).toContain("min-[861px]:h-[calc(70.6875*var(--unit-fx))]");
+    expect(html).not.toContain("min-[861px]:min-h-[calc(70.6875*var(--unit-fx))]");
     expect(html).toContain("h-[calc(25.06*var(--unit-fx))] w-auto");
     expect(html).not.toContain("h-[calc(30*var(--unit-fx))]");
     expect(html).not.toContain("w-[calc(54*var(--unit-fx))]");
-    expect(html).toContain("home-hero-title-line-primary");
-    expect(html).toContain("home-hero-title-line-secondary");
-    expect(html).toContain("home-hero-subtitle");
+    expect(html).toContain("musical-home-title-primary");
+    expect(html).toContain("musical-home-title-secondary");
     expect(html).toContain("mai-h3");
-    expect(html).toContain("mai-h4");
-    expect(html).toContain("mai-h5");
-    expect(html).toContain("mai-h7");
     expect(html).toContain("mai-text-large");
     expect(html).toContain("mai-text-large-alt");
     expect(html).toContain("mai-text-regular");
-    expect(html).toContain(
-      'class="mai-text-large home-hero-subtitle mx-auto text-[var(--hero-watercolor-muted)]"',
-    );
     expect(html).not.toContain("tracking-[0]");
+  });
+
+  it("keeps one service H1 and places compact audience actions after the manifesto", () => {
+    const html = renderToStaticMarkup(<HomePage content={siteContent} />);
+
+    expect(html.match(/<h1/g)).toHaveLength(1);
+    expect(html).toMatch(
+      /<h1[^>]*>[\s\S]*Flute &amp; Music Teacher[\s\S]*For Adults and Children[\s\S]*<\/h1>/,
+    );
+    expect(html).toContain(
+      'aria-label="Flute &amp; Music Teacher For Adults and Children"',
+    );
+    expect(html.match(/>Get in Touch<\/a>/g)).toHaveLength(2);
+    expect(html.match(/>Intro Call<img/g)).toHaveLength(2);
+    expect(html).not.toContain("Book an intro call");
+
+    const heroEnd = html.indexOf("</section>");
+    const heroAction = html.indexOf(">Get in Touch</a>");
+
+    expect(heroAction).toBeGreaterThan(-1);
+    expect(heroAction).toBeLessThan(heroEnd);
+    expect(
+      html.match(/href="\/online-flute-lessons-for-adults"/g),
+    ).toHaveLength(1);
+    expect(
+      html.match(/href="\/online-flute-lessons-for-children"/g),
+    ).toHaveLength(1);
+    expect(html).toMatch(
+      /<a[^>]*class="[^"]*mai-ui inline-flex[^"]*"[^>]*href="\/online-flute-lessons-for-adults"[^>]*>For adults<\/a>/,
+    );
+    expect(html).toMatch(
+      /<a[^>]*class="[^"]*mai-ui inline-flex[^"]*"[^>]*href="\/online-flute-lessons-for-children"[^>]*>For children<\/a>/,
+    );
+
+    const manifestoCopy = html.indexOf("Agatha teaches through small realistic steps");
+    const adultAction = html.indexOf('href="/online-flute-lessons-for-adults"');
+    const childAction = html.indexOf('href="/online-flute-lessons-for-children"');
+    const location = html.indexOf('data-reference-section="single-location"');
+
+    expect(manifestoCopy).toBeGreaterThan(-1);
+    expect(adultAction).toBeGreaterThan(manifestoCopy);
+    expect(childAction).toBeGreaterThan(adultAction);
+    expect(location).toBeGreaterThan(childAction);
+    expect(html).not.toContain('data-reference-section="values"');
+    expect(html).not.toContain('data-reference-section="quote"');
+    expect(html).not.toContain("Find the right lesson");
+  });
+
+  it("restores the mounted player guard after a Strict Mode effect replay", () => {
+    const source = readFileSync(
+      new URL("../components/ui/MusicalScoreHero.tsx", import.meta.url),
+      "utf8",
+    );
+
+    expect(source).toMatch(
+      /useEffect\(\(\) => \{\s+mountedRef\.current = true;/,
+    );
+    expect(source).toContain("mountedRef.current = false;");
   });
 
   it("keeps the open mobile header aligned with the Microsoft AI menu contract", () => {
@@ -325,9 +368,9 @@ describe("home hero", () => {
       "utf8",
     );
 
-    expect(source).toContain("max-[600px]:fixed");
-    expect(source).toContain("max-[600px]:inset-0");
-    expect(source).toContain("max-[600px]:bg-[var(--background)]");
+    expect(source).toContain("max-[860px]:fixed");
+    expect(source).toContain("max-[860px]:inset-0");
+    expect(source).toContain("max-[860px]:bg-[var(--background)]");
     expect(source).toContain("data-menu-state");
     expect(source).toContain("data-header-hidden");
     expect(controllerSource).toContain("window.addEventListener(\"scroll\"");
@@ -336,26 +379,27 @@ describe("home hero", () => {
     expect(source).toContain("fixed");
     expect(source).toContain("top-0");
     expect(source).toContain("pt-[calc(33*var(--unit-fx))]");
-    expect(source).toContain("max-[600px]:pt-5");
-    expect(source).toContain("min-[601px]:-translate-y-[calc(100%+12px)]");
+    expect(source).toContain("max-[860px]:pt-5");
+    expect(source).toContain("min-[861px]:-translate-y-[calc(100%+12px)]");
     expect(controllerSource).toContain("requestAnimationFrame");
     expect(controllerSource).toContain("setTimeout");
-    expect(source).toContain("max-[600px]:fixed max-[600px]:inset-0");
-    expect(source).toContain("max-[600px]:bg-[var(--background)]");
-    expect(source).toContain("max-[600px]:transition-opacity");
-    expect(source).toContain("max-[600px]:duration-[700ms]");
-    expect(source).toContain("max-[600px]:ease-out");
-    expect(source).toContain("max-[600px]:opacity-100");
-    expect(source).toContain("max-[600px]:opacity-0");
-    expect(source).toContain("max-[600px]:leading-[1.8]");
+    expect(source).toContain("max-[860px]:fixed max-[860px]:inset-0");
+    expect(source).toContain("max-[860px]:bg-[var(--background)]");
+    expect(source).toContain("max-[860px]:transition-opacity");
+    expect(source).toContain("max-[860px]:duration-[700ms]");
+    expect(source).toContain("max-[860px]:ease-out");
+    expect(source).toContain("max-[860px]:opacity-100");
+    expect(source).toContain("max-[860px]:opacity-0");
+    expect(source).toContain("max-[860px]:leading-[1.8]");
     expect(source).toContain('"font-ui mt-[calc(28*var(--unit-fx))]');
     expect(source).toContain("aria-label=\"Footer links\"");
     expect(source).toContain("aria-label=\"Social links\"");
-    expect(source).toContain("max-[600px]:z-[9999]");
-    expect(source).toContain("max-[600px]:h-[100dvh]");
-    expect(source).toContain("max-[600px]:justify-between");
-    expect(source).toContain("max-[600px]:row-start-1");
-    expect(source).toContain("max-[600px]:pt-[calc(100*var(--unit-fx))]");
+    expect(source).toContain("max-[860px]:z-[9999]");
+    expect(source).toContain("max-[860px]:h-[100dvh]");
+    expect(source).toContain("max-[860px]:justify-between");
+    expect(source).toContain("max-[860px]:row-start-1");
+    expect(source).toContain("max-[860px]:pt-[calc(100*var(--unit-fx))]");
+    expect(controllerSource).toContain("MOBILE_HEADER_MAX_WIDTH");
     expect(source).toContain("h-[8px] w-[18px]");
     expect(source).toContain("outline-none");
     expect(source).toContain("focus-visible:outline-offset-2");
@@ -367,21 +411,21 @@ describe("home hero", () => {
     expect(source).toContain("translate-y-0 -rotate-45");
     expect(source).toContain("translate-y-0 rotate-45");
     expect(source).not.toContain("clipPath");
-    expect(source).not.toContain("max-[600px]:transition-[clip-path,opacity]");
-    expect(source).not.toContain("max-[600px]:delay-[500ms]");
-    expect(source).not.toContain("max-[600px]:delay-[600ms]");
-    expect(source).not.toContain("max-[600px]:delay-[700ms]");
+    expect(source).not.toContain("max-[860px]:transition-[clip-path,opacity]");
+    expect(source).not.toContain("max-[860px]:delay-[500ms]");
+    expect(source).not.toContain("max-[860px]:delay-[600ms]");
+    expect(source).not.toContain("max-[860px]:delay-[700ms]");
     expect(source).not.toContain(
-      "max-[600px]:transition-opacity max-[600px]:duration-[500ms]",
+      "max-[860px]:transition-opacity max-[860px]:duration-[500ms]",
     );
     expect(source).not.toContain("top-0 h-px w-full bg-[currentColor]");
     expect(source).not.toContain("bottom-0 left-0 h-px w-full bg-[currentColor]");
     expect(source).not.toContain("translate-y-[3.5px]");
-    expect(source).not.toContain("max-[600px]:inset-x-[calc(16*var(--unit-fx))]");
-    expect(source).not.toContain("max-[600px]:bottom-[calc(20*var(--unit-fx))]");
+    expect(source).not.toContain("max-[860px]:inset-x-[calc(16*var(--unit-fx))]");
+    expect(source).not.toContain("max-[860px]:bottom-[calc(20*var(--unit-fx))]");
     expect(source).not.toContain("pb-[calc(132*var(--unit-fx))]");
     expect(source).not.toContain("Accessibility Mode");
-    expect(source).not.toContain("max-[600px]:top-[calc(100%+calc(10*var(--unit-fx)))]");
+    expect(source).not.toContain("max-[860px]:top-[calc(100%+calc(10*var(--unit-fx)))]");
   });
 
   it("renders configured contact links in the mobile header instead of disabled placeholders", () => {
@@ -450,6 +494,32 @@ describe("home hero", () => {
     expect(css).toContain("max-width: min(calc(100vw - 56px), 320px);");
   });
 
+  it("matches the microsoft.ai text-selection treatment", () => {
+    const css = readFileSync(
+      new URL("../app/globals.css", import.meta.url),
+      "utf8",
+    );
+
+    expect(css).toMatch(
+      /::selection\s*\{\s*color: var\(--ink\);\s*text-shadow: none;\s*background-color: var\(--selection-paper\);\s*\}/,
+    );
+  });
+
+  it("defines responsive, focus-visible, and reduced-motion score states", () => {
+    const css = readFileSync(
+      new URL("../app/globals.css", import.meta.url),
+      "utf8",
+    );
+
+    expect(css).toContain(".musical-home-hero");
+    expect(css).toContain(".musical-score-stage");
+    expect(css).toContain(".musical-score-player");
+    expect(css).toContain('.score-note[data-active="true"]');
+    expect(css).toContain(".musical-score-play-button:focus-visible");
+    expect(css).toContain("@media (width < 861px)");
+    expect(css).toContain("@media (prefers-reduced-motion: reduce)");
+  });
+
   it("loads the hero Garamond faces from local font files", () => {
     const layout = readFileSync(
       new URL("../app/layout.tsx", import.meta.url),
@@ -476,7 +546,7 @@ describe("home hero", () => {
     ).toBe(true);
   });
 
-  it("uses updated location artwork and a mobile-specific Agatha image", () => {
+  it("uses the approved location artwork without the removed quote portrait", () => {
     const html = renderToStaticMarkup(
       <HomePage content={siteContent} />,
     );
@@ -484,17 +554,12 @@ describe("home hero", () => {
     expect(html).toContain('src="/images/home/from-the-rhine.webp"');
     expect(html).toContain('width="1501"');
     expect(html).toContain('height="944"');
-    expect(html).toContain("<picture");
-    expect(html).toContain('media="(max-width: 767px)"');
-    expect(html).toContain('media="(min-width: 768px)"');
-    expect(html).toContain("/images/home/agatha-pic-mobile.webp");
+    expect(html).not.toContain("<picture");
+    expect(html).not.toContain("/images/home/agatha-pic-mobile.webp");
 
     expect(
       getWebpSize(new URL("../public/images/home/from-the-rhine.webp", import.meta.url)),
     ).toEqual({height: 944, width: 1501});
-    expect(
-      getWebpSize(new URL("../public/images/home/agatha-pic-mobile.webp", import.meta.url)),
-    ).toEqual({height: 1508, width: 1404});
   });
 
   it("keeps split link button hover motion aligned with Microsoft AI", () => {

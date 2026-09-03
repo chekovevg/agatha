@@ -7,6 +7,23 @@ describe("Next.js response headers", () => {
     expect(nextConfig.allowedDevOrigins).toEqual(["127.0.0.1"]);
   });
 
+  it("redirects only the five approved legacy English paths", async () => {
+    expect(nextConfig.redirects).toBeTypeOf("function");
+
+    const redirects = await nextConfig.redirects?.();
+
+    expect(redirects).toEqual([
+      {source: "/en", destination: "/", permanent: true},
+      {source: "/en/about", destination: "/about", permanent: true},
+      {source: "/en/classes", destination: "/classes", permanent: true},
+      {source: "/en/media", destination: "/media", permanent: true},
+      {source: "/en/book", destination: "/book", permanent: true},
+    ]);
+    expect(redirects).not.toContainEqual(
+      expect.objectContaining({source: "/en/:path*"}),
+    );
+  });
+
   it("applies conservative security headers to every route", async () => {
     expect(nextConfig.headers).toBeTypeOf("function");
 

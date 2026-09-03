@@ -13,7 +13,8 @@ Use this checklist before treating the site as beta-ready or production-ready.
 
 - [x] Vercel project is connected to the GitHub repo.
 - [x] Production deployment is created from `main`.
-- [x] `NEXT_PUBLIC_SITE_URL` points to `https://agatha-pied.vercel.app`.
+- [ ] `NEXT_PUBLIC_SITE_URL` points to the canonical production origin
+  `https://www.agathamusic.com`.
 - [x] `NEXT_PUBLIC_CAL_LINK` is set.
 - [x] `RESEND_API_KEY` is set.
 - [x] Contact notifications include `agathagurko@gmail.com`.
@@ -28,6 +29,8 @@ Use this checklist before treating the site as beta-ready or production-ready.
 - [x] `/book` renders a real Cal.com embed or a real fallback link.
 - [x] Trial Lesson event exists in Cal.com.
 - [ ] Intake questions are configured in Cal.com.
+- [ ] Add an optional "How did you find Agatha?" question to the Cal.com
+  Trial Lesson event.
 - [ ] Calendar sync is configured in Cal.com.
 - [x] No custom calendar logic is added to the site.
 
@@ -69,6 +72,15 @@ npm.cmd run e2e:run
 
 - [x] `npm.cmd run check` covers typecheck, lint, unit tests, and build.
 - [x] GitHub Actions runs the same checks plus Playwright browser smoke tests.
+
+## Search Visibility
+
+- [ ] Verify `agathamusic.com` as a Google Search Console Domain Property.
+- [ ] Submit `https://www.agathamusic.com/sitemap.xml` in Search Console.
+- [ ] Inspect `/`, `/online-flute-lessons-for-adults`, and
+  `/online-flute-lessons-for-children` in Search Console after deployment.
+- [ ] Review real mobile Core Web Vitals after enough search traffic has
+  accumulated.
 
 Browser QA:
 

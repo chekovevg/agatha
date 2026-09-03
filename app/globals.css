@@ -308,6 +308,12 @@ body {
   color: var(--ink);
 }
 
+::selection {
+  color: var(--ink);
+  text-shadow: none;
+  background-color: var(--selection-paper);
+}
+
 html {
   scroll-behavior: smooth;
 }
@@ -1186,6 +1192,288 @@ select {
     transition: background-color 0.8s var(--alias-easeOutCubic);
   }
 
+  .classes-page-shell {
+    isolation: isolate;
+    position: relative;
+  }
+
+  .classes-page-backdrop {
+    background: linear-gradient(to bottom, rgb(242 221 219 / 70%), transparent);
+    height: 100svh;
+    left: 0;
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: -1;
+  }
+
+  .musical-home-hero {
+    align-content: start;
+    background: var(--reference-cream);
+    color: var(--ink);
+    display: grid;
+    justify-items: center;
+    min-height: min(920px, 100svh);
+    overflow: hidden;
+    padding: clamp(142px, 11vw, 190px) 32px clamp(56px, 6vw, 92px);
+    position: relative;
+    text-align: center;
+  }
+
+  .musical-home-hero-copy {
+    display: grid;
+    justify-items: center;
+    position: relative;
+    row-gap: 28px;
+    z-index: 2;
+  }
+
+  .musical-home-title {
+    display: grid;
+    justify-items: center;
+    letter-spacing: normal;
+    line-height: 1;
+    margin: 0;
+    text-wrap: balance;
+  }
+
+  .musical-home-title-primary {
+    font-family: var(--font-garamond-book-narrow, "GaramondBookNarrowC"),
+      var(--font-eb-garamond), Georgia, "Times New Roman", serif;
+    font-size: clamp(70px, 7.7vw, 132px);
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: -0.025em;
+    line-height: 0.88;
+  }
+
+  .musical-home-title-secondary {
+    font-family: var(--font-newsreader), var(--font-display), Georgia, serif;
+    font-size: clamp(22px, 2vw, 34px);
+    font-weight: 400;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+    margin-top: 18px;
+  }
+
+  .musical-score-player {
+    display: grid;
+    justify-items: center;
+    margin-top: clamp(28px, 3.8vw, 56px);
+    max-width: 1440px;
+    position: relative;
+    width: 100%;
+  }
+
+  .musical-score-stage {
+    margin: 0;
+    max-width: 1180px;
+    position: relative;
+    width: min(100%, 1180px);
+  }
+
+  .musical-score-svg {
+    display: block;
+    height: auto;
+    overflow: visible;
+    width: 100%;
+  }
+
+  .score-staff path {
+    fill: none;
+    opacity: 0.72;
+    stroke: var(--ink);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-width: 1.15;
+  }
+
+  .score-note {
+    fill: var(--ink);
+    stroke: var(--ink);
+    stroke-linecap: round;
+    stroke-width: 1.8;
+    transition:
+      fill 180ms var(--alias-easeOutCubic),
+      stroke 180ms var(--alias-easeOutCubic),
+      transform 180ms var(--alias-easeOutCubic);
+  }
+
+  .score-note[data-active="true"] {
+    fill: #ed967c;
+    stroke: #ed967c;
+  }
+
+  .score-note-flag {
+    opacity: 0.8;
+  }
+
+  .score-clef {
+    fill: var(--ink);
+    font-family: "Segoe UI Symbol", "Noto Music", serif;
+    font-size: 64px;
+  }
+
+  .score-annotations {
+    fill: #ed967c;
+    font-family: var(--font-garamond-book-narrow), var(--font-display), serif;
+    font-size: 15px;
+    font-style: italic;
+  }
+
+  .score-annotations path {
+    fill: none;
+    opacity: 0.9;
+    stroke: #ed967c;
+    stroke-linecap: round;
+    stroke-width: 1.5;
+  }
+
+  .musical-score-caption {
+    color: color-mix(in srgb, var(--ink) 72%, transparent);
+    display: grid;
+    font-family: var(--font-ui);
+    font-size: 10px;
+    gap: 2px;
+    left: 2%;
+    letter-spacing: 0.01em;
+    line-height: 1.35;
+    position: absolute;
+    text-align: left;
+    top: 4%;
+  }
+
+  .musical-score-caption cite {
+    font-style: normal;
+  }
+
+  .musical-score-controls {
+    align-items: center;
+    display: flex;
+    gap: 18px;
+    justify-self: start;
+    margin-top: -8px;
+    max-width: 1376px;
+    text-align: left;
+    width: 100%;
+  }
+
+  .musical-score-play-button {
+    align-items: stretch;
+    background: transparent;
+    color: var(--ink);
+    display: inline-grid;
+    flex: 0 0 auto;
+    font-family: var(--font-ui);
+    font-size: 12px;
+    grid-template-columns: minmax(150px, auto) 43px;
+    line-height: 1;
+  }
+
+  .musical-score-play-button > span:first-child {
+    align-items: center;
+    background: var(--warm-sand);
+    border-radius: 999px 0 0 999px;
+    display: flex;
+    justify-content: center;
+    padding: 0 26px;
+  }
+
+  .musical-score-play-icon {
+    align-items: center;
+    background: var(--ink);
+    color: var(--parchment-white);
+    display: flex;
+    font-family: var(--font-ui);
+    font-size: 12px;
+    height: 43px;
+    justify-content: center;
+  }
+
+  .musical-score-play-button:hover > span:first-child {
+    background: var(--reference-soft-row);
+  }
+
+  .musical-score-play-button:focus-visible {
+    border-radius: 999px 0 0 999px;
+    outline: 2px solid var(--ink);
+    outline-offset: 5px;
+  }
+
+  .musical-score-play-button:disabled {
+    cursor: wait;
+    opacity: 0.7;
+  }
+
+  .musical-score-status {
+    color: color-mix(in srgb, var(--ink) 70%, transparent);
+    font-family: var(--font-ui);
+    font-size: 10px;
+    line-height: 1.35;
+    max-width: 250px;
+  }
+
+  @media (width < 861px) {
+    .musical-home-hero {
+      min-height: 720px;
+      padding: 116px 18px 64px;
+    }
+
+    .musical-home-hero-copy {
+      row-gap: 22px;
+    }
+
+    .musical-home-title-primary {
+      font-size: clamp(54px, 17vw, 76px);
+    }
+
+    .musical-home-title-secondary {
+      font-size: clamp(19px, 5.8vw, 26px);
+      margin-top: 12px;
+    }
+
+    .musical-score-player {
+      margin-top: 34px;
+    }
+
+    .musical-score-stage {
+      width: calc(100% + 24px);
+    }
+
+    .musical-score-caption {
+      font-size: 8px;
+      left: 4%;
+      top: 0;
+    }
+
+    .musical-score-controls {
+      justify-content: center;
+      margin-top: 14px;
+      width: 100%;
+    }
+
+    .musical-score-play-button {
+      font-size: 11px;
+      grid-template-columns: minmax(138px, auto) 40px;
+    }
+
+    .musical-score-play-icon {
+      height: 40px;
+    }
+
+    .musical-score-status {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .score-note,
+    .musical-score-play-button > span:first-child {
+      transition: none;
+    }
+  }
+
   .editorial-container {
     margin-inline: auto;
     max-width: 1376px;
@@ -1225,8 +1513,53 @@ select {
   }
 
   @media (max-width: 640px) {
-    .editorial-container {
+    .classes-header-frame {
+      padding-inline: 15px;
+    }
+
+    .classes-header-frame .classes-header-surface {
       padding-inline: 20px;
+    }
+
+    .editorial-container {
+      padding-inline: 40px;
+    }
+
+    .classes-page {
+      padding-top: 106px;
+    }
+
+    .classes-page-intro {
+      margin-inline: -25px;
+    }
+
+    .classes-page-heading {
+      font-size: 29.3284px;
+      line-height: 33.7276px;
+      max-width: 362px;
+    }
+
+    .classes-page-subtitle {
+      font-family: var(--font-copy);
+      font-size: 19.5522px;
+      line-height: 23.4627px;
+      margin-top: 29px;
+      max-width: 362px;
+      min-height: 141px;
+    }
+
+    .classes-page-lessons {
+      margin-top: 156px;
+    }
+
+    .classes-lesson-card {
+      padding-inline: 0;
+    }
+
+    .classes-lesson-cta {
+      height: 42px;
+      min-width: 160px;
+      padding-inline: 24px;
     }
 
     .watercolor-hero::after {

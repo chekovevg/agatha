@@ -22,6 +22,7 @@ export type SiteContent = {
   pages: {
     classes: {
       heading: string;
+      intro: string;
     };
     about: {
       trustHeading: string;
@@ -33,9 +34,14 @@ export type SiteContent = {
       galleryHeading: string;
     };
   };
+  audienceLessons: {
+    adults: AudienceLessonContent;
+    children: AudienceLessonContent;
+  };
   home: {
-    heroTitle: [string, string];
+    heroTitle: string;
     heroSubtitle: string;
+    audienceHeading: string;
     manifesto: {
       heading: string;
       body: string;
@@ -94,11 +100,36 @@ export type SiteContent = {
   };
 };
 
+export type AudienceLessonContent = {
+  path:
+    | "/online-flute-lessons-for-adults"
+    | "/online-flute-lessons-for-children";
+  navLabel: "For adults" | "For children";
+  eyebrow: string;
+  title: string;
+  intro: string;
+  trustLine: string;
+  cardCopy: string;
+  audienceHeading: string;
+  audienceCopy: string;
+  audiencePoints: string[];
+  lessonsHeading: string;
+  lessonsCopy: string;
+  lessonFocus: {title: string; text: string}[];
+  whyHeading: string;
+  whyParagraphs: string[];
+  faq: {question: string; answer: string}[];
+  ctaHeading: string;
+  ctaCopy: string;
+  seo: {title: string; description: string};
+};
+
 export type Lesson = {
   title: string;
   description: string;
   ctaLabel: string;
   slug: string;
+  image: string;
 };
 
 export type ReviewSummary = {

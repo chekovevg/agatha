@@ -3,6 +3,7 @@ import {env} from "@/lib/env";
 import {Section} from "@/components/ui/Section";
 import {SectionHeader} from "@/components/ui/SectionHeader";
 import {ButtonLink} from "@/components/ui/Button";
+import {CalBookingEmbed} from "@/components/analytics/CalBookingEmbed";
 
 export function BookingSection({
   content,
@@ -39,13 +40,7 @@ export function BookingSection({
         </div>
         <div className="rounded-[var(--radius-media)] bg-[var(--card)] p-5 shadow-[var(--shadow-elevated)]">
           {calLink ? (
-            <iframe
-              title="Book a trial lesson with Agatha"
-              src={calLink}
-              loading="lazy"
-              referrerPolicy="strict-origin-when-cross-origin"
-              className="min-h-[620px] w-full rounded-[var(--radius-card)]"
-            />
+            <CalBookingEmbed url={calLink} title="Book an intro call with Agatha" />
           ) : (
             <div className="flex min-h-[420px] flex-col items-start justify-center rounded-[var(--radius-card)] bg-[var(--paper)] p-8">
               <h3 className="mai-h7">Booking link pending</h3>

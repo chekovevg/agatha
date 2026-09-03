@@ -23,7 +23,7 @@ export default defineConfig({
   webServer: {
     command: "npm run start -- --port 3101",
     url: "http://127.0.0.1:3101",
-    reuseExistingServer: false,
+    reuseExistingServer: process.env.PLAYWRIGHT_REUSE_SERVER === "1",
     timeout: 120_000,
   },
 });

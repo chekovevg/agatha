@@ -8,6 +8,15 @@ const nextConfig: NextConfig = {
   images: {
     qualities: [75, 95],
   },
+  async redirects() {
+    return [
+      {source: "/en", destination: "/", permanent: true},
+      {source: "/en/about", destination: "/about", permanent: true},
+      {source: "/en/classes", destination: "/classes", permanent: true},
+      {source: "/en/media", destination: "/media", permanent: true},
+      {source: "/en/book", destination: "/book", permanent: true},
+    ];
+  },
   async headers() {
     return [
       {

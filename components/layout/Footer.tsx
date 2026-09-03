@@ -52,6 +52,7 @@ export function Footer({
         <a
           className="footer-book-link items-center gap-[calc(10*var(--unit-fx))]"
           href="/book"
+          data-analytics-booking-cta="footer"
         >
           {footerBookLabel}
           <Image
@@ -93,7 +94,7 @@ export function Footer({
         <Link href="/datenschutz">Privacy &amp; Cookies</Link>
       </nav>
       <div className="col-start-17 col-span-8 max-[600px]:w-full">
-        <p className="ag-footer-copyright">&copy; Agata Gurko Music 2026</p>
+        <p className="ag-footer-copyright">&copy; Agatha Gurko Music 2026</p>
         <p className="ag-footer-note text-[var(--ink)]">
           {content.home.footerNote}
         </p>

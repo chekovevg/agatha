@@ -30,7 +30,7 @@ export function MediaPage({
             className="mt-[calc(82*var(--unit-fx))] w-full max-w-[calc(844*var(--unit-fx))] max-[600px]:mt-12"
           />
 
-          <SplitLinkButton href="/book" className="mt-[calc(100*var(--unit-fx))] max-[600px]:mt-12">
+          <SplitLinkButton href="/book" className="mt-[calc(100*var(--unit-fx))] max-[600px]:mt-12" data-analytics-booking-cta="media">
             {content.cta.primary}
           </SplitLinkButton>
         </section>

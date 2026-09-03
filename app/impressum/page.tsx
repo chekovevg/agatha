@@ -2,8 +2,9 @@ import type {Metadata} from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Impressum | Agatha Music",
+  title: "Impressum",
   description: "Provider information for Agatha Music.",
+  robots: {index: false, follow: true},
 };
 
 export default function ImpressumPage() {

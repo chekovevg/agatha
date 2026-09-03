@@ -3,17 +3,28 @@
 import {useEffect, useRef, useState} from "react";
 
 import {Button} from "@/components/ui/Button";
-import {contactFormContent as copy} from "@/content/contact-form";
+import {
+  contactFormContent as copy,
+  contactSourceOptions,
+} from "@/content/contact-form";
 import {submitContact} from "@/lib/contact-client";
 
 type FormState = "idle" | "submitting" | "success" | "error";
 
 export function ContactForm() {
+  const formRef = useRef<HTMLFormElement>(null);
   const formStartedAt = useRef("");
   const [state, setState] = useState<FormState>("idle");
 
   useEffect(() => {
     formStartedAt.current = String(Date.now());
+
+    const subject = new URLSearchParams(window.location.search).get("subject");
+    const subjectInput = formRef.current?.elements.namedItem("subject");
+
+    if (subject && subjectInput instanceof HTMLInputElement) {
+      subjectInput.value = subject;
+    }
   }, []);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -37,6 +48,7 @@ export function ContactForm() {
 
   return (
     <form
+      ref={formRef}
       className="grid gap-4 rounded-[var(--radius-media)] bg-[var(--card)] p-5 shadow-[var(--shadow-elevated)]"
       onSubmit={handleSubmit}
       aria-busy={state === "submitting"}
@@ -80,6 +92,21 @@ export function ContactForm() {
           </select>
         </label>
       </div>
+      <label className="mai-ui grid gap-2">
+        {copy.source}
+        <select
+          name="source"
+          className="mai-body rounded px-4 py-3 shadow-[var(--shadow-inset)]"
+          defaultValue=""
+        >
+          <option value="">{copy.sourceNotProvided}</option>
+          {contactSourceOptions.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
+      </label>
       <label className="mai-ui grid gap-2">
         {copy.subject}
         <input

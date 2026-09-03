@@ -12,6 +12,7 @@ function validPayload(overrides: Record<string, unknown> = {}) {
     email: "student@example.com",
     studentAge: "24",
     preferredLanguage: "English",
+    source: "Google or another search engine",
     subject: "Flute lessons",
     message: "I would like to ask about a first flute lesson.",
     website: "",
@@ -59,6 +60,28 @@ describe("POST /api/contact", () => {
     expect(response.status).toBe(400);
     expect(sendContactEmails).not.toHaveBeenCalled();
   });
+
+  it("rejects an unknown lead source", async () => {
+    const {POST} = await import("@/app/api/contact/route");
+    const response = await POST(request(validPayload({source: "Unknown"})));
+
+    expect(response.status).toBe(400);
+    expect(sendContactEmails).not.toHaveBeenCalled();
+  });
+
+  it.each([undefined, ""])(
+    "accepts an optional lead source value of %s",
+    async (source) => {
+      const {POST} = await import("@/app/api/contact/route");
+      const payload = validPayload({source});
+      const response = await POST(request(payload));
+
+      expect(response.status).toBe(200);
+      expect(sendContactEmails).toHaveBeenCalledWith(
+        expectedContactPayload(payload),
+      );
+    },
+  );
 
   it("ignores honeypot spam submissions", async () => {
     const {POST} = await import("@/app/api/contact/route");
