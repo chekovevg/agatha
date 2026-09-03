@@ -452,6 +452,9 @@ test("home spacing roles resolve from the shared scale", async ({page}) => {
       };
 
       return {
+        heroHeight: document
+          .querySelector(".plain-home-hero")
+          ?.getBoundingClientRect().height,
         displayTabs: gapBetween(
           ".plain-home-title",
           ".plain-home-hero [role=tablist]",
@@ -464,10 +467,6 @@ test("home spacing roles resolve from the shared scale", async ({page}) => {
           "[data-home-manifesto-copy]",
           '[data-analytics-booking-cta="home-audience"]',
         ),
-        sectionTransition: gapBetween(
-          '[data-analytics-booking-cta="home-audience"]',
-          "[data-home-location-heading]",
-        ),
       };
     });
 
@@ -476,8 +475,11 @@ test("home spacing roles resolve from the shared scale", async ({page}) => {
       displayTabs: (width <= 600 ? 12.5 : 37.5) * scale,
       controlDescription: 30 * scale,
       descriptionAction: (width <= 600 ? 40 : 50) * scale,
-      sectionTransition: (width <= 600 ? 120 : 250) * scale,
     };
+
+    expect(gaps.heroHeight, `hero height at ${width}px`).toBeGreaterThanOrEqual(
+      1000,
+    );
 
     for (const [role, value] of Object.entries(expected)) {
       expect(gaps[role as keyof typeof gaps], `${role} at ${width}px`).toBeCloseTo(
