@@ -108,6 +108,43 @@ test("classes preserves the Models-inspired mobile visual hierarchy", async ({
   expect(headingType.lineHeight).toBeCloseTo(33.7276, 1);
 });
 
+test("classes keeps the reference card order and mobile text scale", async ({
+  page,
+}) => {
+  await page.setViewportSize({width: 393, height: 852});
+  await page.goto("/classes");
+
+  const pageShell = page.locator(".classes-page-shell");
+  const card = page.locator(".classes-lesson-card").first();
+  const media = card.locator(".classes-lesson-media");
+  const details = card.locator(".classes-lesson-details");
+  const description = card.locator(".classes-lesson-description");
+  const title = card.locator(".classes-lesson-title");
+
+  await expect(card).toBeVisible();
+  await expect(media).toBeVisible();
+  await expect(details).toBeVisible();
+  await expect(description).toBeVisible();
+
+  const [shellBackground, cardDisplay, mediaOrder, detailsOrder, descriptionOrder, titleType, descriptionType] =
+    await Promise.all([
+      pageShell.evaluate((element) => getComputedStyle(element).backgroundColor),
+      card.evaluate((element) => getComputedStyle(element).display),
+      media.evaluate((element) => getComputedStyle(element).order),
+      details.evaluate((element) => getComputedStyle(element).order),
+      description.evaluate((element) => getComputedStyle(element).order),
+      readTypography(title),
+      readTypography(description),
+    ]);
+
+  expect(shellBackground).toBe("rgba(0, 0, 0, 0)");
+  expect(cardDisplay).toBe("flex");
+  expect([mediaOrder, detailsOrder, descriptionOrder]).toEqual(["1", "2", "3"]);
+  expect(titleType.fontSize).toBeCloseTo(32, 1);
+  expect(descriptionType.fontSize).toBeCloseTo(19.5522, 1);
+  expect(descriptionType.lineHeight).toBeCloseTo(23.4627, 1);
+});
+
 test("home exposes its approved H1, metadata, and booking path", async ({
   page,
 }) => {
