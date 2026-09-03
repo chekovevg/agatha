@@ -164,6 +164,10 @@ test("classes keeps the reference card order and mobile text scale", async ({
   expect(descriptionBox).not.toBeNull();
   expect(ctaBox).not.toBeNull();
   expect(ctaBox!.y).toBeGreaterThan(descriptionBox!.y + descriptionBox!.height);
+  await expect(media.locator("img")).toHaveAttribute(
+    "sizes",
+    "(max-width: 640px) calc(100vw - 30px), 216px",
+  );
   expect(titleType.fontSize).toBeCloseTo(26.3955, 1);
   expect(descriptionType.fontSize).toBeCloseTo(17.597, 1);
   expect(descriptionType.lineHeight).toBeCloseTo(23.404, 1);
