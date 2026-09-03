@@ -145,6 +145,33 @@ test("classes keeps the reference card order and mobile text scale", async ({
   expect(descriptionType.lineHeight).toBeCloseTo(23.4627, 1);
 });
 
+test("classes uses the reference spacing and centered card artwork on mobile", async ({
+  page,
+}) => {
+  await page.setViewportSize({width: 393, height: 852});
+  await page.goto("/classes");
+
+  const heading = page.getByTestId("classes-heading");
+  const card = page.locator(".classes-lesson-card").first();
+  const media = card.locator(".classes-lesson-media");
+  const [headingBox, cardBox, mediaBox, cardStyle] = await Promise.all([
+    heading.boundingBox(),
+    card.boundingBox(),
+    media.boundingBox(),
+    card.evaluate((element) => getComputedStyle(element).backgroundColor),
+  ]);
+
+  expect(headingBox).not.toBeNull();
+  expect(cardBox).not.toBeNull();
+  expect(mediaBox).not.toBeNull();
+  expect(headingBox!.y).toBeGreaterThan(190);
+  expect(headingBox!.y).toBeLessThan(220);
+  expect(cardBox!.x).toBeCloseTo(15, 0);
+  expect(mediaBox!.x).toBeCloseTo((393 - mediaBox!.width) / 2, 0);
+  expect(cardStyle).not.toBe("rgba(0, 0, 0, 0)");
+  expect(cardBox!.height).toBeGreaterThanOrEqual(620);
+});
+
 test("home exposes its approved H1, metadata, and booking path", async ({
   page,
 }) => {

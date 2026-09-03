@@ -1122,12 +1122,12 @@ select {
     }
 
     .classes-page.editorial-container {
-      padding-inline: 40px;
-      padding-top: 106px;
+      padding-inline: 15px !important;
+      padding-top: 30px !important;
     }
 
     .classes-page-intro {
-      margin-inline: -25px;
+      margin-inline: 0;
     }
 
     .classes-page-heading {
@@ -1155,14 +1155,16 @@ select {
     }
 
     .classes-lesson-card {
+      background: #fff9ee;
       display: flex;
       flex-direction: column;
       gap: 0;
-      min-height: 0;
-      padding: 0 22px 72px;
+      min-height: 620px;
+      padding: 0 24px 72px;
     }
 
     .classes-lesson-media {
+      align-self: center;
       order: 1;
     }
 
