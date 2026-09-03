@@ -31,6 +31,8 @@ const baseContent: SiteContent = {
   pages: {
     classes: {
       heading: "Discover and choose what you want to learn",
+      intro:
+        "Choose the instrument or subject that suits your musical goals, level and pace.",
     },
     about: {
       trustHeading: "What students can count on",

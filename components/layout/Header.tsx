@@ -16,7 +16,7 @@ export function Header({
   showBookingCta = true,
 }: {
   content: SiteContent;
-  variant?: "compact" | "full" | "home";
+  variant?: "compact" | "full" | "home" | "classes";
   showBookingCta?: boolean;
 }) {
   const {
@@ -36,6 +36,7 @@ export function Header({
     <header
       className={cn(
         "pointer-events-none fixed inset-x-0 top-0 z-[999] bg-transparent px-[var(--space-32)] pt-[var(--space-32)] max-[860px]:px-[var(--space-20)] max-[860px]:pt-[var(--space-20)]",
+        variant === "classes" && "classes-header-frame",
         "min-[861px]:transition-transform min-[861px]:duration-[400ms] min-[861px]:ease-[var(--alias-easeOutCubic)]",
         headerHidden && !menuVisible
           ? "min-[861px]:-translate-y-[calc(100%+12px)]"
@@ -54,6 +55,7 @@ export function Header({
           data-header-surface
           className={cn(
             "pointer-events-auto relative grid h-[58px] grid-cols-2 items-center rounded-[5px] bg-[var(--background)] px-[var(--space-24)] text-[var(--ink)] min-[861px]:grid-cols-3 min-[861px]:shadow-[var(--shadow-navigation-surface)] max-[860px]:px-[var(--space-20)]",
+            variant === "classes" && "classes-header-surface",
           )}
         >
           <Link
@@ -207,7 +209,10 @@ export function Header({
     {!isHome ? (
       <div
         aria-hidden="true"
-        className="h-[91px] max-[860px]:h-[78px]"
+        className={cn(
+          "h-[91px] max-[860px]:h-[78px]",
+          variant === "classes" && "classes-header-spacer",
+        )}
       />
     ) : null}
     </>

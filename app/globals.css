@@ -1108,6 +1108,67 @@ select {
       padding-inline: 20px;
     }
 
+    .classes-header-frame {
+      padding-inline: 15px;
+    }
+
+    .classes-header-frame .classes-header-surface {
+      height: 67.5px;
+      padding-inline: 20px;
+    }
+
+    .classes-header-spacer {
+      height: 87.5px;
+    }
+
+    .classes-page.editorial-container {
+      padding-inline: 40px;
+      padding-top: 106px;
+    }
+
+    .classes-page-intro {
+      margin-inline: -25px;
+    }
+
+    .classes-page-heading {
+      font-size: 29.3284px;
+      line-height: 33.7276px;
+      max-width: 362px;
+    }
+
+    .classes-page-subtitle {
+      font-size: 19.5522px;
+      line-height: 23.4627px;
+      margin-top: 29px;
+      max-width: 362px;
+      min-height: 141px;
+    }
+
+    .classes-page-lessons {
+      margin-top: 156px;
+    }
+
+    .classes-lesson-cta {
+      height: 42px;
+      min-width: 160px;
+      padding-inline: 24px;
+    }
+
+  }
+
+  .classes-page-shell {
+    isolation: isolate;
+    position: relative;
+  }
+
+  .classes-page-backdrop {
+    background: linear-gradient(to bottom, rgb(242 221 219 / 70%), transparent);
+    height: 100svh;
+    inset: 0 0 auto;
+    pointer-events: none;
+    position: absolute;
+    width: 100%;
+    z-index: -1;
   }
 
 
