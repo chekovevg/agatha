@@ -1,4 +1,4 @@
-export const MOBILE_HEADER_MAX_WIDTH = 860;
+export const MOBILE_HEADER_MAX_WIDTH = 640;
 
 export function shouldHideHeader({
   currentScrollY,

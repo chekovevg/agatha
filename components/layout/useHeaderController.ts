@@ -60,6 +60,17 @@ export function useHeaderController() {
     }
 
     function handleResize() {
+      if (window.innerWidth > MOBILE_HEADER_MAX_WIDTH && menuVisible) {
+        if (closeTimerRef.current) {
+          clearTimeout(closeTimerRef.current);
+          closeTimerRef.current = null;
+        }
+
+        cancelAnimationFrame(menuAnimationFrameRef.current);
+        setMenuState("closed");
+        return;
+      }
+
       if (window.innerWidth <= MOBILE_HEADER_MAX_WIDTH) {
         setHeaderHidden(false);
       }

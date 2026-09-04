@@ -442,8 +442,8 @@ test("Classes menu shadow is rendered outside the animated clip", async ({page})
     ]);
 
     expect(filter).toContain("drop-shadow");
-    expect(filter).toContain("rgba(63, 53, 47, 0.24)");
-    expect(filter).toContain("0px 12px 36px");
+    expect(filter).toContain("rgba(63, 53, 47, 0.2)");
+    expect(filter).toContain("0px 10px 28px");
     expect(boxShadow).toBe("none");
     expect(clipPath).toContain("inset(0px");
 
