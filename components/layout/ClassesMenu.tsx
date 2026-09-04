@@ -79,11 +79,19 @@ export function ClassesMenu({
         }
       }}
       onKeyDown={(event) => {
-        if (event.key === "Escape") {
-          suppressNextFocusOpen.current = true;
-          setOpen(false);
-          focusResponsiveTrigger();
+        if (event.key !== "Escape") {
+          return;
         }
+
+        const isMobile = window.matchMedia("(max-width: 640px)").matches;
+        if (isMobile && !open) {
+          return;
+        }
+
+        event.preventDefault();
+        suppressNextFocusOpen.current = true;
+        setOpen(false);
+        focusResponsiveTrigger();
       }}
     >
       <div className="classes-menu-trigger-row">

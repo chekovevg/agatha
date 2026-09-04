@@ -41,11 +41,7 @@ export function Header({
     for (const element of background) element.inert = true;
 
     function closeWithEscape(event: KeyboardEvent) {
-      if (event.key !== "Escape") return;
-      if (
-        event.target instanceof Element &&
-        event.target.closest("#classes-menu-mobile, .classes-menu-trigger-row")
-      ) {
+      if (event.key !== "Escape" || event.defaultPrevented) {
         return;
       }
       event.preventDefault();

@@ -1439,6 +1439,49 @@ test.describe("mobile navigation", () => {
 
     await expect(page.getByRole("button", {name: "Open Menu"})).toBeFocused();
   });
+
+  test("closes Classes first, then closes the mobile menu with Escape", async ({page}) => {
+    await page.goto("/");
+    await page.getByRole("button", {name: "Open Menu"}).click();
+
+    const disclosure = page.getByRole("button", {name: "Classes menu"});
+    const submenu = page.getByRole("navigation", {
+      name: "Mobile Classes submenu",
+    });
+    await disclosure.click();
+    await expect(submenu).toBeVisible();
+
+    await page.keyboard.press("Escape");
+    await expect(submenu).toBeHidden();
+    await expect(disclosure).toBeFocused();
+
+    await page.keyboard.press("Escape");
+    await expect(page.getByRole("button", {name: "Open Menu"})).toBeFocused();
+  });
+
+  test("releases the page when an open mobile menu becomes desktop navigation", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    await page.getByRole("button", {name: "Open Menu"}).click();
+
+    await page.setViewportSize({width: 768, height: 1024});
+
+    await expect(page.locator("header")).toHaveAttribute(
+      "data-menu-state",
+      "closed",
+    );
+    await expect
+      .poll(() =>
+        page.locator("main").evaluate((element) => (element as HTMLElement).inert),
+      )
+      .toBe(false);
+    await expect
+      .poll(() =>
+        page.locator("footer").evaluate((element) => (element as HTMLElement).inert),
+      )
+      .toBe(false);
+  });
 });
 
 test("video iframe loads only after explicit interaction", async ({page}) => {
