@@ -14,12 +14,12 @@ describe("header visibility state", () => {
     ).toBe(false);
   });
 
-  it("always reveals the header through the 860px mobile breakpoint", () => {
+  it("always reveals the header through the 640px mobile breakpoint", () => {
     expect(
       shouldHideHeader({
         currentScrollY: 200,
         lastScrollY: 100,
-        viewportWidth: 860,
+        viewportWidth: 640,
         menuVisible: false,
       }),
     ).toBe(false);
@@ -41,7 +41,7 @@ describe("header visibility state", () => {
       shouldHideHeader({
         currentScrollY: 107,
         lastScrollY: 100,
-        viewportWidth: 861,
+        viewportWidth: 641,
         menuVisible: false,
       }),
     ).toBe(true);

@@ -108,6 +108,7 @@ export function AnalyticsConsentBanner({
   return (
     <section
       aria-label="Analytics preferences"
+      data-analytics-consent-banner
       className="fixed bottom-4 left-4 z-50 flex h-[150px] w-[297px] flex-col items-start gap-[30px] rounded-[5px] bg-[var(--ink)] p-5 text-[var(--paper)] max-[329px]:right-4 max-[329px]:w-auto"
       role="region"
     >

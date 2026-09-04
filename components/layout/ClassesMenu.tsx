@@ -42,7 +42,7 @@ export function ClassesMenu({
   };
 
   const focusResponsiveTrigger = () => {
-    const isMobile = window.matchMedia("(max-width: 860px)").matches;
+    const isMobile = window.matchMedia("(max-width: 640px)").matches;
     const trigger = isMobile
       ? mobileTriggerRef.current
       : desktopTriggerRef.current;
@@ -51,19 +51,19 @@ export function ClassesMenu({
 
   return (
     <li
-      className="relative flex h-full items-center justify-center max-[860px]:block max-[860px]:h-auto"
+      className="relative flex h-full items-center justify-center max-[640px]:block max-[640px]:h-auto"
       onMouseEnter={() => {
-        if (window.matchMedia("(min-width: 861px)").matches) {
+        if (window.matchMedia("(min-width: 641px)").matches) {
           openMenu();
         }
       }}
       onMouseLeave={() => {
-        if (window.matchMedia("(min-width: 861px)").matches) {
+        if (window.matchMedia("(min-width: 641px)").matches) {
           setOpen(false);
         }
       }}
       onFocus={() => {
-        if (!window.matchMedia("(min-width: 861px)").matches) {
+        if (!window.matchMedia("(min-width: 641px)").matches) {
           return;
         }
 
@@ -124,16 +124,16 @@ export function ClassesMenu({
         aria-hidden={!open}
         data-state={open ? "open" : "closed"}
         className={cn(
-          "classes-menu-shell absolute left-1/2 top-full w-[698px] -translate-x-1/2 pt-[var(--space-8)] max-[860px]:hidden",
+          "classes-menu-shell absolute left-1/2 top-full w-[606px] -translate-x-1/2 pt-[var(--space-8)] max-[640px]:hidden",
           open ? "pointer-events-auto" : "pointer-events-none",
         )}
       >
         <div
           data-state={open ? "open" : "closed"}
-          className="classes-menu-panel h-[488px] w-[698px] rounded-[4px] text-[var(--ink)]"
+          className="classes-menu-panel h-[460px] w-[606px] rounded-[4px] text-[var(--ink)]"
         >
-          <div className="classes-menu-content grid h-full w-full grid-cols-[306.657px_333px] gap-[var(--space-10)] rounded-[4px] bg-[var(--background)] p-[var(--space-24)]">
-            <div className="flex h-[440px] min-w-0 flex-col">
+          <div className="classes-menu-content grid h-full w-full grid-cols-[260px_286px] gap-[var(--space-10)] rounded-[4px] bg-[var(--background)] p-[var(--space-20)]">
+            <div className="flex h-[420px] min-w-0 flex-col">
               <div className="flex w-full flex-col gap-[var(--space-20)]">
                 <p className="mai-metanav-title w-full [text-box-edge:cap_alphabetic] [text-box-trim:trim-both]">
                   What I teach
@@ -186,10 +186,10 @@ export function ClassesMenu({
             <a
               href={lessonBookingHref(activeLesson.title)}
               aria-label={`Book ${activeLesson.title} lesson`}
-              className="group flex h-[440px] min-w-0 flex-col items-center gap-[var(--space-24)] bg-[var(--hover-paper)] px-[var(--space-16)] pb-[var(--space-30)] pt-[var(--space-16)] focus-visible:outline-2"
+              className="group flex h-[420px] min-w-0 flex-col items-center gap-[var(--space-20)] bg-[var(--hover-paper)] px-[var(--space-16)] pb-[var(--space-24)] pt-[var(--space-16)] focus-visible:outline-2"
               onClick={onNavigate}
             >
-              <span className="relative block h-[260px] w-[260px] shrink-0">
+              <span className="relative block h-[230px] w-[230px] shrink-0">
                 <Image
                   data-testid="classes-menu-preview-image"
                   src={activeLesson.image}
