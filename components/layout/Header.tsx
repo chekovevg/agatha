@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import {useEffect, useRef} from "react";
 
 import {ClassesMenu} from "@/components/layout/ClassesMenu";
 import {getFooterContent} from "@/components/layout/footer-content";
@@ -27,22 +28,50 @@ export function Header({
     menuVisible,
     openMenu,
   } = useHeaderController();
+  const menuTriggerRef = useRef<HTMLButtonElement>(null);
   const navItems = content.nav;
   const footerContent = getFooterContent(content);
   const isHome = variant === "home";
+
+  useEffect(() => {
+    if (!menuVisible || window.innerWidth > 640) return;
+
+    const background = [document.querySelector("main"), document.querySelector("footer")]
+      .filter((element): element is HTMLElement => element instanceof HTMLElement);
+    for (const element of background) element.inert = true;
+
+    function closeWithEscape(event: KeyboardEvent) {
+      if (event.key !== "Escape") return;
+      if (
+        event.target instanceof Element &&
+        event.target.closest("#classes-menu-mobile, .classes-menu-trigger-row")
+      ) {
+        return;
+      }
+      event.preventDefault();
+      closeMenu();
+      requestAnimationFrame(() => menuTriggerRef.current?.focus());
+    }
+
+    document.addEventListener("keydown", closeWithEscape);
+    return () => {
+      document.removeEventListener("keydown", closeWithEscape);
+      for (const element of background) element.inert = false;
+    };
+  }, [closeMenu, menuVisible]);
 
   return (
     <>
     <header
       className={cn(
-        "pointer-events-none fixed inset-x-0 top-0 z-[999] bg-transparent px-[var(--space-32)] pt-[var(--space-32)] max-[860px]:px-[var(--space-20)] max-[860px]:pt-[var(--space-20)]",
+        "pointer-events-none fixed inset-x-0 top-0 z-[999] bg-transparent px-[21px] pt-[33px] max-[640px]:px-[15px] max-[640px]:pt-[20px]",
         variant === "classes" && "classes-header-frame",
-        "min-[861px]:transition-transform min-[861px]:duration-[400ms] min-[861px]:ease-[var(--alias-easeOutCubic)]",
+        "min-[641px]:transition-transform min-[641px]:duration-[400ms] min-[641px]:ease-[var(--alias-easeOutCubic)]",
         headerHidden && !menuVisible
-          ? "min-[861px]:-translate-y-[calc(100%+12px)]"
-          : "min-[861px]:translate-y-0",
+          ? "min-[641px]:-translate-y-[calc(100%+12px)]"
+          : "min-[641px]:translate-y-0",
         menuVisible &&
-          "max-[860px]:fixed max-[860px]:inset-x-0 max-[860px]:top-0 max-[860px]:z-[9999]",
+          "max-[640px]:fixed max-[640px]:inset-x-0 max-[640px]:top-0 max-[640px]:z-[9999]",
       )}
       data-header-hidden={headerHidden}
       data-menu-state={menuState}
@@ -54,14 +83,14 @@ export function Header({
         <div
           data-header-surface
           className={cn(
-            "pointer-events-auto relative grid h-[58px] grid-cols-2 items-center rounded-[5px] bg-[var(--background)] px-[var(--space-24)] text-[var(--ink)] min-[861px]:grid-cols-3 min-[861px]:shadow-[var(--shadow-navigation-surface)] max-[860px]:px-[var(--space-20)]",
+            "pointer-events-auto relative grid h-[58px] grid-cols-2 items-center rounded-[5px] bg-[var(--background)] px-[var(--space-24)] text-[var(--ink)] min-[641px]:grid-cols-3 min-[641px]:shadow-[var(--shadow-navigation-surface)] max-[640px]:h-[67px] max-[640px]:px-[var(--space-20)]",
             variant === "classes" && "classes-header-surface",
           )}
         >
           <Link
             href="/"
             aria-label="Home Agatha Music link"
-            className="relative z-[2] flex h-full items-center justify-self-start max-[860px]:col-start-1 max-[860px]:row-start-1"
+            className="relative z-[2] flex h-full items-center justify-self-start max-[640px]:col-start-1 max-[640px]:row-start-1"
             onClick={closeMenu}
           >
             <Image
@@ -77,17 +106,17 @@ export function Header({
           <nav
             aria-label="Header Menu"
             className={cn(
-              "mai-header-nav justify-self-center min-[861px]:h-full min-[861px]:w-full",
+              "mai-header-nav justify-self-center min-[641px]:h-full min-[641px]:w-full",
               menuVisible
-                ? "max-[860px]:fixed max-[860px]:inset-0 max-[860px]:z-[1] max-[860px]:flex max-[860px]:h-[100dvh] max-[860px]:w-full max-[860px]:flex-col max-[860px]:items-start max-[860px]:overflow-x-hidden max-[860px]:overflow-y-auto max-[860px]:bg-[var(--background)] max-[860px]:px-[var(--space-32)] max-[860px]:pb-[var(--space-32)] max-[860px]:pt-[max(72px,var(--space-100))] max-[860px]:transition-opacity max-[860px]:duration-[700ms] max-[860px]:ease-out"
-                : "max-[860px]:absolute max-[860px]:left-0 max-[860px]:right-0 max-[860px]:top-full max-[860px]:z-50 max-[860px]:hidden max-[860px]:w-full max-[860px]:bg-[var(--background)] max-[860px]:px-[var(--space-20)] max-[860px]:pb-[var(--space-30)] max-[860px]:pt-[var(--space-30)]",
+                ? "max-[640px]:fixed max-[640px]:inset-0 max-[640px]:z-[1] max-[640px]:flex max-[640px]:h-[100dvh] max-[640px]:w-full max-[640px]:flex-col max-[640px]:items-start max-[640px]:overflow-x-hidden max-[640px]:overflow-y-auto max-[640px]:bg-[var(--background)] max-[640px]:px-[var(--space-32)] max-[640px]:pb-[var(--space-32)] max-[640px]:pt-[max(72px,var(--space-100))] max-[640px]:transition-opacity max-[640px]:duration-[700ms] max-[640px]:ease-out"
+                : "max-[640px]:absolute max-[640px]:left-0 max-[640px]:right-0 max-[640px]:top-full max-[640px]:z-50 max-[640px]:hidden max-[640px]:w-full max-[640px]:bg-[var(--background)] max-[640px]:px-[var(--space-20)] max-[640px]:pb-[var(--space-30)] max-[640px]:pt-[var(--space-30)]",
               menuVisible &&
                 (menuExpanded
-                  ? "max-[860px]:opacity-100"
-                  : "max-[860px]:pointer-events-none max-[860px]:opacity-0"),
+                  ? "max-[640px]:opacity-100"
+                  : "max-[640px]:pointer-events-none max-[640px]:opacity-0"),
             )}
           >
-            <ul className="flex h-full items-center justify-center gap-[var(--space-16)] max-[860px]:block max-[860px]:h-auto max-[860px]:w-full max-[860px]:space-y-0">
+            <ul className="flex h-full items-center justify-center gap-[var(--space-16)] max-[640px]:block max-[640px]:h-auto max-[640px]:w-full max-[640px]:space-y-0">
             {navItems.map((item) =>
               item.href === "/classes" ? (
                 <ClassesMenu
@@ -100,11 +129,11 @@ export function Header({
               ) : (
               <li
                 key={item.href}
-                className="relative flex h-full items-center justify-center max-[860px]:block max-[860px]:h-11"
+                className="relative flex h-full items-center justify-center max-[640px]:block max-[640px]:h-11"
               >
                 <a
                   href={item.href}
-                  className="inline-flex h-[38px] items-center rounded-[4px] px-[10px] hover:bg-[var(--hover-paper)] max-[860px]:h-full max-[860px]:px-0 max-[860px]:leading-[1.8]"
+                  className="inline-flex h-[38px] items-center rounded-[4px] px-[10px] hover:bg-[var(--hover-paper)] max-[640px]:h-full max-[640px]:px-0 max-[640px]:leading-[1.8]"
                   onClick={closeMenu}
                 >
                   {item.label}
@@ -114,7 +143,7 @@ export function Header({
             )}
             </ul>
             <div
-              className="mobile-menu-bottom hidden w-full max-[860px]:mt-auto max-[860px]:flex max-[860px]:flex-col max-[860px]:pt-[var(--space-56)]"
+              className="mobile-menu-bottom hidden w-full max-[640px]:mt-auto max-[640px]:flex max-[640px]:flex-col max-[640px]:pt-[var(--space-56)]"
               data-mobile-menu-bottom
             >
               {showBookingCta ? (
@@ -176,7 +205,8 @@ export function Header({
             ) : null}
           </div>
           <button
-            className="group relative z-[2] hidden h-[8px] w-[18px] justify-self-end text-[0] leading-none outline-none focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-2 max-[860px]:col-start-2 max-[860px]:row-start-1 max-[860px]:block"
+            ref={menuTriggerRef}
+            className="group relative z-[2] hidden h-[8px] w-[18px] justify-self-end text-[0] leading-none outline-none focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-2 max-[640px]:col-start-2 max-[640px]:row-start-1 max-[640px]:block"
             type="button"
             aria-label={menuVisible ? "Close Menu" : "Open Menu"}
             aria-expanded={menuExpanded}
@@ -210,7 +240,7 @@ export function Header({
       <div
         aria-hidden="true"
         className={cn(
-          "h-[91px] max-[860px]:h-[78px]",
+          "h-[91px] max-[640px]:h-[87px]",
           variant === "classes" && "classes-header-spacer",
         )}
       />

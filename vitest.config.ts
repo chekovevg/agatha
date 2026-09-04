@@ -11,7 +11,7 @@ export default defineConfig({
     environment: "node",
     exclude: [
       ...configDefaults.exclude,
-      ".superpowers/worktrees/**",
+      ".superpowers/**",
       "tests/e2e/**",
     ],
   },
