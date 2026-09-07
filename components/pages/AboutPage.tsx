@@ -18,7 +18,7 @@ export function AboutPage({
       <main className="mx-auto grid w-full max-w-[calc(1660*var(--unit-fx))] gap-[var(--space-120)] px-[var(--space-24)] pb-[var(--space-120)] pt-[var(--space-32)] min-[601px]:px-[var(--space-24)] min-[861px]:gap-[var(--space-160)] min-[861px]:pb-[var(--space-160)] min-[861px]:pt-[var(--space-160)]">
         <section
           aria-labelledby="about-title"
-          className="grid gap-[var(--space-40)] min-[861px]:grid-cols-[repeat(24,minmax(0,1fr))] min-[861px]:gap-x-[var(--space-20)] min-[861px]:gap-y-0"
+          className="about-intro grid gap-[var(--space-40)] min-[861px]:grid-cols-[repeat(24,minmax(0,1fr))] min-[861px]:gap-x-[var(--space-20)] min-[861px]:gap-y-0"
         >
           <div className="grid w-full content-start gap-[var(--space-16)] justify-self-center min-[861px]:col-span-5 min-[861px]:w-[245px] min-[861px]:justify-self-start">
             <div className="relative aspect-[1086/1448] w-full overflow-hidden rounded-[var(--radius-card)] bg-[var(--paper)] min-[861px]:h-[328px] min-[861px]:aspect-auto">
@@ -76,7 +76,7 @@ export function AboutPage({
         <section
           id="contact"
           aria-labelledby="about-contact-title"
-          className="grid min-[861px]:grid-cols-[repeat(24,minmax(0,1fr))] min-[861px]:gap-x-[var(--space-20)]"
+          className="about-contact grid min-[861px]:grid-cols-[repeat(24,minmax(0,1fr))] min-[861px]:gap-x-[var(--space-20)]"
         >
           <div className="grid max-w-[643px] gap-[var(--space-40)] min-[861px]:col-start-8 min-[861px]:col-span-11">
             <h2 id="about-contact-title" className="mai-h4">

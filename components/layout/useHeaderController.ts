@@ -20,6 +20,22 @@ export function useHeaderController() {
   const menuExpanded = menuState === "open";
 
   useEffect(() => {
+    if (!menuVisible) return;
+    const mobile = window.matchMedia(`(max-width: ${MOBILE_HEADER_MAX_WIDTH}px)`);
+    const previousOverflow = document.body.style.overflow;
+    function syncViewport() {
+      document.body.style.overflow = mobile.matches ? "hidden" : previousOverflow;
+      if (!mobile.matches) setMenuState("closed");
+    }
+    syncViewport();
+    mobile.addEventListener("change", syncViewport);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      mobile.removeEventListener("change", syncViewport);
+    };
+  }, [menuVisible]);
+
+  useEffect(() => {
     return () => {
       if (closeTimerRef.current) {
         clearTimeout(closeTimerRef.current);
@@ -101,11 +117,16 @@ export function useHeaderController() {
   }
 
   function closeMenu() {
+    if (!menuVisible) return;
     if (closeTimerRef.current) {
       clearTimeout(closeTimerRef.current);
     }
 
     cancelAnimationFrame(menuAnimationFrameRef.current);
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setMenuState("closed");
+      return;
+    }
     setMenuState("closing");
     closeTimerRef.current = setTimeout(() => {
       closeTimerRef.current = null;

@@ -98,14 +98,32 @@ export function CalBookingEmbed({
       elementOrSelector: "#agatha-cal-inline",
       calLink,
       config: {
+        theme: "light",
         ...readCalUtm(window.location.search),
         ...(notes ? {notes} : {}),
       },
     });
+    const palette = getComputedStyle(document.documentElement);
+    const ink = palette.getPropertyValue("--ink").trim();
+    const background = palette.getPropertyValue("--background").trim();
+    const paper = palette.getPropertyValue("--paper").trim();
     Cal("ui", {
+      theme: "light",
+      cssVarsPerTheme: {
+        light: {
+          "cal-brand": ink,
+          "cal-brand-emphasis": ink,
+          "cal-brand-text": background,
+          "cal-brand-accent": background,
+          "cal-text": ink,
+          "cal-text-emphasis": ink,
+          "cal-bg": background,
+          "cal-bg-emphasis": paper,
+          "cal-bg-subtle": paper,
+        },
+      },
       hideEventTypeDetails: true,
       showTimezoneWhenEventDetailsHidden: true,
-      styles: {body: {background: "transparent"}},
     });
     Cal("on", {
       action: "linkReady",

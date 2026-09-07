@@ -74,13 +74,11 @@ export function HomePage({content}: {content: SiteContent}) {
                   .map((item) => (
                     <details
                       key={item.question}
-                      className="group py-[var(--space-20)]"
+                      className="faq-item group py-[var(--space-20)]"
                     >
                       <summary className="mai-body flex cursor-pointer list-none items-center justify-between gap-[var(--space-24)] text-[var(--ink)]">
                         <span>{item.question}</span>
-                        <span aria-hidden="true" className="mai-ui">
-                          +
-                        </span>
+                        <span aria-hidden="true" className="faq-icon" />
                       </summary>
                       <p className="mai-body mt-[var(--space-16)] max-w-[780px] text-[var(--muted)]">
                         {item.answer}
