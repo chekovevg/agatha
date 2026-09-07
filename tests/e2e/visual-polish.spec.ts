@@ -50,3 +50,44 @@ test("FAQ disclosure updates its icon and remains keyboard operable", async ({pa
   await page.keyboard.press("Enter");
   await expect(page.locator("[data-home-faq] details").first()).not.toHaveAttribute("open");
 });
+
+
+test("footer highlights only the current page and updates after navigation", async ({page}) => {
+  await page.goto("/classes");
+  const footer = page.locator("footer");
+  const current = footer.locator('[aria-current="page"]');
+  await expect(current).toHaveCount(1);
+  await expect(current).toHaveText("Classes");
+  await expect(current).toHaveCSS("text-decoration-line", "underline");
+  await footer.getByRole("link", {name: "About me", exact: true}).click();
+  await expect(page).toHaveURL(/\/about$/);
+  await expect(current).toHaveCount(1);
+  await expect(current).toHaveText("About me");
+  await expect(footer.getByRole("link", {name: "Classes", exact: true})).toHaveCSS("text-decoration-line", "none");
+  await page.goto("/");
+  await expect(current).toHaveCount(0);
+});
+
+
+test("Classes intro uses the measured Models typography scale", async ({page}) => {
+  for (const [width, headingSize, headingLine, subtitleSize, subtitleLine] of [
+    [1728, 64, 64, 32, 38.4],
+    [1440, 56.8889, 56.8889, 28.4444, 34.1333],
+    [768, 50.8031, 50.8031, 22.2264, 26.6716],
+    [390, 29.1045, 33.4701, 19.403, 23.2836],
+  ]) {
+    await page.setViewportSize({width, height: 1000});
+    await page.goto("/classes");
+    for (const [selector, size, line] of [
+      [".classes-page-heading", headingSize, headingLine],
+      [".classes-page-subtitle", subtitleSize, subtitleLine],
+    ] as const) {
+      const metrics = await page.locator(selector).evaluate((element) => {
+        const style = getComputedStyle(element);
+        return {size: parseFloat(style.fontSize), line: parseFloat(style.lineHeight)};
+      });
+      expect(metrics.size).toBeCloseTo(size, 1);
+      expect(metrics.line).toBeCloseTo(line, 1);
+    }
+  }
+});

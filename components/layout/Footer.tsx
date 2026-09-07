@@ -1,6 +1,7 @@
 import type {SiteContent} from "@/content/types";
 import Link from "next/link";
 import Image from "next/image";
+import {FooterLink} from "@/components/layout/FooterLink";
 import {getFooterContent} from "@/components/layout/footer-content";
 
 export function Footer({
@@ -11,7 +12,7 @@ export function Footer({
   const footerContent = getFooterContent(content);
 
   return (
-    <footer className="mx-auto mt-[calc(320*var(--unit-fx))] grid w-[calc(100%_-_32px)] max-w-[1660px] grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-start gap-x-[var(--space-24)] bg-[var(--background)] pb-[calc(160*var(--unit-fx))] font-ui text-[var(--ink)] max-[1080px]:grid-cols-1 max-[1080px]:gap-x-0 max-[1080px]:gap-y-[var(--space-48)] max-[600px]:mt-[var(--space-100)] max-[600px]:gap-y-[var(--space-24)] max-[600px]:pb-[var(--space-72)]">
+    <footer className="mx-auto mt-[calc(320*var(--unit-fx))] grid w-[calc(100%_-_32px)] max-w-[1660px] grid-cols-[minmax(0,2fr)_minmax(0,6fr)_minmax(0,4fr)] items-start gap-x-0 bg-[var(--background)] pb-[calc(160*var(--unit-fx))] font-ui text-[var(--ink)] max-[1080px]:grid-cols-1 max-[1080px]:gap-x-0 max-[1080px]:gap-y-[var(--space-48)] max-[600px]:mt-[var(--space-100)] max-[600px]:gap-y-[var(--space-24)] max-[600px]:pb-[var(--space-72)]">
       <div className="min-w-0" data-footer-zone="brand">
         <Link href="/" aria-label={`${content.brand} home`}>
           <Image
@@ -24,7 +25,7 @@ export function Footer({
         </Link>
       </div>
       <div
-        className="ag-footer-links flex shrink-0 justify-center gap-[var(--space-48)] max-[1080px]:flex-col max-[600px]:gap-[var(--space-24)]"
+        className="ag-footer-links grid min-w-0 grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,2fr)] gap-x-[var(--space-16)] max-[1080px]:grid-cols-1 max-[1080px]:gap-y-[var(--space-48)] max-[600px]:gap-y-[var(--space-24)]"
         data-footer-zone="links"
       >
         <nav
@@ -33,20 +34,9 @@ export function Footer({
           data-footer-section="site"
         >
           {footerContent.siteLinks.map((item) => (
-            <Link key={item.href} href={item.href}>
+            <FooterLink key={item.href} href={item.href}>
               {item.label}
-            </Link>
-          ))}
-        </nav>
-        <nav
-          aria-label="Legal links"
-          className="ag-footer-link-list"
-          data-footer-section="legal"
-        >
-          {footerContent.legalLinks.map((item) => (
-            <Link key={item.href} href={item.href}>
-              {item.label}
-            </Link>
+            </FooterLink>
           ))}
         </nav>
         <nav
@@ -56,7 +46,7 @@ export function Footer({
         >
           {footerContent.contactLinks.map((item) =>
             item.showIcon ? (
-              <Link
+              <FooterLink
                 key={item.href}
                 className="footer-book-link items-center gap-[var(--space-8)]"
                 href={item.href}
@@ -71,7 +61,7 @@ export function Footer({
                   height={18}
                   className="h-[18px] w-[18px]"
                 />
-              </Link>
+              </FooterLink>
             ) : (
               <a key={item.href} href={item.href}>
                 {item.label}
@@ -79,15 +69,26 @@ export function Footer({
             ),
           )}
         </nav>
+        <nav
+          aria-label="Legal links"
+          className="ag-footer-link-list"
+          data-footer-section="legal"
+        >
+          {footerContent.legalLinks.map((item) => (
+            <FooterLink key={item.href} href={item.href}>
+              {item.label}
+            </FooterLink>
+          ))}
+        </nav>
       </div>
       <div
-        className="flex min-w-0 flex-col items-end gap-[var(--space-16)] max-[1080px]:items-start"
+        className="flex min-w-0 flex-col items-start gap-[var(--space-16)]"
         data-footer-zone="meta"
       >
-        <p className="ag-footer-copyright w-[269px] max-w-full">
+        <p className="ag-footer-copyright w-full">
           {footerContent.copyright}
         </p>
-        <p className="ag-footer-note w-[269px] max-w-full text-[var(--ink)]">
+        <p className="ag-footer-note w-full text-[var(--ink)]">
           {footerContent.note}
         </p>
       </div>

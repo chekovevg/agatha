@@ -49,15 +49,14 @@ test("assigns the requested artwork to each color scheme", async ({page}) => {
   ).toHaveAttribute("href", "/favicon-light.svg");
 });
 
-test("home applies the reference background fade while its hero owns the viewport", async ({
+test("home keeps a uniform background while scrolling", async ({
   page,
 }) => {
   await page.setViewportSize({width: 393, height: 852});
   await page.goto("/");
 
-  const shell = page.getByTestId("home-background-fade");
-  await expect(shell).toHaveCSS("background-color", "rgb(244, 232, 200)");
-  await expect(shell).toHaveCSS("transition-duration", "1.1s");
+  const shell = page.locator(".home-page-shell");
+  await expect(shell).toHaveCSS("background-color", "rgb(254, 249, 238)");
 
   await page.evaluate(() => window.scrollTo(0, window.innerHeight * 2));
   await expect(shell).toHaveCSS("background-color", "rgb(254, 249, 238)");
@@ -581,7 +580,7 @@ test("home audience tabs switch their panel without navigation", async ({
   }
 });
 
-test("footer keeps its link cluster centered and stacks before columns overlap", async ({
+test("footer uses the reference column proportions and stacks before overlap", async ({
   page,
 }) => {
   for (const width of [1100, 1440]) {
@@ -625,13 +624,13 @@ test("footer keeps its link cluster centered and stacks before columns overlap",
     ]);
 
     expect(Number.parseFloat(footerStyle.columnGap)).toBeCloseTo(
-      24 * (width / 1728),
+      0,
       1,
     );
     expect(footerStyle.display).toBe("grid");
     expect(footerStyle.paddingBottom).toBeGreaterThanOrEqual(100);
-    expect(brandBox!.width).toBeCloseTo(metaBox!.width, 0);
-    expect(linksBox!.x + linksBox!.width / 2).toBeCloseTo(width / 2, 0);
+    expect(metaBox!.width / brandBox!.width).toBeCloseTo(2, 1);
+    expect(linksBox!.width / brandBox!.width).toBeCloseTo(3, 1);
     expect(copyrightBox!.x).toBeCloseTo(noteBox!.x, 0);
     expect(rectanglesIntersect(brandBox!, linksBox!)).toBe(false);
     expect(rectanglesIntersect(linksBox!, metaBox!)).toBe(false);
@@ -653,7 +652,7 @@ test("footer keeps its link cluster centered and stacks before columns overlap",
 
   expect(linksBox!.y).toBeGreaterThan(brandBox!.y + brandBox!.height);
   expect(metaBox!.y).toBeGreaterThan(linksBox!.y + linksBox!.height);
-  await expect(links).toHaveCSS("flex-direction", "column");
+  await expect(links).toHaveCSS("display", "grid");
   expect(
     await footer.evaluate((element) =>
       Number.parseFloat(getComputedStyle(element).paddingBottom),
@@ -711,7 +710,7 @@ test("footer uses line-height rhythm on mobile and preserves desktop spacing", a
     await page
       .locator('footer [data-footer-section="site"]')
       .evaluate((element) => Number.parseFloat(getComputedStyle(element).rowGap)),
-  ).toBeCloseTo(16 * (1440 / 1728), 1);
+  ).toBe(0);
 });
 
 test("desktop Classes menu remains open while the pointer crosses the header gap", async ({
