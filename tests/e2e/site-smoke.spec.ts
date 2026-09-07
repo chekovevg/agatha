@@ -49,17 +49,25 @@ test("assigns the requested artwork to each color scheme", async ({page}) => {
   ).toHaveAttribute("href", "/favicon-light.svg");
 });
 
-test("home keeps a uniform background while scrolling", async ({
+test("home fades one continuous background while scrolling", async ({
   page,
 }) => {
   await page.setViewportSize({width: 393, height: 852});
   await page.goto("/");
 
   const shell = page.locator(".home-page-shell");
-  await expect(shell).toHaveCSS("background-color", "rgb(254, 249, 238)");
+  await expect(shell).toHaveCSS("background-color", "rgb(244, 232, 200)");
+  await expect(shell).toHaveCSS("transition-duration", "1.1s");
+  await expect(page.locator(".home-main-stack")).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+  await expect(page.locator("footer")).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
 
   await page.evaluate(() => window.scrollTo(0, window.innerHeight * 2));
   await expect(shell).toHaveCSS("background-color", "rgb(254, 249, 238)");
+  await page.evaluate(() => window.scrollTo(0, 0));
+  await expect(shell).toHaveCSS("background-color", "rgb(244, 232, 200)");
+  await page.emulateMedia({reducedMotion: "reduce"});
+  await expect(shell).toHaveCSS("transition-duration", "0s");
+
 });
 
 test("primary English routes render successfully with security headers", async ({
