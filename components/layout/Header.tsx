@@ -72,6 +72,27 @@ export function Header({
       data-header-hidden={headerHidden}
       data-menu-state={menuState}
       data-variant={variant}
+      onKeyDown={(event) => {
+        if (!menuVisible || !window.matchMedia("(max-width: 640px)").matches) return;
+        if (event.key === "Escape") {
+          event.preventDefault();
+          closeMenu();
+          event.currentTarget.querySelector<HTMLButtonElement>("[data-menu-toggle]")?.focus();
+        } else if (event.key === "Tab") {
+          const controls = Array.from(event.currentTarget.querySelectorAll<HTMLElement>(
+            'a[href], button:not([disabled])',
+          )).filter((element) => element.tabIndex >= 0 && element.getClientRects().length > 0);
+          const first = controls[0];
+          const last = controls.at(-1);
+          if (event.shiftKey && document.activeElement === first) {
+            event.preventDefault();
+            last?.focus();
+          } else if (!event.shiftKey && document.activeElement === last) {
+            event.preventDefault();
+            first?.focus();
+          }
+        }
+      }}
     >
       <div
         className="pointer-events-none mx-auto w-full max-w-[1660px]"
@@ -100,6 +121,7 @@ export function Header({
             />
           </Link>
           <nav
+            id="header-menu"
             aria-label="Header Menu"
             className={cn(
               "mai-header-nav justify-self-center min-[641px]:h-full min-[641px]:w-full",
@@ -202,10 +224,12 @@ export function Header({
           </div>
           <button
             ref={menuTriggerRef}
-            className="group relative z-[2] hidden h-[8px] w-[18px] justify-self-end text-[0] leading-none outline-none focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-2 max-[640px]:col-start-2 max-[640px]:row-start-1 max-[640px]:block"
+            data-menu-toggle
+            className="group relative z-[2] -mr-[13px] hidden h-11 w-11 justify-self-end text-[0] leading-none outline-none focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-2 max-[640px]:col-start-2 max-[640px]:row-start-1 max-[640px]:block"
             type="button"
             aria-label={menuVisible ? "Close Menu" : "Open Menu"}
             aria-expanded={menuExpanded}
+            aria-controls="header-menu"
             onClick={() => {
               if (menuVisible) {
                 closeMenu();
@@ -217,14 +241,14 @@ export function Header({
             <span
               aria-hidden="true"
               className={cn(
-                "absolute left-1/2 top-1/2 block w-full -translate-x-1/2 -translate-y-[3px] border-t border-current transition-transform duration-[400ms] ease-[var(--alias-easeOutCubic)]",
+                "absolute left-1/2 top-1/2 block w-[18px] -translate-x-1/2 -translate-y-[3px] border-t border-current transition-transform duration-[400ms] ease-[var(--alias-easeOutCubic)]",
                 menuVisible && "translate-y-0 -rotate-45",
               )}
             />
             <span
               aria-hidden="true"
               className={cn(
-                "absolute left-1/2 top-1/2 block w-full -translate-x-1/2 translate-y-[3px] border-t border-current transition-transform duration-[400ms] ease-[var(--alias-easeOutCubic)]",
+                "absolute left-1/2 top-1/2 block w-[18px] -translate-x-1/2 translate-y-[3px] border-t border-current transition-transform duration-[400ms] ease-[var(--alias-easeOutCubic)]",
                 menuVisible && "translate-y-0 rotate-45",
               )}
             />

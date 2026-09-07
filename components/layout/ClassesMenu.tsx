@@ -89,6 +89,7 @@ export function ClassesMenu({
         }
 
         event.preventDefault();
+        event.stopPropagation();
         suppressNextFocusOpen.current = true;
         setOpen(false);
         focusResponsiveTrigger();

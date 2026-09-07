@@ -1,6 +1,12 @@
-@import "tailwindcss";
+@import "tailwindcss" source(none);
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+
+/* Scan application sources, never archived builds or diagnostic artifacts. */
+@source "./";
+@source "../components";
+@source "../content";
+@source "../lib";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -662,6 +668,12 @@ select {
   .ag-footer-link-list a {
     display: block;
     line-height: inherit;
+    text-underline-offset: 0.25em;
+  }
+
+  .ag-footer-link-list a:hover,
+  .ag-footer-link-list a:focus-visible {
+    text-decoration: underline;
   }
 
   .ag-footer-link-list a.footer-book-link {
@@ -1233,6 +1245,81 @@ select {
     position: relative;
   }
 
+  .classes-page-subtitle {
+    margin-top: var(--space-30);
+    max-width: 750px;
+    text-wrap: balance;
+  }
+
+  #contact {
+    scroll-margin-top: 110px;
+  }
+
+  @media (width <= 640px) {
+    .classes-page-subtitle {
+      min-height: 0;
+    }
+  }
+
+  /* Keep the fixed portrait out of the text columns at small desktop widths. */
+  @media (861px <= width < 1200px) {
+    .about-intro,
+    .about-contact {
+      grid-template-columns: 245px minmax(0, 1fr);
+      column-gap: 32px;
+    }
+
+    .about-intro > div {
+      grid-column: auto;
+    }
+
+    .about-contact > div {
+      grid-column: 2;
+    }
+  }
+
+  .faq-item summary {
+    min-height: 24px;
+    border-radius: 2px;
+    transition: color 400ms var(--alias-easeOut);
+  }
+
+  .faq-item summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-icon {
+    position: relative;
+    flex: 0 0 14px;
+    height: 14px;
+    transition: transform 400ms var(--alias-easeOut);
+  }
+
+  .faq-icon::before,
+  .faq-icon::after {
+    content: "";
+    position: absolute;
+    inset: 50% 0 auto;
+    border-top: 1px solid currentColor;
+  }
+
+  .faq-icon::after {
+    transform: rotate(90deg);
+  }
+
+  .faq-item[open] .faq-icon {
+    transform: rotate(45deg);
+  }
+
+  .faq-item[open] > p {
+    animation: faq-answer-in 400ms var(--alias-easeOut);
+  }
+
+  @keyframes faq-answer-in {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
   .classes-page-backdrop {
     background: linear-gradient(to bottom, rgb(242 221 219 / 70%), transparent);
     height: 100svh;
@@ -1325,5 +1412,16 @@ select {
   }
   html {
     @apply font-sans;
+  }
+}
+
+/* Covers shared controls and mobile rules declared after component overrides. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
   }
 }

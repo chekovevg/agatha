@@ -47,7 +47,7 @@ function LessonRow({
   lesson: Lesson;
 }) {
   return (
-    <article className="classes-lesson-card grid min-h-[328px] gap-[var(--space-32)] rounded-[var(--radius-card)] bg-[var(--background)] px-[var(--space-24)] py-[var(--space-40)] transition-shadow duration-[150ms] hover:shadow-[var(--shadow-hover)] md:grid-cols-[216px_1fr] md:items-center md:px-[var(--space-48)] lg:grid-cols-[216px_1fr_333px] lg:gap-[var(--space-120)]">
+    <article className="classes-lesson-card grid min-h-[328px] gap-[var(--space-32)] rounded-[var(--radius-card)] bg-[var(--background)] px-[var(--space-24)] py-[var(--space-40)] transition-shadow duration-[600ms] ease-[var(--alias-easeOut)] hover:shadow-[var(--shadow-hover)] focus-within:shadow-[var(--shadow-hover)] md:grid-cols-[216px_1fr] md:items-center md:px-[var(--space-48)] lg:grid-cols-[216px_1fr_333px] lg:gap-[var(--space-120)]">
       <div className="classes-lesson-media relative h-[216px] w-[216px] justify-self-center">
         <Image
           src={lesson.image}
@@ -65,7 +65,7 @@ function LessonRow({
           {lesson.title}
         </h2>
       </div>
-      <p className="classes-lesson-description mai-body text-[var(--ink)]">
+      <p className="classes-lesson-description mai-body text-[var(--ink)] md:col-span-2 lg:col-span-1">
         {lesson.description}
       </p>
       <ButtonLink

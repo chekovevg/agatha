@@ -55,7 +55,7 @@ export function ContactForm() {
           name="email"
           required
           type="email"
-          className="mai-body rounded px-4 py-3 shadow-[var(--shadow-inset)]"
+          className="mai-body rounded border border-[var(--muted)] px-4 py-3 focus-visible:outline-[var(--ink)]"
         />
       </label>
       <div className="grid gap-2">
@@ -70,8 +70,8 @@ export function ContactForm() {
           maxLength={3000}
           rows={5}
           aria-describedby="contact-message-hint"
-          onInput={validateMessage}
-          className="mai-body rounded px-4 py-3 shadow-[var(--shadow-inset)]"
+           onInput={validateMessage}
+          className="mai-body rounded border border-[var(--muted)] px-4 py-3 focus-visible:outline-[var(--ink)]"
         />
         <p
           id="contact-message-hint"
