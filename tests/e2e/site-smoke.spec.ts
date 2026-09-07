@@ -830,19 +830,19 @@ test("desktop Classes menu previews lessons and booking targets", async ({
       .evaluate((element) => Number.parseFloat(getComputedStyle(element).rowGap)),
   ).toBeCloseTo(20 * (1440 / 1728), 1);
 
-  await menu.getByRole("link", {name: "Solfege", exact: true}).hover();
+  await menu.getByRole("link", {name: "Solfegge and Ear Training", exact: true}).hover();
   await expect(menu.getByTestId("classes-menu-preview-title")).toHaveText(
-    "Solfege",
+    "Solfegge and Ear Training",
   );
   await expect(menu.getByTestId("classes-menu-preview-image")).toHaveAttribute(
     "src",
     /solfege\.webp/,
   );
   await expect(
-    menu.getByRole("link", {name: "Solfege", exact: true}),
-  ).toHaveAttribute("href", "/book?type=lesson&subject=Solfege");
+    menu.getByRole("link", {name: "Solfegge and Ear Training", exact: true}),
+  ).toHaveAttribute("href", "/book?type=lesson&subject=Solfegge+and+Ear+Training");
 
-  await menu.getByRole("link", {name: "Solfege", exact: true}).focus();
+  await menu.getByRole("link", {name: "Solfegge and Ear Training", exact: true}).focus();
   await page.keyboard.press("Escape");
   await expect(menu).toBeHidden();
   await expect(classesLink).toBeFocused();

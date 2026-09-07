@@ -116,7 +116,7 @@ const baseContent: SiteContent = {
     },
     {
       slug: "solfege",
-      title: "Solfege",
+      title: "Solfegge and Ear Training",
       image: "/images/classes/solfege.webp",
       description:
         "Train your ear, recognise intervals and chords, sing and write melodic lines, and connect theory with real musical listening.",
