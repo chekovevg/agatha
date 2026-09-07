@@ -80,7 +80,7 @@ describe("editorial site structure", () => {
       {slug: "recorder", title: "Recorder"},
       {slug: "piccolo", title: "Piccolo"},
       {slug: "music-theory", title: "Music Theory"},
-      {slug: "solfege", title: "Solfege"},
+      {slug: "solfege", title: "Solfegge and Ear Training"},
     ]);
   });
 
@@ -150,7 +150,7 @@ describe("editorial site structure", () => {
       'href="/book?type=lesson&amp;subject=Flute"',
     );
     expect(html).toContain(
-      'href="/book?type=lesson&amp;subject=Solfege"',
+      'href="/book?type=lesson&amp;subject=Solfegge+and+Ear+Training"',
     );
     expect(html).not.toContain("Music History");
     expect(html).not.toContain("For adults");
