@@ -91,3 +91,36 @@ test("Classes intro uses the measured Models typography scale", async ({page}) =
     }
   }
 });
+
+
+test("header returns on upward scroll on every main page", async ({page}) => {
+  await page.setViewportSize({width: 1440, height: 900});
+  for (const route of ["/", "/classes", "/about", "/media"]) {
+    await page.goto(route);
+    const header = page.locator("header");
+    await expect(header).toHaveCSS("position", "fixed");
+    await page.evaluate(() => window.scrollTo(0, 900));
+    await expect(header).toHaveAttribute("data-header-hidden", "true");
+    await page.evaluate(() => window.scrollBy(0, -100));
+    await expect(header).toHaveAttribute("data-header-hidden", "false");
+    await expect.poll(async () => (await header.boundingBox())!.y).toBeGreaterThanOrEqual(0);
+  }
+});
+
+test("Classes hover menu stays above its heading and cards stay compact", async ({page}) => {
+  await page.setViewportSize({width: 1728, height: 1000});
+  await page.goto("/classes");
+  await page.locator('header a[href="/classes"]').first().hover();
+  const panel = page.locator(".classes-menu-panel");
+  await expect(panel).toHaveCSS("opacity", "1");
+  await expect.poll(() => panel.evaluate((element) => {
+    const box = element.getBoundingClientRect();
+    return element.contains(document.elementFromPoint(box.x + box.width / 2, box.y + box.height * 0.7));
+  })).toBe(true);
+  const card = page.locator(".classes-lesson-card").first();
+  const title = await card.locator("h2").boundingBox();
+  const cta = await card.locator(".classes-lesson-cta").boundingBox();
+  expect((await card.boundingBox())!.height).toBeLessThanOrEqual(360);
+  expect(cta!.y - title!.y - title!.height).toBeLessThanOrEqual(40);
+  expect(cta!.width).toBeLessThan(300);
+});

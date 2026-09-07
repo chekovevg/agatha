@@ -2,6 +2,7 @@ import Image from "next/image";
 
 import {Footer} from "@/components/layout/Footer";
 import {Header} from "@/components/layout/Header";
+import {HomeBackgroundFade} from "@/components/sections/HomeBackgroundFade";
 import {HomeAudienceTabs} from "@/components/sections/HomeAudienceTabs";
 import type {SiteContent} from "@/content/types";
 
@@ -12,12 +13,14 @@ export function HomePage({content}: {content: SiteContent}) {
     <div
       className="home-page-shell editorial-shell min-h-screen"
     >
+      <HomeBackgroundFade />
       <Header content={content} variant="home" />
       <main>
         <section
           className="plain-home-hero"
           aria-labelledby="home-hero-title"
           data-home-hero="plain"
+          data-home-tone="#f4e8c8"
         >
           <div className="plain-home-hero-copy">
             <h1 id="home-hero-title" className="plain-home-title">

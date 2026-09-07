@@ -30,7 +30,7 @@ export function ClassesPage({
             {content.pages.classes.intro}
           </p>
         </section>
-        <div className="classes-page-lessons mx-auto mt-[var(--space-144)] grid max-w-[1150px] gap-[var(--space-24)]">
+        <div className="classes-page-lessons mx-auto mt-[var(--space-144)] grid max-w-[1440px] gap-[var(--space-24)]">
           {content.lessons.map((lesson) => (
             <LessonRow key={lesson.slug} lesson={lesson} />
           ))}
@@ -64,17 +64,17 @@ function LessonRow({
         <h2 className="classes-lesson-title mai-h4 mt-[var(--space-24)]">
           {lesson.title}
         </h2>
+        <ButtonLink
+          href={lessonBookingHref(lesson.title)}
+          className="classes-lesson-cta mt-[var(--space-32)]"
+          data-analytics-booking-cta="classes"
+        >
+          Book a Lesson
+        </ButtonLink>
       </div>
       <p className="classes-lesson-description mai-body text-[var(--ink)] md:col-span-2 lg:col-span-1">
         {lesson.description}
       </p>
-      <ButtonLink
-        href={lessonBookingHref(lesson.title)}
-        className="classes-lesson-cta mt-[var(--space-32)] md:col-start-2"
-        data-analytics-booking-cta="classes"
-      >
-        Book a Lesson
-      </ButtonLink>
     </article>
   );
 }
