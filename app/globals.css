@@ -1234,7 +1234,7 @@ select {
 
   @media (width > 600px) {
     .classes-lesson-cta {
-      height: calc(var(--mai-ui-size) * 3);
+      height: max(44px, calc(var(--mai-ui-size) * 3));
     }
   }
 
