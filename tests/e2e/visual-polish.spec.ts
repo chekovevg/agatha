@@ -124,3 +124,31 @@ test("Classes hover menu stays above its heading and cards stay compact", async 
   expect(cta!.y - title!.y - title!.height).toBeLessThanOrEqual(40);
   expect(cta!.width).toBeLessThan(300);
 });
+test("long Classes labels stay inside the list without overlapping the preview", async ({page}) => {
+  for (const width of [641, 768, 1440, 1920]) {
+    await page.setViewportSize({width, height: 900});
+    await page.goto("/classes");
+    await page.locator('header a[href="/classes"]').first().hover();
+    const menu = page.getByRole("navigation", {name: "Desktop Classes submenu"});
+    const link = menu.getByRole("link", {name: "Solfegge and Ear Training", exact: true});
+    await link.hover();
+    const geometry = await link.evaluate((element) => {
+      const list = element.parentElement!;
+      const label = element.querySelector("span.flex-1")!;
+      const preview = list.parentElement!.nextElementSibling!;
+      const range = document.createRange();
+      range.selectNodeContents(label);
+      const text = range.getBoundingClientRect();
+      const row = element.getBoundingClientRect();
+      return {
+        overflow: list.scrollWidth - list.clientWidth,
+        gap: preview.getBoundingClientRect().left - element.getBoundingClientRect().right,
+        clipped: label.scrollWidth > label.clientWidth || text.top < row.top || text.bottom > row.bottom,
+      };
+    });
+    expect(geometry.overflow).toBe(0);
+    expect(geometry.gap).toBeGreaterThan(0);
+    expect(geometry.clipped).toBe(false);
+    await expect(menu.getByTestId("classes-menu-preview-title")).toHaveText("Solfegge and Ear Training");
+  }
+});

@@ -152,7 +152,7 @@ export function ClassesMenu({
                 </p>
               </div>
 
-              <div className="mt-[var(--space-32)] grid gap-[var(--space-10)]">
+              <div className="mt-[var(--space-32)] grid grid-cols-1 gap-[var(--space-10)]">
                 {lessons.map((lesson) => {
                   return (
                     <a
@@ -172,7 +172,7 @@ export function ClassesMenu({
                           className="object-contain"
                         />
                       </span>
-                      <span className="min-w-0 flex-1 truncate">{lesson.title}</span>
+                      <span className="min-w-0 flex-1 whitespace-normal leading-[1.2]">{lesson.title}</span>
                       <ChevronRight
                         aria-hidden="true"
                         className="h-[22px] w-[22px] -translate-x-1 opacity-0 transition-[opacity,transform] duration-[600ms] ease-[var(--alias-easeOut)] group-hover:translate-x-0 group-hover:opacity-100 group-focus-visible:translate-x-0 group-focus-visible:opacity-100"
