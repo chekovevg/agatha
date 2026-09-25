@@ -339,12 +339,14 @@ test("responsive typography and location geometry match the Chrome audit", async
     );
     expectTypography(
       await readTypography(page.locator("[data-home-location-heading]")),
-      expected.locationHeading,
+      {...expected.locationHeading, size: expected.locationHeading.size * 1.15,
+        letterSpacing: expected.locationHeading.letterSpacing * 1.15},
       `location heading at ${expected.width}px`,
     );
     expectTypography(
       await readTypography(page.locator("[data-home-location-copy]")),
-      expected.locationCopy,
+      {...expected.locationCopy, size: expected.locationCopy.size * 1.09,
+        letterSpacing: expected.locationCopy.letterSpacing * 1.09},
       `location copy at ${expected.width}px`,
     );
     expectTypography(

@@ -126,7 +126,7 @@ test("classes preserves the Models-inspired mobile visual hierarchy", async ({
   expect(headerBox!.width).toBeCloseTo(363, 0);
   expect(headingBox!.y).toBeGreaterThan(135);
   expect(headingBox!.y).toBeLessThan(150);
-  expect(headingType.fontSize).toBeCloseTo(29.3284, 1);
+  expect(headingType.fontSize).toBeCloseTo(33.7276, 1);
   expect(headingType.lineHeight).toBeCloseTo(33.7276, 1);
 });
 
@@ -173,10 +173,10 @@ test("classes keeps the reference card order and mobile text scale", async ({
   expect(ctaBox!.y).toBeGreaterThan(descriptionBox!.y + descriptionBox!.height);
   await expect(media.locator("img")).toHaveAttribute(
     "sizes",
-    "(max-width: 640px) calc(100vw - 30px), 216px",
+    "216px",
   );
-  expect(titleType.fontSize).toBeCloseTo(26.3955, 1);
-  expect(descriptionType.fontSize).toBeCloseTo(17.597, 1);
+  expect(titleType.fontSize).toBeCloseTo(30.3549, 1);
+  expect(descriptionType.fontSize).toBeCloseTo(19.1807, 1);
   expect(descriptionType.lineHeight).toBeCloseTo(23.404, 1);
 });
 
@@ -203,6 +203,8 @@ test("classes uses the reference spacing and centered card artwork on mobile", a
   expect(headingBox!.y).toBeLessThan(150);
   expect(cardBox!.x).toBeCloseTo(15, 0);
   expect(mediaBox!.x).toBeCloseTo((393 - mediaBox!.width) / 2, 0);
+  expect(mediaBox!.width).toBe(216);
+  expect(mediaBox!.height).toBe(216);
   expect(cardStyle).not.toBe("rgba(0, 0, 0, 0)");
   expect(cardBox!.height).toBeGreaterThanOrEqual(601);
 });

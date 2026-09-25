@@ -53,7 +53,7 @@ function LessonRow({
           src={lesson.image}
           alt=""
           fill
-          sizes="(max-width: 640px) calc(100vw - 30px), 216px"
+          sizes="216px"
           className="object-contain"
         />
       </div>

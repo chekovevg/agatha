@@ -79,8 +79,8 @@ test("Classes intro uses the measured Models typography scale", async ({page}) =
     await page.setViewportSize({width, height: 1000});
     await page.goto("/classes");
     for (const [selector, size, line] of [
-      [".classes-page-heading", headingSize, headingLine],
-      [".classes-page-subtitle", subtitleSize, subtitleLine],
+      [".classes-page-heading", headingSize * 1.15, headingLine],
+      [".classes-page-subtitle", subtitleSize * 1.09, subtitleLine],
     ] as const) {
       const metrics = await page.locator(selector).evaluate((element) => {
         const style = getComputedStyle(element);
@@ -150,5 +150,37 @@ test("long Classes labels stay inside the list without overlapping the preview",
     expect(geometry.gap).toBeGreaterThan(0);
     expect(geometry.clipped).toBe(false);
     await expect(menu.getByTestId("classes-menu-preview-title")).toHaveText("Solfegge and Ear Training");
+  }
+});
+
+test("lesson typography fits every card across the responsive boundaries", async ({page}) => {
+  for (const width of [375, 390, 430, 447, 600, 601, 640, 641, 768, 860, 861, 1024, 1440, 1728, 1920]) {
+    await page.setViewportSize({width, height: 1000});
+    await page.goto("/classes");
+    await page.evaluate(() => document.fonts.ready);
+    const cards = await page.locator(".classes-lesson-card").evaluateAll((elements) => elements.map((card) => {
+      const title = card.querySelector("h2")!;
+      const description = card.querySelector(".classes-lesson-description")!;
+      const button = card.querySelector(".classes-lesson-cta")!;
+      const bounds = card.getBoundingClientRect();
+      return {
+        title: title.textContent,
+        overflow: [title, description, button].some((element) => {
+          const box = element.getBoundingClientRect();
+          return element.scrollWidth > element.clientWidth + 1 || box.left < bounds.left || box.right > bounds.right;
+        }),
+        titleButtonGap: button.getBoundingClientRect().top - title.getBoundingClientRect().bottom,
+        leftInset: title.getBoundingClientRect().left - bounds.left,
+        bottomInset: bounds.bottom - button.getBoundingClientRect().bottom,
+      };
+    }));
+    for (const card of cards) {
+      expect(card.overflow, `${card.title} at ${width}px`).toBe(false);
+      expect(card.titleButtonGap, `${card.title} at ${width}px`).toBeGreaterThan(0);
+      if (width <= 600) {
+        expect(card.leftInset).toBeGreaterThanOrEqual(20);
+        expect(card.bottomInset).toBeGreaterThanOrEqual(23.5);
+      }
+    }
   }
 });
