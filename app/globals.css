@@ -116,6 +116,9 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  /* Optical correction from the Bradford comparison; keep UI and line rhythm independent. */
+  --display-optical-scale: 1.15;
+  --copy-optical-scale: 1.09;
   --mai-body-size: calc(24 * var(--unit-fx-type));
   --mai-body-line: 1.25;
   --mai-body-tracking: -0.01em;
@@ -361,10 +364,10 @@
 
 body {
   font-family: var(--font-body);
-  font-size: var(--mai-body-size);
+  font-size: calc(var(--mai-body-size) * var(--copy-optical-scale));
   font-weight: 400;
   letter-spacing: var(--mai-body-tracking);
-  line-height: var(--mai-body-line);
+  line-height: calc(var(--mai-body-size) * var(--mai-body-line));
   background: var(--background);
   color: var(--ink);
 }
@@ -416,10 +419,10 @@ select {
 
   .mai-body {
     font-family: var(--font-body);
-    font-size: var(--mai-body-size);
+    font-size: calc(var(--mai-body-size) * var(--copy-optical-scale));
     font-weight: 400;
     letter-spacing: var(--mai-body-tracking);
-    line-height: var(--mai-body-line);
+    line-height: calc(var(--mai-body-size) * var(--mai-body-line));
   }
 
   .mai-h1 {
@@ -432,74 +435,74 @@ select {
 
   .mai-h2 {
     font-family: var(--font-display);
-    font-size: var(--mai-h2-size);
+    font-size: calc(var(--mai-h2-size) * var(--display-optical-scale));
     font-weight: 400;
     letter-spacing: var(--mai-h2-tracking);
-    line-height: var(--mai-h2-line);
+    line-height: calc(var(--mai-h2-size) * var(--mai-h2-line));
   }
 
   .mai-h4 {
     font-family: var(--font-display);
-    font-size: var(--mai-h4-size);
+    font-size: calc(var(--mai-h4-size) * var(--display-optical-scale));
     font-weight: 400;
     letter-spacing: var(--mai-h4-tracking);
-    line-height: var(--mai-h4-line);
+    line-height: calc(var(--mai-h4-size) * var(--mai-h4-line));
   }
 
   .mai-h3 {
     font-family: var(--font-display);
-    font-size: var(--mai-h3-size);
+    font-size: calc(var(--mai-h3-size) * var(--display-optical-scale));
     font-weight: 400;
     letter-spacing: var(--mai-h3-tracking);
-    line-height: var(--mai-h3-line);
+    line-height: calc(var(--mai-h3-size) * var(--mai-h3-line));
   }
 
   .mai-h5 {
     font-family: var(--font-display);
-    font-size: var(--mai-h5-size);
+    font-size: calc(var(--mai-h5-size) * var(--display-optical-scale));
     font-weight: 400;
     letter-spacing: var(--mai-h5-tracking);
-    line-height: var(--mai-h5-line);
+    line-height: calc(var(--mai-h5-size) * var(--mai-h5-line));
   }
 
   .mai-h6 {
     font-family: var(--font-display);
-    font-size: var(--mai-h6-size);
+    font-size: calc(var(--mai-h6-size) * var(--display-optical-scale));
     font-weight: 400;
     letter-spacing: var(--mai-h6-tracking);
-    line-height: var(--mai-h6-line);
+    line-height: calc(var(--mai-h6-size) * var(--mai-h6-line));
   }
 
   .mai-h7 {
     font-family: var(--font-display);
-    font-size: var(--mai-h7-size);
+    font-size: calc(var(--mai-h7-size) * var(--display-optical-scale));
     font-weight: 400;
     letter-spacing: var(--mai-h7-tracking);
-    line-height: var(--mai-h7-line);
+    line-height: calc(var(--mai-h7-size) * var(--mai-h7-line));
   }
 
   .mai-text-large {
     font-family: var(--font-copy);
-    font-size: var(--mai-text-large-size);
+    font-size: calc(var(--mai-text-large-size) * var(--copy-optical-scale));
     font-weight: 400;
     letter-spacing: var(--mai-text-large-tracking);
-    line-height: var(--mai-text-large-line);
+    line-height: calc(var(--mai-text-large-size) * var(--mai-text-large-line));
   }
 
   .mai-text-large-alt {
     font-family: var(--font-copy);
-    font-size: var(--mai-text-large-alt-size);
+    font-size: calc(var(--mai-text-large-alt-size) * var(--copy-optical-scale));
     font-weight: 400;
     letter-spacing: var(--mai-text-large-alt-tracking);
-    line-height: var(--mai-text-large-alt-line);
+    line-height: calc(var(--mai-text-large-alt-size) * var(--mai-text-large-alt-line));
   }
 
   .mai-text-regular {
     font-family: var(--font-copy);
-    font-size: var(--mai-text-regular-size);
+    font-size: calc(var(--mai-text-regular-size) * var(--copy-optical-scale));
     font-weight: 400;
     letter-spacing: var(--mai-text-regular-tracking);
-    line-height: var(--mai-text-regular-line);
+    line-height: calc(var(--mai-text-regular-size) * var(--mai-text-regular-line));
   }
 
   .mai-text-28 {
@@ -856,10 +859,10 @@ select {
 
   .home-section-copy {
     font-family: var(--font-newsreader), var(--font-display), Georgia, serif;
-    font-size: var(--mai-text-large-alt-size);
+    font-size: calc(var(--mai-text-large-alt-size) * var(--copy-optical-scale));
     font-weight: 400;
     letter-spacing: var(--mai-text-large-alt-tracking);
-    line-height: var(--mai-text-large-alt-line);
+    line-height: calc(var(--mai-text-large-alt-size) * var(--mai-text-large-alt-line));
     max-width: 750px;
     text-wrap: balance;
   }
@@ -879,10 +882,10 @@ select {
 
   .home-section-heading {
     font-family: var(--font-eb-garamond), Georgia, "Times New Roman", serif;
-    font-size: var(--mai-h3-size);
+    font-size: calc(var(--mai-h3-size) * var(--display-optical-scale));
     font-weight: 400;
     letter-spacing: var(--mai-h3-tracking);
-    line-height: var(--mai-h3-line);
+    line-height: calc(var(--mai-h3-size) * var(--mai-h3-line));
     text-wrap: balance;
   }
 
@@ -896,9 +899,9 @@ select {
   }
 
   .home-location-copy-stack .home-section-copy {
-    font-size: var(--mai-body-size);
+    font-size: calc(var(--mai-body-size) * var(--copy-optical-scale));
     letter-spacing: var(--mai-body-tracking);
-    line-height: var(--mai-body-line);
+    line-height: calc(var(--mai-body-size) * var(--mai-body-line));
     max-width: calc(7 * var(--col) + var(--gutter) + var(--space-10));
   }
 
@@ -1147,6 +1150,9 @@ select {
       height: 111px;
     }
 
+  }
+
+  @media (max-width: 600px) {
     .classes-page.editorial-container {
       padding-inline: 15px !important;
       padding-top: 30px !important;
@@ -1157,14 +1163,14 @@ select {
     }
 
     .classes-page-heading {
-      font-size: calc(30 * var(--unit-fx-type));
-      line-height: 1.15;
+      font-size: calc(30 * var(--unit-fx-type) * var(--display-optical-scale));
+      line-height: calc(34.5 * var(--unit-fx-type));
       max-width: 362px;
     }
 
     .classes-page-subtitle {
-      font-size: calc(20 * var(--unit-fx-type));
-      line-height: 1.2;
+      font-size: calc(20 * var(--unit-fx-type) * var(--copy-optical-scale));
+      line-height: calc(24 * var(--unit-fx-type));
       margin-top: 29px;
       max-width: 362px;
       min-height: 141px;
@@ -1186,15 +1192,13 @@ select {
       flex-direction: column;
       gap: 0;
       min-height: 601px;
-      padding: 0;
+      padding: 20px 20px 24px;
     }
 
     .classes-lesson-media {
       align-self: center;
-      aspect-ratio: 1;
-      height: auto;
       order: 1;
-      width: 100%;
+      flex-shrink: 0;
     }
 
     .classes-lesson-details {
@@ -1207,15 +1211,15 @@ select {
     }
 
     .classes-lesson-title {
-      font-size: 26.3955px;
-      line-height: 30.3549px;
+      font-size: calc(27 * var(--unit-fx-type) * var(--display-optical-scale));
+      line-height: calc(30 * var(--unit-fx-type));
       margin-top: 12px !important;
       order: 2;
     }
 
     .classes-lesson-description {
-      font-size: 17.597px;
-      line-height: 23.404px;
+      font-size: calc(18 * var(--unit-fx-type) * var(--copy-optical-scale));
+      line-height: calc(23.94 * var(--unit-fx-type));
       margin-top: 25px;
       order: 3;
     }
@@ -1228,11 +1232,17 @@ select {
 
   }
 
+  @media (width > 600px) {
+    .classes-lesson-cta {
+      height: calc(var(--mai-ui-size) * 3);
+    }
+  }
+
   .classes-page.editorial-container {
     max-width: 1504px;
   }
 
-  @media (width > 640px) {
+  @media (width > 600px) {
     .classes-page.editorial-container {
       padding-top: calc(var(--space-144) + 91px);
     }
@@ -1266,26 +1276,32 @@ select {
 
   @media (width > 600px) {
     .classes-page-heading {
-      font-size: var(--mai-h3-size);
-      line-height: 1;
+      font-size: calc(var(--mai-h3-size) * var(--display-optical-scale));
+      line-height: var(--mai-h3-size);
       max-width: calc(680 * var(--unit-fx));
     }
 
     .classes-page-subtitle {
-      font-size: var(--mai-text-large-alt-size);
-      line-height: 1.2;
+      font-size: calc(var(--mai-text-large-alt-size) * var(--copy-optical-scale));
+      line-height: calc(var(--mai-text-large-alt-size) * 1.2);
       max-width: calc(960 * var(--unit-fx));
     }
   }
 
   @media (601px <= width <= 860px) {
+    .classes-lesson-description {
+      font-size: calc(21 * var(--unit-fx-type) * var(--copy-optical-scale));
+      line-height: calc(26.25 * var(--unit-fx-type));
+    }
+
     .classes-page-heading,
     .classes-page-subtitle {
       max-width: calc(1380 * var(--unit-fx));
     }
 
     .classes-page-subtitle {
-      font-size: calc(28 * var(--unit-fx-type));
+      font-size: calc(28 * var(--unit-fx-type) * var(--copy-optical-scale));
+      line-height: calc(33.6 * var(--unit-fx-type));
     }
   }
 
